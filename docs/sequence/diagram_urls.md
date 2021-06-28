@@ -1,3 +1,0 @@
-# Sequence Diagrams
-
-* [Executing a Command](https://sequencediagram.org/index.html#initialData=C4S2BsFMAIFEA9IGMCuoB2BzaBDaBhAewFtid0ATAKCpyWEICdoBVAZ0kZvc4FoA+ACIg2SJhQBc0AO6MwkNrmhjS5alWGjxAgEKFgEgFSGAPCdgA3SOmD9+xgDrpiCtjkyQae4AKKrKAGJ0DIwAnlJIjJA4wJB+ZJQAFACyru6QADQEhDaQ8MAAlDTxakH0TKG+JAmS0OiQ0omEAA6gOWxZqWxuHllEuflFVCWUvFX+FGUh4dAc4ABmxdWlwRVj-N5SI+re4zVSechokIkFQA)
