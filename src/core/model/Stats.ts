@@ -21,7 +21,6 @@ export interface PerformanceStats extends Stats{
     largestKillingSpree: number,
     firstBlood: boolean,
     firstTower: boolean,
-    won: boolean,
 }
 
 interface OverallStats extends Stats{
