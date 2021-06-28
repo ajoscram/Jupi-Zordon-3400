@@ -1,6 +1,7 @@
 import { Channel, DiscordUser, Server } from '../model'
 
 export interface Message{
+    getCommandOptions(): string[];
     getInvoker(): DiscordUser;
     getInvokingChannel(): Channel;
     getUsersInChannel(channel: Channel): DiscordUser[];

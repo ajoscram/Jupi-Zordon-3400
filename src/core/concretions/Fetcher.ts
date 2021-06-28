@@ -1,22 +1,22 @@
 import { ChampionFetcher, MatchFetcher, SummonerFetcher } from "../abstractions";
-import { CompletedMatch, OngoingMatch, Summoner } from "../model";
+import { CompletedMatch, OngoingMatch, Server, Summoner } from "../model";
 
 export class Fetcher{
     constructor(
-        public championFetcher: ChampionFetcher,
-        public summonerFetcher: SummonerFetcher,
-        public matchFetcher: MatchFetcher
+        private championFetcher: ChampionFetcher,
+        private summonerFetcher: SummonerFetcher,
+        private matchFetcher: MatchFetcher
     ){}
 
-    public getSummoner(summonerName: string): Summoner{
+    public async getSummoner(summonerName: string): Promise<Summoner>{
         return this.summonerFetcher.getSummoner(summonerName);
     }
 
-    public getOngoingMatch(summoner: Summoner): OngoingMatch{
-        return this.matchFetcher.getOngoingMatch(summoner);
+    public async getOngoingMatch(summoner: Summoner, server: Server): Promise<OngoingMatch>{
+        return this.matchFetcher.getOngoingMatch(summoner, server);
     }
 
-    public getCompletedMatch(ongoingMatch: OngoingMatch): CompletedMatch{
+    public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch>{
         return this.matchFetcher.getCompletedMatch(ongoingMatch);
     }
 }
