@@ -1,6 +1,6 @@
 import { Command } from "../core/abstractions";
 import { BotError, Context } from "../core/concretions";
-import { Channel, DiscordUser, Player } from "../core/model";
+import { Channel, User, Account } from "../core/model";
 
 export class BalanceTeamsCommand extends Command{
     private readonly channelName: string;
@@ -12,9 +12,9 @@ export class BalanceTeamsCommand extends Command{
 
     public async execute(context: Context): Promise<void>{
         const channel: Channel = this.getChannel(context);
-        const users: DiscordUser[] = context.message.getUsersInChannel(channel);
-        const players: Player[] = await context.database.getPlayers(users);
-        const balancedTeams: [Player[], Player[]] = await context.predictor.balance(players);
+        const users: User[] = context.message.getUsersInChannel(channel);
+        const accounts: Account[] = await context.database.getAccounts(users);
+        const balancedTeams: [Account[], Account[]] = await context.predictor.balance(accounts);
         context.message.reply(balancedTeams);
     }
 

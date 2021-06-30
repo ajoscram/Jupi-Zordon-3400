@@ -1,4 +1,4 @@
-import { Command, Message, CommandMetadata } from "../core/abstractions";
+import { Command, CommandMetadata } from "../core/abstractions";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, LinkPlayerCommand, RecordMatchCommand } from "../commands";
 
 export class CommandFactory{

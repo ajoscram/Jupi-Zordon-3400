@@ -1,6 +1,6 @@
-import { OngoingMatch, Player } from "../model";
+import { Account, OngoingMatch } from "../model";
 
 export interface Predictor{
-    balance(player: Player[]): Promise<[Player[], Player[]]>;
+    balance(players: Account[]): Promise<[Account[], Account[]]>;
     predict(ongoingMatch: OngoingMatch): Promise<number>;
 }

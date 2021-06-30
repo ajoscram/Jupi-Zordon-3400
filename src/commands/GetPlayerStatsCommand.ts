@@ -1,4 +1,4 @@
-import { Command, Message } from "../core/abstractions";
+import { Command } from "../core/abstractions";
 import { Context } from "../core/concretions";
 import { Summoner, SummonerOverallStats } from "../core/model";
 

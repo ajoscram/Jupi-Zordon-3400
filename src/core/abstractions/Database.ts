@@ -1,10 +1,10 @@
-import { CompletedMatch, DiscordUser, OngoingMatch, Player, Summoner, SummonerOverallStats } from "../model";
+import { CompletedMatch, User, OngoingMatch, Account, Summoner, SummonerOverallStats } from "../model";
 
 export interface Database{
-    getPlayer(user: DiscordUser): Promise<Player>;
-    getPlayers(users: DiscordUser[]): Promise<Player[]>;
+    getAccount(user: User): Promise<Account>;
+    getAccounts(users: User[]): Promise<Account[]>;
     getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats>;
-    upsert(player: Player): Promise<void>;
+    upsert(account: Account): Promise<void>;
     insert(ongoingMatch: OngoingMatch): Promise<void>;
     insert(completedMatch: CompletedMatch): Promise<void>;
 }

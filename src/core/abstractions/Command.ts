@@ -1,6 +1,5 @@
-import { Message } from '.';
 import { Context } from '../concretions';
-import { DiscordUser, Player, Summoner } from '../model';
+import { User, Account, Summoner } from '../model';
 
 export abstract class Command{
     constructor(
@@ -15,8 +14,8 @@ export abstract class Command{
             return await context.fetcher.getSummoner(summonerName);
         }
         else{
-            const discordUser: DiscordUser = context.message.getInvoker();
-            const player: Player = await context.database.getPlayer(discordUser);
+            const user: User = context.message.getInvoker();
+            const player: Account = await context.database.getAccount(user);
             return player.summoner;
         }
     }

@@ -9,7 +9,7 @@ export interface Champion extends Identity {
 
 export interface Summoner extends Identity { }
 
-export interface DiscordUser extends Identity { }
+export interface User extends Identity { }
 
 export interface Server extends Identity { }
 

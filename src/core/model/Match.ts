@@ -1,4 +1,4 @@
-import { Player, Server, Champion, TeamStats } from ".";
+import { Summoner, Server, Champion, TeamStats } from ".";
 
 interface Match{
     id: string,
@@ -6,7 +6,7 @@ interface Match{
 }
 
 export interface OngoingMatch extends Match{
-    map: Map<Player, Champion>
+    map: Map<Summoner, Champion>
 }
 
 export interface CompletedMatch extends Match{
