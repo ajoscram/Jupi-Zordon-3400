@@ -1,6 +1,6 @@
 import { Command, Message } from "../core/abstractions";
 import { Context } from "../core/concretions";
-import { DiscordUser, Player, Summoner, SummonerOverallStats } from "../core/model";
+import { Summoner, SummonerOverallStats } from "../core/model";
 
 export class GetPlayerStatsCommand extends Command{
     constructor(message: Message){
@@ -11,12 +11,6 @@ export class GetPlayerStatsCommand extends Command{
         const options: string[] = this.message.getCommandOptions();
         const summoner: Summoner = await this.getSummoner(options, context);
         const stats: SummonerOverallStats = await context.database.getSummonerOverallStats(summoner);
-
-        const reply: string = this.createReply(stats);
-        this.message.reply(reply);
-    }
-
-    private createReply(stats: SummonerOverallStats): string{
-        throw new Error("Method not implemented.");
+        this.message.reply(stats);
     }
 }

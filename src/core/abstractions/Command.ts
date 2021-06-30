@@ -28,7 +28,7 @@ export abstract class Command{
             case 1:
                 return options[0];
             default:
-                throw new Error("Method not implemented.");
+                throw new Error("Please provide the player's summoner name or no parameters to this command.");
         }
     }
 }

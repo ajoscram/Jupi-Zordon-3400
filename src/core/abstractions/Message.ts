@@ -1,4 +1,5 @@
-import { Channel, DiscordUser, Server } from '../model'
+import { BotError } from '../concretions';
+import { Channel, CompletedMatch, DiscordUser, OngoingMatch, Player, Server, SummonerOverallStats } from '../model'
 
 export interface Message{
     getCommandOptions(): string[];
@@ -8,5 +9,11 @@ export interface Message{
     getUser(name: string): DiscordUser;
     getChannel(name: string): Channel;
     getServer(): Server;
-    reply(text: string): void;
+
+    reply(error: BotError): void;
+    reply(teams: [Player[], Player[]]): void;
+    reply(stats: SummonerOverallStats): void;
+    reply(match: OngoingMatch, probabilityBlueWins: number): void;
+    reply(match: CompletedMatch): void;
+    reply(player: Player): void;
 }

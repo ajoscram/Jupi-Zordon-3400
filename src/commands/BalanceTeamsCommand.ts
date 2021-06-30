@@ -1,5 +1,5 @@
 import { Command, Message } from "../core/abstractions";
-import { Context } from "../core/concretions";
+import { BotError, Context } from "../core/concretions";
 import { Channel, DiscordUser, Player } from "../core/model";
 
 export class BalanceTeamsCommand extends Command{
@@ -7,16 +7,14 @@ export class BalanceTeamsCommand extends Command{
         super(message);
     }
 
-    public async execute(context: Context): Promise<void> {
+    public async execute(context: Context): Promise<void>{
         const options: string[] = this.message.getCommandOptions();
         const channel: Channel = this.getChannel(options);
 
         const users: DiscordUser[] = this.message.getUsersInChannel(channel);
         const players: Player[] = await context.database.getPlayers(users);
         const balancedTeams: [Player[], Player[]] = await context.predictor.balance(players);
-        
-        const reply: string = this.createReply(balancedTeams);
-        this.message.reply(reply);
+        this.message.reply(balancedTeams);
     }
 
     private getChannel(options: string[]): Channel{
@@ -34,11 +32,7 @@ export class BalanceTeamsCommand extends Command{
             case 1:
                 return options[0];
             default:
-                throw new Error("Method not implemented.");
+                throw new BotError("Provide either a channel name on this server or no parameters for this command.");
         }
-    }
-
-    private createReply(teams: [Player[], Player[]]): string{
-        throw new Error("Method not implemented.");
     }
 }

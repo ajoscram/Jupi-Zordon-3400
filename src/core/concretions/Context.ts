@@ -3,8 +3,8 @@ import { Fetcher } from '.'
 
 export class Context{
     constructor(
-        public fetcher: Fetcher,
-        public predictor: Predictor,
-        public database: Database
+        public readonly fetcher: Fetcher,
+        public readonly predictor: Predictor,
+        public readonly database: Database
     ){}
 }
