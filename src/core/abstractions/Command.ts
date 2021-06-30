@@ -4,29 +4,29 @@ import { DiscordUser, Player, Summoner } from '../model';
 
 export abstract class Command{
     constructor(
-        public message: Message
+        protected readonly options: string[]
     ){ }
 
     public abstract execute(context: Context): Promise<void>;
 
-    protected async getSummoner(options: string[], context: Context): Promise<Summoner>{
-        const summonerName: string = this.tryGetSummonerName(options);
+    protected async getSummoner(context: Context): Promise<Summoner>{
+        const summonerName: string = this.tryGetSummonerName();
         if(summonerName){
             return await context.fetcher.getSummoner(summonerName);
         }
         else{
-            const discordUser: DiscordUser = this.message.getInvoker();
+            const discordUser: DiscordUser = context.message.getInvoker();
             const player: Player = await context.database.getPlayer(discordUser);
             return player.summoner;
         }
     }
 
-    private tryGetSummonerName(options: string[]): string{
-        switch(options.length){
+    private tryGetSummonerName(): string{
+        switch(this.options.length){
             case 0:
                 return null;
             case 1:
-                return options[0];
+                return this.options[0];
             default:
                 throw new Error("Please provide the player's summoner name or no parameters to this command.");
         }

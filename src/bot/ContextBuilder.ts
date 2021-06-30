@@ -1,5 +1,5 @@
-import { Context, Fetcher } from ".";
-import { ChampionFetcher, Database, MatchFetcher, Predictor, SummonerFetcher } from "../abstractions";
+import { Context, Fetcher } from "../core/concretions";
+import { ChampionFetcher, Database, MatchFetcher, Message, Predictor, SummonerFetcher } from "../core/abstractions";
 
 export class ContextBuilder{
     private predictor: Predictor;
@@ -33,12 +33,12 @@ export class ContextBuilder{
         return this;
     }
 
-    public build(): Context{
+    public build(message: Message): Context{
         const fetcher: Fetcher = new Fetcher(
             this.championFetcher,
             this.summonerFetcher,
             this.matchFetcher
         );
-        return new Context(fetcher, this.predictor, this.database);
+        return new Context(fetcher, this.predictor, this.database, message);
     }
 }

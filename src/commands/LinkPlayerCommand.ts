@@ -3,21 +3,21 @@ import { BotError, Context } from "../core/concretions";
 import { DiscordUser, Player, Summoner } from "../core/model";
 
 export class LinkPlayerCommand extends Command{
-    constructor(message: Message){
-        super(message);
+    private readonly discordName: string;
+    private readonly summonerName: string;
+
+    constructor(options: string[]){
+        super(options);
+        this.validateOptions(options);
+        [ this.discordName, this.summonerName ] = options;
     }
 
     public async execute(context: Context): Promise<void> {
-        const options = this.message.getCommandOptions();
-        this.validateOptions(options);
-        const [ discordName, summonerName ] = options;
-        
-        const discordUser: DiscordUser = this.message.getUser(discordName);
-        const summoner: Summoner = await context.fetcher.getSummoner(summonerName);
+        const discordUser: DiscordUser = context.message.getUser(this.discordName);
+        const summoner: Summoner = await context.fetcher.getSummoner(this.summonerName);
         const player: Player = { summoner, discordUser };
         await context.database.upsert(player);
-
-        this.message.reply(player);
+        context.message.reply(player);
     }
 
     private validateOptions(options: string[]): void{

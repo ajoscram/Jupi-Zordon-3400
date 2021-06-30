@@ -2,7 +2,6 @@ import { BotError } from '../concretions';
 import { Channel, CompletedMatch, DiscordUser, OngoingMatch, Player, Server, SummonerOverallStats } from '../model'
 
 export interface Message{
-    getCommandOptions(): string[];
     getInvoker(): DiscordUser;
     getInvokingChannel(): Channel;
     getUsersInChannel(channel: Channel): DiscordUser[];

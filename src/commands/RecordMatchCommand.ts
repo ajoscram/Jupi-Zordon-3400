@@ -1,4 +1,4 @@
-import { Command, Message } from "../core/abstractions";
+import { Command } from "../core/abstractions";
 import { BotError, Context, Fetcher } from "../core/concretions";
 import { CompletedMatch, OngoingMatch, Server, Summoner } from "../core/model";
 
@@ -6,23 +6,22 @@ export class RecordMatchCommand extends Command{
     private static readonly AWAIT_MILLISECONDS = 30000;
     private static readonly MAX_LOOPS = 240;
 
-    constructor(message: Message){
-        super(message);
+    constructor(options: string[]){
+        super(options);
     }
 
     public async execute(context: Context): Promise<void> {
-        const options: string[] = this.message.getCommandOptions();
-        const summoner: Summoner = await this.getSummoner(options, context);
-        const server: Server = this.message.getServer();
+        const summoner: Summoner = await this.getSummoner(context);
+        const server: Server = context.message.getServer();
 
         const ongoingMatch: OngoingMatch = await context.fetcher.getOngoingMatch(summoner, server);
         const probabilityBlueWins: number = await context.predictor.predict(ongoingMatch);
         await context.database.insert(ongoingMatch);
-        this.message.reply(ongoingMatch, probabilityBlueWins);
+        context.message.reply(ongoingMatch, probabilityBlueWins);
 
         const completedMatch: CompletedMatch = await this.waitForMatch(ongoingMatch, context.fetcher);
         await context.database.insert(completedMatch);
-        this.message.reply(completedMatch);
+        context.message.reply(completedMatch);
     }
 
     private async waitForMatch(ongoingMatch: OngoingMatch, fetcher: Fetcher): Promise<CompletedMatch>{
