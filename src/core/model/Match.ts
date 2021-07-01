@@ -1,8 +1,8 @@
-import { Summoner, Server, Champion, TeamStats } from ".";
+import { ServerIdentity, Summoner, Champion, TeamStats } from ".";
 
 interface Match{
     id: string,
-    server: Server
+    serverIdentity: ServerIdentity
 }
 
 export interface OngoingMatch extends Match{

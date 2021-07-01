@@ -11,6 +11,6 @@ export interface Summoner extends Identity { }
 
 export interface User extends Identity { }
 
-export interface Server extends Identity { }
+export interface ServerIdentity { }
 
 export interface Channel extends Identity { }

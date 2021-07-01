@@ -1,4 +1,4 @@
-export interface CommandMetadataSource{
-    getCommandToken(): string;
-    getCommandOptions(): string[];
+export interface CommandMetadata {
+    getToken(): string;
+    getOptions(): string[];
 }

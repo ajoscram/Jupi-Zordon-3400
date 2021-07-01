@@ -1,4 +1,4 @@
-import { Predictor, Database, Message } from '../abstractions';
+import { Predictor, Database, Message, Server } from '../abstractions';
 import { Fetcher } from '.'
 
 export class Context{
@@ -6,6 +6,7 @@ export class Context{
         public readonly fetcher: Fetcher,
         public readonly predictor: Predictor,
         public readonly database: Database,
-        public readonly message: Message
+        public readonly server: Server,
+        public readonly message: Message,
     ){}
 }
