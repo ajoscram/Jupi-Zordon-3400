@@ -5,10 +5,10 @@ export interface Message{
     getInvoker(): User;
     getInvokingChannel(): Channel;
 
-    reply(error: BotError): void;
-    reply(teams: [Account[], Account[]]): void;
-    reply(stats: SummonerOverallStats): void;
-    reply(match: OngoingMatch, probabilityBlueWins: number): void;
-    reply(match: CompletedMatch): void;
-    reply(account: Account): void;
+    send(error: BotError): void;
+    send(teams: [Account[], Account[]]): void;
+    send(stats: SummonerOverallStats): void;
+    send(match: OngoingMatch, probabilityBlueWins: number): void;
+    send(match: CompletedMatch): void;
+    send(account: Account): void;
 }
