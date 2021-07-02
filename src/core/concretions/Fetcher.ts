@@ -1,9 +1,8 @@
-import { ChampionFetcher, MatchFetcher, SummonerFetcher } from "../abstractions";
+import { MatchFetcher, SummonerFetcher } from "../abstractions";
 import { CompletedMatch, OngoingMatch, Summoner, ServerIdentity } from "../model";
 
 export class Fetcher{
     constructor(
-        private championFetcher: ChampionFetcher,
         private summonerFetcher: SummonerFetcher,
         private matchFetcher: MatchFetcher
     ){}

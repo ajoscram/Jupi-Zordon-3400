@@ -18,6 +18,6 @@ export class GetPlayerStatsCommand extends Command{
     public async execute(context: Context): Promise<void> {
         const summoner: Summoner = await this.utils.getSummoner(context, this.summonerName);
         const stats: SummonerOverallStats = await context.database.getSummonerOverallStats(summoner);
-        context.message.reply(stats);
+        context.message.send(stats);
     }
 }

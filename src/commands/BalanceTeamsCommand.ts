@@ -1,5 +1,5 @@
 import { Command } from "../core/abstractions";
-import { BotError, Context } from "../core/concretions";
+import { Context } from "../core/concretions";
 import { Channel, User, Account } from "../core/model";
 import { CommandUtils } from "../util";
 
@@ -18,7 +18,7 @@ export class BalanceTeamsCommand extends Command{
         const users: User[] = context.server.getUsersInChannel(channel);
         const accounts: Account[] = await context.database.getAccounts(users);
         const balancedTeams: [Account[], Account[]] = await context.predictor.balance(accounts);
-        context.message.reply(balancedTeams);
+        context.message.send(balancedTeams);
     }
 
     private getChannel(context: Context): Channel{

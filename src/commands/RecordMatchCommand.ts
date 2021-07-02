@@ -22,10 +22,10 @@ export class RecordMatchCommand extends Command{
         const ongoingMatch: OngoingMatch = await context.fetcher.getOngoingMatch(summoner, serverIdentity);
         const probabilityBlueWins: number = await context.predictor.predict(ongoingMatch);
         await context.database.insert(ongoingMatch);
-        context.message.reply(ongoingMatch, probabilityBlueWins);
+        context.message.send(ongoingMatch, probabilityBlueWins);
 
         const completedMatch: CompletedMatch = await context.fetcher.getCompletedMatch(ongoingMatch);
         await context.database.insert(completedMatch);
-        context.message.reply(completedMatch);
+        context.message.send(completedMatch);
     }
 }

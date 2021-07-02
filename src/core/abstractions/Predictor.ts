@@ -1,8 +1,7 @@
-import { Account, OngoingMatch } from "../model";
-import { AIModelSource } from ".";
+import { Account, AIModel, OngoingMatch } from "../model";
 
 export interface Predictor{
-    initialize(source: AIModelSource): Promise<void>;
+    initialize(model: AIModel): Promise<void>;
     balance(players: Account[]): Promise<[Account[], Account[]]>;
     predict(ongoingMatch: OngoingMatch): Promise<number>;
 }

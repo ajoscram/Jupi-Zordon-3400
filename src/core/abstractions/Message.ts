@@ -4,7 +4,6 @@ import { Channel, CompletedMatch, User, OngoingMatch, Account, SummonerOverallSt
 export interface Message{
     getInvoker(): User;
     getInvokingChannel(): Channel;
-
     send(error: BotError): void;
     send(teams: [Account[], Account[]]): void;
     send(stats: SummonerOverallStats): void;

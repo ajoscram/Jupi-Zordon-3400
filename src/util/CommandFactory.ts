@@ -3,8 +3,8 @@ import { BalanceTeamsCommand, GetPlayerStatsCommand, LinkPlayerCommand, RecordMa
 
 export class CommandFactory{
     public tryCreateCommand(metadata: CommandMetadata): Command{
-        const options: string[] = metadata.getCommandOptions();
-        switch(metadata.getCommandToken()){
+        const options: string[] = metadata.getOptions();
+        switch(metadata.getToken()){
             case "link":
             case "l":
                 return new LinkPlayerCommand(options);

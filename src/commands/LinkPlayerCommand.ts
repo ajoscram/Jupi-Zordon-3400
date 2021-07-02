@@ -1,5 +1,5 @@
 import { Command } from "../core/abstractions";
-import { BotError, Context } from "../core/concretions";
+import { Context } from "../core/concretions";
 import { User, Account, Summoner } from "../core/model";
 import { CommandUtils } from "../util";
 
@@ -19,6 +19,6 @@ export class LinkPlayerCommand extends Command{
         const summoner: Summoner = await context.fetcher.getSummoner(this.summonerName);
         const account: Account = { summoner, user };
         await context.database.upsert(account);
-        context.message.reply(account);
+        context.message.send(account);
     }
 }
