@@ -10,4 +10,5 @@ export interface Message{
     send(match: OngoingMatch, probabilityBlueWins: number): void;
     send(match: CompletedMatch): void;
     send(account: Account): void;
+    send(text: string): void;
 }

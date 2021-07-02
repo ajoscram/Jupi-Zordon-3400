@@ -1,5 +1,5 @@
 import { Command, CommandMetadata } from "../core/abstractions";
-import { BalanceTeamsCommand, GetPlayerStatsCommand, LinkPlayerCommand, RecordMatchCommand } from "../commands";
+import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkPlayerCommand, RecordMatchCommand } from "../commands";
 
 export class CommandFactory{
     public tryCreateCommand(metadata: CommandMetadata): Command{
@@ -17,6 +17,9 @@ export class CommandFactory{
             case "stats":
             case "s":
                 return new GetPlayerStatsCommand(options);
+            case "help":
+            case "h":
+                return new HelpCommand(options);
             default:
                 return null;
         }
