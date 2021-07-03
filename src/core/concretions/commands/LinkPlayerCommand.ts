@@ -1,6 +1,6 @@
-import { Command } from "../core/abstractions";
-import { Context } from "../core/concretions";
-import { User, Account, Summoner } from "../core/model";
+import { Command } from "../../abstractions";
+import { Context } from "..";
+import { User, Account, Summoner } from "../../model";
 import { CommandUtils } from "../util";
 
 export class LinkPlayerCommand extends Command{
@@ -16,7 +16,7 @@ export class LinkPlayerCommand extends Command{
 
     public async execute(context: Context): Promise<void> {
         const user: User = context.server.getUser(this.username);
-        const summoner: Summoner = await context.fetcher.getSummoner(this.summonerName);
+        const summoner: Summoner = await context.summonerFetcher.getSummoner(this.summonerName);
         const account: Account = { summoner, user };
         await context.database.upsert(account);
         context.message.send(account);

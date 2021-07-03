@@ -1,5 +1,5 @@
-import { Context } from "../core/concretions";
-import { Command } from "../core/abstractions";
+import { Context } from "..";
+import { Command } from "../../abstractions";
 
 export class HelpCommand extends Command{
 

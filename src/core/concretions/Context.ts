@@ -1,9 +1,9 @@
-import { Predictor, Database, Message, Server } from '../abstractions';
-import { Fetcher } from '.'
+import { Predictor, Database, Message, Server, MatchFetcher, SummonerFetcher } from '../abstractions';
 
 export class Context{
     constructor(
-        public readonly fetcher: Fetcher,
+        public readonly summonerFetcher: SummonerFetcher,
+        public readonly matchFetcher: MatchFetcher,
         public readonly predictor: Predictor,
         public readonly database: Database,
         public readonly server: Server,

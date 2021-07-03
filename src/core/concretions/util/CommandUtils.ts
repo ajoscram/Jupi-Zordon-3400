@@ -1,10 +1,10 @@
-import { Context } from '../core/concretions';
-import { User, Account, Summoner } from '../core/model';
+import { Context } from '..';
+import { User, Account, Summoner } from '../../model';
 
 export class CommandUtils{
     public async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
         if(summonerName){
-            return await context.fetcher.getSummoner(summonerName);
+            return await context.summonerFetcher.getSummoner(summonerName);
         }
         else{
             const user: User = context.message.getInvoker();

@@ -1,6 +1,6 @@
-import { Command } from "../core/abstractions";
-import { Context } from "../core/concretions";
-import { Summoner, SummonerOverallStats } from "../core/model";
+import { Command } from "../../abstractions";
+import { Context } from "..";
+import { Summoner, SummonerOverallStats } from "../../model";
 import { CommandUtils } from "../util";
 
 export class GetPlayerStatsCommand extends Command{
