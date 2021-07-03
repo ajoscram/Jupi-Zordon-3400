@@ -1,25 +1,34 @@
-import { Command, CommandMetadata } from "../core/abstractions";
+import { Command, Message } from "../core/abstractions";
+import { CommandMetadata } from "../core/model";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkPlayerCommand, RecordMatchCommand } from "../commands";
+import { CommandMetadataExtractor } from "../core/concretions";
 
 export class CommandFactory{
-    public tryCreateCommand(metadata: CommandMetadata): Command{
-        const options: string[] = metadata.getOptions();
-        switch(metadata.getToken()){
+
+    private extractor: CommandMetadataExtractor
+
+    constructor(identifier: string){
+        this.extractor = new CommandMetadataExtractor(identifier);
+    }
+
+    public tryCreateCommand(message: Message): Command{
+        const metadata: CommandMetadata = this.extractor.extract(message);
+        switch(metadata.alias){
             case "link":
             case "l":
-                return new LinkPlayerCommand(options);
+                return new LinkPlayerCommand(metadata.options);
             case "balance":
             case "b":
-                return new BalanceTeamsCommand(options);
+                return new BalanceTeamsCommand(metadata.options);
             case "record":
             case "r":
-                return new RecordMatchCommand(options);
+                return new RecordMatchCommand(metadata.options);
             case "stats":
             case "s":
-                return new GetPlayerStatsCommand(options);
+                return new GetPlayerStatsCommand(metadata.options);
             case "help":
             case "h":
-                return new HelpCommand(options);
+                return new HelpCommand(metadata.options);
             default:
                 return null;
         }
