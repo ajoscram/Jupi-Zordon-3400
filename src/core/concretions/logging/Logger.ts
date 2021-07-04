@@ -1,7 +1,7 @@
-import { Writer } from "../abstractions";
+import { Writer } from "../../abstractions";
 
 export class Logger implements Writer{
-    private writers: Writer[] = []
+    private writers: Writer[] = [];
 
     add(writer: Writer): void{
         this.writers.push(writer);
