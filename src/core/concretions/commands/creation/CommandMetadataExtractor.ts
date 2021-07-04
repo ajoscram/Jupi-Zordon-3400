@@ -1,5 +1,5 @@
-import { Message } from "../../abstractions";
-import { CommandMetadata } from "../../model";
+import { Message } from "../../../abstractions";
+import { CommandMetadata } from "./CommandMetadata";
 
 export class CommandMetadataExtractor{
     constructor(

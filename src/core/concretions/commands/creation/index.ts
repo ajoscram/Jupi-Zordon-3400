@@ -1,0 +1,1 @@
+export { CommandFactory } from '../creation/CommandFactory';

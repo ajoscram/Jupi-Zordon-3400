@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
 import { User, Account, Summoner } from "../../model";
-import { CommandUtils } from "../util";
+import { CommandUtils } from "./util";
 
 export class LinkPlayerCommand extends Command{
 

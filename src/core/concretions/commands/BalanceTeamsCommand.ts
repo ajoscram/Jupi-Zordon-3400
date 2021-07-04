@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
 import { Channel, User, Account } from "../../model";
-import { CommandUtils } from "../util";
+import { CommandUtils } from "./util";
 
 export class BalanceTeamsCommand extends Command{
 

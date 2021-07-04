@@ -1,7 +1,6 @@
-import { Command } from ".";
+import { Command, Message } from ".";
 import { Context } from "../concretions";
-import { CommandFactory } from "../concretions/util";
-import { Message } from "./Message";
+import { CommandFactory } from "../concretions/commands/creation";
 
 export abstract class Bot{
     private commandFactory: CommandFactory;
@@ -10,7 +9,9 @@ export abstract class Bot{
         this.commandFactory = new CommandFactory(commandIdentifier);
     }
 
+    public abstract initialize(): Promise<void>;
     public abstract run(): Promise<void>;
+
     protected abstract getContext(message: Message): Context;
 
     protected async OnMessage(message: Message): Promise<void>{

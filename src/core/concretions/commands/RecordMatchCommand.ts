@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
 import { CompletedMatch, OngoingMatch, ServerIdentity, Summoner } from "../../model";
-import { CommandUtils } from "../util";
+import { CommandUtils } from "./util";
 
 export class RecordMatchCommand extends Command{
 

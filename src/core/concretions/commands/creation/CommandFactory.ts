@@ -1,7 +1,7 @@
-import { Command, Message } from "../../abstractions";
-import { CommandMetadata } from "../../model";
-import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkPlayerCommand, RecordMatchCommand } from "../commands";
-import { CommandMetadataExtractor } from "..";
+import { Command, Message } from "../../../abstractions";
+import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkPlayerCommand, RecordMatchCommand } from "..";
+import { CommandMetadataExtractor } from "./CommandMetadataExtractor";
+import { CommandMetadata } from "./CommandMetadata";
 
 export class CommandFactory{
 
