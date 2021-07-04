@@ -1,5 +1,5 @@
 import { Command, Message } from "../../../abstractions";
-import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkPlayerCommand, RecordMatchCommand } from "..";
+import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "..";
 import { CommandMetadataExtractor } from "./CommandMetadataExtractor";
 import { CommandMetadata } from "./CommandMetadata";
 
@@ -16,7 +16,7 @@ export class CommandFactory{
         switch(metadata.alias){
             case "link":
             case "l":
-                return new LinkPlayerCommand(metadata.options);
+                return new LinkAccountCommand(metadata.options);
             case "balance":
             case "b":
                 return new BalanceTeamsCommand(metadata.options);

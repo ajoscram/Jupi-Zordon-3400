@@ -3,7 +3,7 @@ import { Context } from "..";
 import { User, Account, Summoner } from "../../model";
 import { CommandUtils } from "./util";
 
-export class LinkPlayerCommand extends Command{
+export class LinkAccountCommand extends Command{
 
     private readonly username: string;
     private readonly summonerName: string;

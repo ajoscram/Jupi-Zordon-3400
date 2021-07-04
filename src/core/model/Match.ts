@@ -6,7 +6,8 @@ interface Match{
 }
 
 export interface OngoingMatch extends Match{
-    map: Map<Summoner, Champion>
+    blue: Map<Summoner, Champion>
+    red: Map<Summoner, Champion>
 }
 
 export interface CompletedMatch extends Match{

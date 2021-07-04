@@ -8,8 +8,8 @@ export class CommandUtils{
         }
         else{
             const user: User = context.message.getInvoker();
-            const player: Account = await context.database.getAccount(user);
-            return player.summoner;
+            const account: Account = await context.database.getAccount(user);
+            return account.summoner;
         }
     }
 
