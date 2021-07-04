@@ -6,3 +6,4 @@ export { Predictor } from './Predictor';
 export { SummonerFetcher } from './SummonerFetcher';
 export { Server } from './Server';
 export { Bot } from './Bot';
+export { Writer } from './Writer'
