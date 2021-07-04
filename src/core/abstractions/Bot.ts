@@ -14,7 +14,7 @@ export abstract class Bot{
 
     protected abstract getContext(message: Message): Context;
 
-    protected async OnMessage(message: Message): Promise<void>{
+    protected async processMessage(message: Message): Promise<void>{
         const command: Command = this.commandFactory.tryCreateCommand(message);
         if(command){
             const context: Context = this.getContext(message);
