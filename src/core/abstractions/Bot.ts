@@ -15,15 +15,11 @@ export abstract class Bot{
     protected abstract getContext(message: Message): Context;
     protected abstract handleUnknownError(error: Error): BotError;
 
-    protected async processMessage(message: Message): Promise<void>{
-        try{
-            const command: Command = this.commandFactory.tryCreateCommand(message);
-            if(command){
-                const context: Context = this.getContext(message);
-                command.execute(context);
-            }
-        } catch(error) {
-            this.handleError(error, message);
+    protected processMessage(message: Message): void{
+        const command: Command = this.commandFactory.tryCreateCommand(message);
+        if(command){
+            const context: Context = this.getContext(message);
+            command.execute(context).catch((error) => { this.handleError(error, message) });
         }
     }
 

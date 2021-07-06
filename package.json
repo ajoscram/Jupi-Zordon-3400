@@ -8,9 +8,10 @@
     "test": "test"
   },
   "scripts": {
+    "exec": "node build/src/main.js",
     "build": "npx tsc || exit 1",
-    "start": "node build/src/main.js",
-    "dev": "npx nodemon -e ts,json,env --ignore ./build --ignore *.spec.ts --exec \"npm run build && npm run start\"",
+    "start": "npm run build && npm run exec",
+    "dev": "npx nodemon -e ts,json,env --ignore ./build --ignore *.spec.ts --exec npm run start",
     "jasmine": "npx jasmine-ts \"test/**/*.spec.ts\"",
     "test": "npx nodemon -e ts,json,env --ignore ./build --exec \"npm run jasmine\""
   },
