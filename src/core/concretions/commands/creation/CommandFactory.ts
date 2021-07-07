@@ -28,7 +28,7 @@ export class CommandFactory{
                 return new GetPlayerStatsCommand(metadata.options);
             case "help":
             case "h":
-                return new HelpCommand(metadata.options);
+                return new HelpCommand();
             default:
                 return null;
         }

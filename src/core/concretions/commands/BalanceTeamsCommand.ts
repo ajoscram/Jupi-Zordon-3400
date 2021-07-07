@@ -3,13 +3,12 @@ import { Context } from "..";
 import { Channel, User, Account } from "../../model";
 import { CommandUtils } from "./util";
 
-export class BalanceTeamsCommand extends Command{
+export class BalanceTeamsCommand implements Command{
 
     private readonly channelName: string;
 
     constructor(options: string[]){
-        super(options);
-        new CommandUtils().validateOptionsLength(options, [ 1 ]);
+        new CommandUtils().validateOptionsLength(options, [ 0, 1 ]);
         [ this.channelName ] = options;
     }
 

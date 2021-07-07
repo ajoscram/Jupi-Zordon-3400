@@ -3,13 +3,12 @@ import { Context } from "..";
 import { User, Account, Summoner } from "../../model";
 import { CommandUtils } from "./util";
 
-export class LinkAccountCommand extends Command{
+export class LinkAccountCommand implements Command{
 
     private readonly username: string;
     private readonly summonerName: string;
 
     constructor(options: string[]){
-        super(options);
         new CommandUtils().validateOptionsLength(options, [ 2 ]);
         [ this.username, this.summonerName ] = options;
     }

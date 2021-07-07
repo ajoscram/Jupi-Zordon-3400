@@ -3,13 +3,12 @@ import { Context } from "..";
 import { Summoner, SummonerOverallStats } from "../../model";
 import { CommandUtils } from "./util";
 
-export class GetPlayerStatsCommand extends Command{
+export class GetPlayerStatsCommand implements Command{
 
     private readonly utils: CommandUtils;
     private readonly summonerName: string;
 
     constructor(options: string[]){
-        super(options);
         this.utils = new CommandUtils();
         this.utils.validateOptionsLength(options, [0, 1]);
         [ this.summonerName ] = options;
