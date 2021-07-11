@@ -5,7 +5,7 @@ export interface Database{
     getAccount(user: User): Promise<Account>;
     getAccounts(users: User[]): Promise<Account[]>;
     getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats>;
-    getAIModel(): AIModel;
+    getAIModel(): Promise<AIModel>;
     upsert(account: Account): Promise<void>;
     insert(ongoingMatch: OngoingMatch): Promise<void>;
     insert(completedMatch: CompletedMatch): Promise<void>;
