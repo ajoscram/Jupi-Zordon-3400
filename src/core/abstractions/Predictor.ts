@@ -1,9 +1,7 @@
-import { Account, AIModel, OngoingMatch } from "../model";
-
-type ProbabilityBlueWins = number;
+import { Account, AIModel, OngoingMatch, Prediction } from "../model";
 
 export interface Predictor{
     initialize(model: AIModel): Promise<void>;
     balance(players: Account[]): Promise<[Account[], Account[]]>;
-    predict(ongoingMatch: OngoingMatch): Promise<ProbabilityBlueWins>;
+    predict(ongoingMatch: OngoingMatch): Promise<Prediction>;
 }

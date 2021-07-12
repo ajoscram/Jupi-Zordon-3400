@@ -1,6 +1,6 @@
 import { Message } from "src/core/abstractions";
 import { BotError } from "src/core/concretions";
-import { User, Channel, Account, SummonerOverallStats, OngoingMatch, CompletedMatch } from "src/core/model";
+import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction } from "src/core/model";
 
 export class MockMessage implements Message{
 
@@ -34,9 +34,8 @@ export class MockMessage implements Message{
         this.sentItems.push(stats);
     }
 
-    public sendPrediction(match: OngoingMatch, probabilityBlueWins: number): void {
-        this.sentItems.push(match);
-        this.sentItems.push(probabilityBlueWins);
+    public sendPrediction(prediction: Prediction): void {
+        this.sentItems.push(prediction);
     }
 
     public sendMatch(match: CompletedMatch): void {

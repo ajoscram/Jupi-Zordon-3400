@@ -12,8 +12,8 @@
     "build": "npx tsc",
     "jasmine": "npx jasmine-ts \"test/**/*.spec.ts\"",
     "start": "npm run build && npm run exec",
-    "dev": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./test -x npm run start --s",
-    "test": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -x npm run jasmine --s"
+    "dev": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./test -i ./docs -x npm run start --s",
+    "test": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./docs -x npm run jasmine --s"
   },
   "repository": {
     "type": "git",

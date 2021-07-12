@@ -3,3 +3,4 @@ export { Account } from './Account';
 export { SummonerOverallStats, ChampionOverallStats, PerformanceStats, TeamStats } from './Stats';
 export { OngoingMatch, CompletedMatch } from './Match';
 export { AIModel } from './AIModel';
+export { Prediction } from './Prediction';

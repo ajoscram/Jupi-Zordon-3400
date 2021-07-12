@@ -19,7 +19,7 @@ export abstract class Bot{
         const command: Command = this.commandFactory.tryCreateCommand(message);
         if(command){
             const context: Context = this.getContext(message);
-            command.execute(context).catch((error) => { this.handleError(error, message) });
+            command?.execute(context).catch((error) => { this.handleError(error, message) });
         }
     }
 
