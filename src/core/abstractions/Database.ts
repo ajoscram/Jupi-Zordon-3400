@@ -7,6 +7,6 @@ export interface Database{
     getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats>;
     getAIModel(): Promise<AIModel>;
     upsert(account: Account): Promise<void>;
-    insert(ongoingMatch: OngoingMatch): Promise<void>;
-    insert(completedMatch: CompletedMatch): Promise<void>;
+    insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void>;
+    insertCompletedMatch(completedMatch: CompletedMatch): Promise<void>;
 }

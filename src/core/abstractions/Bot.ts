@@ -30,6 +30,6 @@ export abstract class Bot{
         if(!(error instanceof BotError))
             error = this.handleUnknownError(error);
 
-        message.send(error);
+        message.sendError(error);
     }
 }

@@ -20,11 +20,11 @@ export class RecordMatchCommand implements Command{
 
         const ongoingMatch: OngoingMatch = await context.matchFetcher.getOngoingMatch(summoner, serverIdentity);
         const probabilityBlueWins: number = await context.predictor.predict(ongoingMatch);
-        await context.database.insert(ongoingMatch);
-        context.message.send(ongoingMatch, probabilityBlueWins);
+        await context.database.insertOngoingMatch(ongoingMatch);
+        context.message.sendPrediction(ongoingMatch, probabilityBlueWins);
 
         const completedMatch: CompletedMatch = await context.matchFetcher.getCompletedMatch(ongoingMatch);
-        await context.database.insert(completedMatch);
-        context.message.send(completedMatch);
+        await context.database.insertCompletedMatch(completedMatch);
+        context.message.sendMatch(completedMatch);
     }
 }
