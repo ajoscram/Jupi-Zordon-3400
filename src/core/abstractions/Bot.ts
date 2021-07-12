@@ -11,9 +11,7 @@ export abstract class Bot{
 
     public abstract initialize(): Promise<void>;
     public abstract run(): Promise<void>;
-
     protected abstract getContext(message: Message): Context;
-    protected abstract handleUnknownError(error: Error): BotError;
 
     protected processMessage(message: Message): void{
         const command: Command = this.commandFactory.tryCreateCommand(message);
@@ -28,7 +26,7 @@ export abstract class Bot{
             error = new Error("Someone was stupid enough to throw this: " + error);
 
         if(!(error instanceof BotError))
-            error = this.handleUnknownError(error);
+            error = new BotError("Oops! An unexpected error has occurred.", error);
 
         message.sendError(error);
     }
