@@ -5,7 +5,7 @@ import { CommandMetadata } from "./CommandMetadata";
 
 export class CommandFactory{
 
-    private extractor: CommandMetadataExtractor
+    private readonly extractor: CommandMetadataExtractor;
 
     constructor(identifier: string){
         this.extractor = new CommandMetadataExtractor(identifier);

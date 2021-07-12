@@ -3,9 +3,9 @@ import { BotError, Context } from "../concretions";
 import { CommandFactory } from "../concretions/commands/creation";
 
 export abstract class Bot{
-    private commandFactory: CommandFactory;
+    private readonly commandFactory: CommandFactory;
 
-    public Bot(commandIdentifier: string){
+    constructor(commandIdentifier: string){
         this.commandFactory = new CommandFactory(commandIdentifier);
     }
 
