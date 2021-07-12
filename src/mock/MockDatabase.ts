@@ -3,35 +3,35 @@ import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, C
 
 export class MockDatabase implements Database {
 
-    private ongoingMatches: OngoingMatch[] = [];
+    public readonly ongoingMatches: OngoingMatch[] = [];
 
-    async initialize(): Promise<void> {}
+    public async initialize(): Promise<void> { }
 
-    async getAccount(user: User): Promise<Account> {
+    public async getAccount(user: User): Promise<Account> {
         throw new Error("Method not implemented.");
     }
    
-    async getAccounts(users: User[]): Promise<Account[]> {
+    public async getAccounts(users: User[]): Promise<Account[]> {
         throw new Error("Method not implemented.");
     }
     
-    async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
+    public async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
         throw new Error("Method not implemented.");
     }
    
-    async getAIModel(): Promise<AIModel> {
+    public async getAIModel(): Promise<AIModel> {
         throw new Error("Method not implemented.");
     }
    
-    async upsert(account: Account): Promise<void> {
+    public async upsert(account: Account): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
-    async insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void> {
+    public async insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void> {
         this.ongoingMatches.push(ongoingMatch);
     }
 
-    async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
+    public async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
         throw new Error("Method not implemented.");
     }
 }
