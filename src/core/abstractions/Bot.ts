@@ -13,11 +13,16 @@ export abstract class Bot{
     public abstract run(): Promise<void>;
     protected abstract getContext(message: Message): Context;
 
-    protected processMessage(message: Message): void{
-        const command: Command = this.commandFactory.tryCreateCommand(message);
-        if(command){
-            const context: Context = this.getContext(message);
-            command?.execute(context).catch((error) => { this.handleError(error, message) });
+    protected async process(message: Message): Promise<void>{
+        try{
+            const command: Command = this.commandFactory.tryCreateCommand(message);
+            if(command){
+                const context: Context = this.getContext(message);
+                await command.execute(context);
+            }
+        }
+        catch(error){
+            this.handleError(error, message);
         }
     }
 
