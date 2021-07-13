@@ -34,5 +34,5 @@
 * Ajitox
 * Barrita
 ## Goals
-1. Write a MockBot, MockMessage and MockServer.
-2. Implement the real message, server and bot modules which talk to the Discord libreary
+1. Write a MockMessage and MockServer.
+2. Implement the real message, server and bot modules which talk to the Discord library

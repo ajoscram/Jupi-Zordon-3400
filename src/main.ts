@@ -1,5 +1,5 @@
 // import { Bot } from "./core/abstractions";
 
-// const bot: Bot = ???;
+// const bot: Bot = new DiscordBot("!");
 // bot.initialize();
 // bot.run();
