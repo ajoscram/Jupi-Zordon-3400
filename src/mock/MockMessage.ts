@@ -1,9 +1,10 @@
 import { Message } from "src/core/abstractions";
-import { BotError } from "src/core/concretions";
+import { ErrorCode } from "src/core/concretions";
 import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction } from "src/core/model";
 
 export class MockMessage implements Message{
 
+    public static readonly HELP_ITEM: string = "help_item";
     public readonly sentItems: any[] = [];
 
     constructor(
@@ -22,7 +23,7 @@ export class MockMessage implements Message{
         return this.content;
     }
 
-    public sendError(error: BotError): void {
+    public sendError(error: ErrorCode): void {
         this.sentItems.push(error);
     }
 
@@ -46,7 +47,7 @@ export class MockMessage implements Message{
         this.sentItems.push(account);
     }
 
-    public sendText(text: string): void {
-        this.sentItems.push(text);
+    public sendHelp(): void {
+        this.sentItems.push(MockMessage.HELP_ITEM);
     }
 }

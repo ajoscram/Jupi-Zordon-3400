@@ -1,2 +1,2 @@
 export { Context } from './Context';
-export { BotError } from './BotError';
+export { BotError, ErrorCode } from './BotError';

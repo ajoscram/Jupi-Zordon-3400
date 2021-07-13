@@ -1,5 +1,5 @@
 import { Message } from "src/core/abstractions";
-import { BotError } from "src/core/concretions";
+import { ErrorCode } from "src/core/concretions";
 import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch } from "src/core/model";
 
 export class DiscordMessage implements Message{
@@ -12,7 +12,7 @@ export class DiscordMessage implements Message{
     getContent(): string {
         throw new Error("Method not implemented.");
     }
-    sendError(error: BotError): void {
+    sendError(error: ErrorCode): void {
         throw new Error("Method not implemented.");
     }
     sendTeams(teams: [Account[], Account[]]): void {
@@ -30,7 +30,7 @@ export class DiscordMessage implements Message{
     sendAccount(account: Account): void {
         throw new Error("Method not implemented.");
     }
-    sendText(text: string): void {
+    sendHelp(): void {
         throw new Error("Method not implemented.");
     }
 }

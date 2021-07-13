@@ -1,6 +1,7 @@
 import { Command, Message } from ".";
-import { BotError, Context } from "../concretions";
+import { BotError, Context, ErrorCode } from "../concretions";
 import { CommandFactory } from "../concretions/commands/creation";
+import { Logger } from "../concretions/logging";
 
 export abstract class Bot{
     private readonly commandFactory: CommandFactory;
@@ -31,8 +32,9 @@ export abstract class Bot{
             error = new Error("Someone was stupid enough to throw this: " + error);
 
         if(!(error instanceof BotError))
-            error = new BotError("Oops! An unexpected error has occurred.", error);
-
-        message.sendError(error);
+            error = new BotError(ErrorCode.UNKNOWN, error);
+            
+        Logger.logError(error.inner.message);
+        message.sendError(error.code);
     }
 }

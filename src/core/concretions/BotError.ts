@@ -1,8 +1,15 @@
 export class BotError extends Error{
     constructor(
-        message: string,
+        public readonly code: ErrorCode,
         public readonly inner?: Error
     ){
-        super(message);
+        super("BotError Code: " + code);
     }
+}
+
+export enum ErrorCode{
+    UNKNOWN,
+    USER_NOT_FOUND,
+    CHANNEL_NOT_FOUND,
+    CHANNEL_IS_NOT_VOICE
 }
