@@ -23,31 +23,31 @@ export class MockMessage implements Message{
         return this.content;
     }
 
-    public replyWithError(error: ErrorCode): void {
+    public async replyWithError(error: ErrorCode): Promise<void> {
         this.sentItems.push(error);
     }
 
-    public replyWithTeams(teams: [Account[], Account[]]): void {
+    public async replyWithTeams(teams: [Account[], Account[]]): Promise<void> {
         this.sentItems.push(teams);
     }
 
-    public replyWithSummonerStats(stats: SummonerOverallStats): void {
+    public async replyWithSummonerStats(stats: SummonerOverallStats): Promise<void> {
         this.sentItems.push(stats);
     }
 
-    public replyWithPrediction(prediction: Prediction): void {
+    public async replyWithPrediction(prediction: Prediction): Promise<void> {
         this.sentItems.push(prediction);
     }
 
-    public replyWithCompletedMatch(match: CompletedMatch): void {
+    public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
         this.sentItems.push(match);
     }
 
-    public replyWithAccount(account: Account): void {
+    public async replyWithAccount(account: Account): Promise<void> {
         this.sentItems.push(account);
     }
 
-    public replyWithHelp(): void {
+    public async replyWithHelp(): Promise<void> {
         this.sentItems.push(MockMessage.HELP_ITEM);
     }
 }

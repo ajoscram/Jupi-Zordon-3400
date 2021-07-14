@@ -52,7 +52,7 @@ export class DiscordMessage implements Message{
 
     private getGuildChannel(): GuildChannel{
         if(!(this.message.channel instanceof GuildChannel))
-            throw new BotError(ErrorCode.CHANNEL_IS_NOT_A_SERVER_CHANNEL);
+            throw new BotError(ErrorCode.CHANNEL_IS_NOT_IN_A_SERVER);
         else if(!this.message.channel.isText())
             throw new BotError(ErrorCode.CHANNEL_IS_NOT_TEXT);
         else

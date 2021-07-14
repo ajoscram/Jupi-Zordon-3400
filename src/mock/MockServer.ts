@@ -17,6 +17,10 @@ export class MockServer implements Server{
         return { id: "channel_id", name }
     }
 
+    public getCurrentChannel(user: User): Channel {
+        return { id: "channel_id", name: "channel_name" };
+    }
+
     public getIdentity(): ServerIdentity {
         return { id: "server_id", name: "server_name" }
     }
