@@ -11,11 +11,11 @@ export class MockMessage implements Message{
         private readonly content: string
     ){}
 
-    public getInvoker(): User {
+    public getAuthor(): User {
         return { id: "user_id", name: "user_name" };
     }
 
-    public getInvokingChannel(): Channel {
+    public getChannel(): Channel {
         return { id: "channel_id", name: "channel_name" };
     }
 
@@ -23,31 +23,31 @@ export class MockMessage implements Message{
         return this.content;
     }
 
-    public sendError(error: ErrorCode): void {
+    public replyWithError(error: ErrorCode): void {
         this.sentItems.push(error);
     }
 
-    public sendTeams(teams: [Account[], Account[]]): void {
+    public replyWithTeams(teams: [Account[], Account[]]): void {
         this.sentItems.push(teams);
     }
 
-    public sendSummonerStats(stats: SummonerOverallStats): void {
+    public replyWithSummonerStats(stats: SummonerOverallStats): void {
         this.sentItems.push(stats);
     }
 
-    public sendPrediction(prediction: Prediction): void {
+    public replyWithPrediction(prediction: Prediction): void {
         this.sentItems.push(prediction);
     }
 
-    public sendMatch(match: CompletedMatch): void {
+    public replyWithCompletedMatch(match: CompletedMatch): void {
         this.sentItems.push(match);
     }
 
-    public sendAccount(account: Account): void {
+    public replyWithAccount(account: Account): void {
         this.sentItems.push(account);
     }
 
-    public sendHelp(): void {
+    public replyWithHelp(): void {
         this.sentItems.push(MockMessage.HELP_ITEM);
     }
 }

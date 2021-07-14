@@ -17,13 +17,15 @@ export class BalanceTeamsCommand implements Command{
         const users: User[] = context.server.getUsersInChannel(channel);
         const accounts: Account[] = await context.database.getAccounts(users);
         const balancedTeams: [Account[], Account[]] = await context.predictor.balance(accounts);
-        context.message.sendTeams(balancedTeams);
+        context.message.replyWithTeams(balancedTeams);
     }
 
     private getChannel(context: Context): Channel{
         if(this.channelName)
             return context.server.getChannel(this.channelName);
-        else
-            return context.message.getInvokingChannel();
+        else{
+            const user: User = context.message.getAuthor();
+            return context.server.getCurrentChannel(user);
+        }
     }
 }
