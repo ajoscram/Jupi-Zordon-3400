@@ -1,5 +1,5 @@
 import { Command, Message } from ".";
-import { BotError, Context, ErrorCode } from "../concretions";
+import { Context, BotError, ErrorCode } from "../concretions";
 import { CommandFactory } from "../concretions/commands/creation";
 import { Logger } from "../concretions/logging";
 
