@@ -6,6 +6,6 @@ export class HelpCommand implements Command{
     constructor(){ }
 
     public async execute(context: Context): Promise<void> {
-        context.message.sendHelp();
+        context.message.replyWithHelp();
     }
 }

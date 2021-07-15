@@ -7,7 +7,7 @@ export class CommandUtils{
             return await context.summonerFetcher.getSummoner(summonerName);
         }
         else{
-            const user: User = context.message.getInvoker();
+            const user: User = context.message.getAuthor();
             const account: Account = await context.database.getAccount(user);
             return account.summoner;
         }

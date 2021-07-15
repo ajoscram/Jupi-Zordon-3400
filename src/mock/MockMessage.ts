@@ -11,11 +11,11 @@ export class MockMessage implements Message{
         private readonly content: string
     ){}
 
-    public getInvoker(): User {
+    public getAuthor(): User {
         return { id: "user_id", name: "user_name" };
     }
 
-    public getInvokingChannel(): Channel {
+    public getChannel(): Channel {
         return { id: "channel_id", name: "channel_name" };
     }
 
@@ -23,31 +23,31 @@ export class MockMessage implements Message{
         return this.content;
     }
 
-    public sendError(error: ErrorCode): void {
+    public async replyWithError(error: ErrorCode): Promise<void> {
         this.sentItems.push(error);
     }
 
-    public sendTeams(teams: [Account[], Account[]]): void {
+    public async replyWithTeams(teams: [Account[], Account[]]): Promise<void> {
         this.sentItems.push(teams);
     }
 
-    public sendSummonerStats(stats: SummonerOverallStats): void {
+    public async replyWithSummonerStats(stats: SummonerOverallStats): Promise<void> {
         this.sentItems.push(stats);
     }
 
-    public sendPrediction(prediction: Prediction): void {
+    public async replyWithPrediction(prediction: Prediction): Promise<void> {
         this.sentItems.push(prediction);
     }
 
-    public sendMatch(match: CompletedMatch): void {
+    public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
         this.sentItems.push(match);
     }
 
-    public sendAccount(account: Account): void {
+    public async replyWithAccount(account: Account): Promise<void> {
         this.sentItems.push(account);
     }
 
-    public sendHelp(): void {
+    public async replyWithHelp(): Promise<void> {
         this.sentItems.push(MockMessage.HELP_ITEM);
     }
 }

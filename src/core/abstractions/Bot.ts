@@ -35,6 +35,6 @@ export abstract class Bot{
             error = new BotError(ErrorCode.UNKNOWN, error);
             
         Logger.logError(error.inner.message);
-        message.sendError(error.code);
+        message.replyWithError(error.code);
     }
 }
