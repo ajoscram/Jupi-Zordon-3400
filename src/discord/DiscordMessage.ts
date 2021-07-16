@@ -25,31 +25,31 @@ export class DiscordMessage implements Message{
     }
 
     public async replyWithError(error: ErrorCode): Promise<void> {
-        this.reply(this.presenter.createReplyFromError, error);
+        await this.reply(this.presenter.createReplyFromError, error);
     }
 
     public async replyWithTeams(teams: [Account[], Account[]]): Promise<void> {
-        this.reply(this.presenter.createReplyFromTeams, teams);
+        await this.reply(this.presenter.createReplyFromTeams, teams);
     }
 
     public async replyWithSummonerStats(stats: SummonerOverallStats): Promise<void> {
-        this.reply(this.presenter.createReplyFromSummonerStats, stats);
+        await this.reply(this.presenter.createReplyFromSummonerStats, stats);
     }
 
     public async replyWithPrediction(prediction: Prediction): Promise<void> {
-        this.reply(this.presenter.createReplyFromPrediction, prediction);
+        await this.reply(this.presenter.createReplyFromPrediction, prediction);
     }
 
     public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
-        this.reply(this.presenter.createReplyFromCompletedMatch, match);
+        await this.reply(this.presenter.createReplyFromCompletedMatch, match);
     }
 
     public async replyWithAccount(account: Account): Promise<void> {
-        this.reply(this.presenter.createReplyFromAccount, account);
+        await this.reply(this.presenter.createReplyFromAccount, account);
     }
 
     public async replyWithHelp(): Promise<void> {
-        this.reply(this.presenter.createReplyFromHelp);
+        await this.reply(this.presenter.createReplyFromHelp);
     }
 
     private getGuildChannel(): GuildChannel{

@@ -1,37 +1,39 @@
+import { StringResolvable, APIMessage } from "discord.js";
 import { ErrorCode } from "src/core/concretions";
 import { Account, SummonerOverallStats, Prediction, CompletedMatch } from "src/core/model";
 import { Presenter } from ".";
-import { ErrorMapper } from "./ErrorMapper";
+import { errors } from "./english-errors";
 
 export class StringPresenter implements Presenter{
 
-    private readonly errorMapper: ErrorMapper = new ErrorMapper();
-
-    public createReplyFromError(error: ErrorCode) {
-        return this.errorMapper.map(error);
+    public createReplyFromError(error: ErrorCode): StringResolvable | APIMessage {
+        if(errors[ErrorCode[error]])
+            return "ERROR: " + errors[ErrorCode[error]];
+        else
+            return "ERROR: An unexpected error occurred with code " + ErrorCode[error];
     }
 
-    public createReplyFromTeams(teams: [Account[], Account[]]) {
+    public createReplyFromTeams(teams: [Account[], Account[]]): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 
-    public createReplyFromSummonerStats(stats: SummonerOverallStats) {
+    public createReplyFromSummonerStats(stats: SummonerOverallStats): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 
-    public createReplyFromPrediction(prediction: Prediction) {
+    public createReplyFromPrediction(prediction: Prediction): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 
-    public createReplyFromCompletedMatch(match: CompletedMatch) {
+    public createReplyFromCompletedMatch(match: CompletedMatch): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 
-    public createReplyFromAccount(account: Account) {
+    public createReplyFromAccount(account: Account): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 
-    public createReplyFromHelp() {
+    public createReplyFromHelp(): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
     }
 }
