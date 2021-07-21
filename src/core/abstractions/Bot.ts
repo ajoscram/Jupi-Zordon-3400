@@ -1,5 +1,5 @@
 import { Command, Message } from ".";
-import { BotError, Context, ErrorCode } from "../concretions";
+import { Context, BotError, ErrorCode } from "../concretions";
 import { CommandFactory } from "../concretions/commands/creation";
 import { Logger } from "../concretions/logging";
 
@@ -35,6 +35,6 @@ export abstract class Bot{
             error = new BotError(ErrorCode.UNKNOWN, error);
             
         Logger.logError(error.inner.message);
-        message.sendError(error.code);
+        message.replyWithError(error.code);
     }
 }

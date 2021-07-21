@@ -1,36 +1,68 @@
 import { Message } from "src/core/abstractions";
-import { ErrorCode } from "src/core/concretions";
+import { BotError, ErrorCode } from "src/core/concretions";
 import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch } from "src/core/model";
+import { Message as DiscordAPIMessage, GuildChannel, StringResolvable, APIMessage } from "discord.js";
+import { Presenter } from "./presentation";
 
 export class DiscordMessage implements Message{
-    getInvoker(): User {
-        throw new Error("Method not implemented.");
+
+    constructor(
+        private readonly message: DiscordAPIMessage,
+        private readonly presenter: Presenter
+    ){}
+
+    public getAuthor(): User {
+        return { id: this.message.author.id, name: this.message.author.username };
     }
-    getInvokingChannel(): Channel {
-        throw new Error("Method not implemented.");
+
+    public getChannel(): Channel {
+        const channel: GuildChannel = this.getGuildChannel();
+        return { id: channel.id, name: channel.name };
     }
-    getContent(): string {
-        throw new Error("Method not implemented.");
+
+    public getContent(): string {
+        return this.message.content;
     }
-    sendError(error: ErrorCode): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithError(error: ErrorCode): Promise<void> {
+        await this.reply(this.presenter.createReplyFromError, error);
     }
-    sendTeams(teams: [Account[], Account[]]): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithTeams(teams: [Account[], Account[]]): Promise<void> {
+        await this.reply(this.presenter.createReplyFromTeams, teams);
     }
-    sendSummonerStats(stats: SummonerOverallStats): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithSummonerStats(stats: SummonerOverallStats): Promise<void> {
+        await this.reply(this.presenter.createReplyFromSummonerStats, stats);
     }
-    sendPrediction(prediction: Prediction): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithPrediction(prediction: Prediction): Promise<void> {
+        await this.reply(this.presenter.createReplyFromPrediction, prediction);
     }
-    sendMatch(match: CompletedMatch): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
+        await this.reply(this.presenter.createReplyFromCompletedMatch, match);
     }
-    sendAccount(account: Account): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithAccount(account: Account): Promise<void> {
+        await this.reply(this.presenter.createReplyFromAccount, account);
     }
-    sendHelp(): void {
-        throw new Error("Method not implemented.");
+
+    public async replyWithHelp(): Promise<void> {
+        await this.reply(this.presenter.createReplyFromHelp);
+    }
+
+    private getGuildChannel(): GuildChannel{
+        if(!(this.message.channel instanceof GuildChannel))
+            throw new BotError(ErrorCode.CHANNEL_IS_NOT_IN_A_SERVER);
+        else if(!this.message.channel.isText())
+            throw new BotError(ErrorCode.CHANNEL_IS_NOT_TEXT);
+        else
+            return this.message.channel as GuildChannel;
+    }
+
+    private async reply(presenter: (...args: any) => StringResolvable | APIMessage, ...args: any): Promise<void>{
+        const reply: StringResolvable | APIMessage = presenter(args);
+        await this.message.channel.send(reply);
     }
 }

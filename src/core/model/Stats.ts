@@ -21,6 +21,7 @@ export interface PerformanceStats extends Stats{
     readonly largestKillingSpree: number,
     readonly firstBlood: boolean,
     readonly firstTower: boolean,
+    readonly role: "TOP" | "MIDDLE" | "JUNGLE" | "CARRY" | "SUPPORT" | "UNKNOWN"
 }
 
 interface OverallStats extends Stats{
