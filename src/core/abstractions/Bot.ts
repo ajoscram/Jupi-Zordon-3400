@@ -16,11 +16,8 @@ export abstract class Bot{
 
     protected async process(message: Message): Promise<void>{
         try{
-            const command: Command = this.commandFactory.tryCreateCommand(message);
-            if(command){
-                const context: Context = this.getContext(message);
-                await command.execute(context);
-            }
+            const command: Command | null = this.commandFactory.tryCreateCommand(message);
+            await command?.execute(this.getContext(message));
         }
         catch(error){
             this.handleError(error, message);

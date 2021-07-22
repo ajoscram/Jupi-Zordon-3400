@@ -43,7 +43,7 @@ export class DiscordServer implements Server{
     }
 
     private getVoiceChannel(channel: Channel): VoiceChannel{
-        const voiceChannel: GuildChannel = this.guild.channels.cache.get(channel.id);
+        const voiceChannel: GuildChannel | undefined = this.guild.channels.cache.get(channel.id);
         if(!voiceChannel)
             throw new BotError(ErrorCode.CHANNEL_NOT_FOUND);
         else if(!(voiceChannel instanceof VoiceChannel))

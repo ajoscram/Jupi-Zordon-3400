@@ -13,7 +13,7 @@ export class CommandMetadataExtractor{
             const options: string[] = tokens.slice(1);
             return { alias, options };
         }
-        return { alias: null, options: []};
+        return { alias: "", options: []};
     }
 
     private getTokens(content: string): string[]{

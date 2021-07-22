@@ -11,7 +11,7 @@ export class CommandFactory{
         this.extractor = new CommandMetadataExtractor(identifier);
     }
 
-    public tryCreateCommand(message: Message): Command{
+    public tryCreateCommand(message: Message): Command | null{
         const metadata: CommandMetadata = this.extractor.extract(message);
         switch(metadata.alias){
             case "link":

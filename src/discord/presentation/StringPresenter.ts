@@ -8,13 +8,12 @@ export class StringPresenter implements Presenter{
 
     public createReplyFromError(error: ErrorCode): StringResolvable | APIMessage {
         if(errors[ErrorCode[error]])
-            return "ERROR: " + errors[ErrorCode[error]];
+            return `ERROR: ${errors[ErrorCode[error]]}`;
         else
-            return "ERROR: An unexpected error occurred with code " + ErrorCode[error];
+            return `ERROR: An unexpected error occurred with code ${ErrorCode[error]}.`;
     }
 
     public createReplyFromTeams(teams: [Account[], Account[]]): StringResolvable | APIMessage {
-        throw new Error("Method not implemented.");
     }
 
     public createReplyFromSummonerStats(stats: SummonerOverallStats): StringResolvable | APIMessage {
