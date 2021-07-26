@@ -1,5 +1,5 @@
 import { Database } from "src/core/abstractions";
-import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch } from "src/core/model";
+import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Champion } from "src/core/model";
 
 export class MockDatabase implements Database {
 
@@ -7,40 +7,78 @@ export class MockDatabase implements Database {
 
     public readonly ongoingMatches: OngoingMatch[] = [];
 
+    public readonly completedMatches: CompletedMatch[] = [];
+
+    public accounts: Account[] = [];
+
     public async initialize(): Promise<void> { }
 
     public async getAccount(user: User): Promise<Account> {
-        return {summoner: {
-                    id: "" + this.id++,
-                    name: "summoner_name"
-                },
-                user        
+        return {
+            summoner: {
+                id: "" + this.id++,
+                name: "summoner_name"
+            },
+            user
         };
     }
-   
+
     public async getAccounts(users: User[]): Promise<Account[]> {
         const accounts: Account[] = [];
 
-        for(let element of users){
+        for (let element of users) {
             const account: Account = await this.getAccount(element);
             accounts.push(account);
         }
 
         return accounts;
     }
-    
+
     public async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
-        throw new Error("Method not implemented.");
+        const picksMap = new Map<Champion,number>();
+        const katarina: Champion = {
+            id: "17",
+            name: "Katarina",
+            picture: "BattleAcademyKatarina.png"
+        };
+        picksMap.set(katarina, 17);
+        return {
+            summoner: {
+                id: "0",
+                name: "Noxian"
+            },
+            picks: picksMap,
+            wins: 17,
+            losses: 0,
+            assists: 180,
+            deaths: 20,
+            damageDealtToChampions: 850000,
+            damageDealtToObjectives: 700000,
+            damageReceived: 1050000,
+            gold: 2000000,
+            kills: 300,
+            minions: 2000,
+            minutesPlayed: 425,
+            visionScore: 100,
+            crowdControlScore: 0
+        };
     }
-   
+
     public async getAIModel(): Promise<AIModel> {
         return {};
     }
-   
+
     public async upsert(account: Account): Promise<void> {
         //Check if account is created to update it or add it
+        if (this.accounts.includes(account)) {
+            //update
+            /*const index = this.accounts.indexOf(account);
+            this.accounts[index] = account;*/
+        } else {
+            //insert
+            this.accounts.push(account);
+        }
 
-        throw new Error("Method not implemented.");
     }
 
     public async insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void> {
@@ -48,6 +86,6 @@ export class MockDatabase implements Database {
     }
 
     public async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
-        throw new Error("Method not implemented.");
+        this.completedMatches.push(completedMatch);
     }
 }
