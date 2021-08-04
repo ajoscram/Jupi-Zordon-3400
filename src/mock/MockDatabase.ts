@@ -9,7 +9,7 @@ export class MockDatabase implements Database {
 
     public readonly completedMatches: CompletedMatch[] = [];
 
-    public accounts: Account[] = [];
+    public readonly accounts: Account[] = [];
 
     public async initialize(): Promise<void> { }
 
@@ -43,10 +43,7 @@ export class MockDatabase implements Database {
         };
         picksMap.set(katarina, 17);
         return {
-            summoner: {
-                id: "0",
-                name: "Noxian"
-            },
+            summoner,
             picks: picksMap,
             wins: 17,
             losses: 0,
@@ -70,10 +67,14 @@ export class MockDatabase implements Database {
 
     public async upsert(account: Account): Promise<void> {
         //Check if account is created to update it or add it
-        if (this.accounts.includes(account)) {
+        const desiredAccount: Account|undefined = this.accounts.find(element => 
+            element.summoner.id === account.summoner.id &&
+            element.user.id === account.user.id);
+
+        if (desiredAccount) {
             //update
-            /*const index = this.accounts.indexOf(account);
-            this.accounts[index] = account;*/
+            const index = this.accounts.indexOf(desiredAccount);
+            this.accounts[index] = account;
         } else {
             //insert
             this.accounts.push(account);
