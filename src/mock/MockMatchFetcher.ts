@@ -1,5 +1,5 @@
 import { MatchFetcher } from "src/core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion } from "src/core/model";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats } from "src/core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
 
@@ -19,7 +19,68 @@ export class MockMatchFetcher implements MatchFetcher {
     }
 
     public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
-        throw new Error("Not implemente");
+        return {
+                id: ongoingMatch.id,
+                serverIdentity: ongoingMatch.serverIdentity,
+                blue : this.getTeamStats(ongoingMatch.blue, true),
+                red : this.getTeamStats(ongoingMatch.red, false),
+                minutesPlayed : 31,
+                date : new Date()
+            };
+    }
+
+    private getTeamStats(mapSummChamp: Map<Summoner,Champion>, wonTeam: boolean): TeamStats{
+        
+        return {
+            bans: [],
+            won: wonTeam,
+            dragons: 3,
+            heralds: 1,
+            barons: 1,
+            towers: 9,
+            performanceStats: this.getPerformanceStatsArray(mapSummChamp, wonTeam)
+        }
+    }
+
+    private getPerformanceStatsArray(mapSummChamp: Map<Summoner,Champion>, wonTeam: boolean ): PerformanceStats[] {
+        const performanceStatsJson: PerformanceStats[] = [];
+        let first: boolean = true;
+        for (let summoner of mapSummChamp.keys()){
+            const champion: Champion|undefined = mapSummChamp.get(summoner)
+            performanceStatsJson.push(
+                this.getPerformanceStats(
+                    summoner, 
+                    champion?champion: this.createChampion(69),
+                    first && wonTeam,
+                    first && wonTeam
+                )
+            );
+            first = false;
+        }
+        return performanceStatsJson;
+    }
+
+    private getPerformanceStats(summoner: Summoner, champion: Champion, firstBlood: boolean, firstTower: boolean): PerformanceStats {
+        return {
+            summoner,
+            champion,
+            largestMultikill: 4,
+            largestKillingSpree: 3,
+            firstBlood,
+            firstTower,
+            role: "MIDDLE",
+            assists: 2,
+            deaths: 20,
+            damageDealtToChampions: 53405,
+            damageDealtToObjectives: 2345,
+            damageReceived: 78798,
+            gold: 11350,
+            kills: 10,
+            minions: 125,
+            minutesPlayed: 31,
+            visionScore: 21,
+            crowdControlScore: 15
+        }
     }
 
     private createChampion(id:number): Champion{
