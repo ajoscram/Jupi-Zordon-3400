@@ -1,11 +1,10 @@
 import { MatchFetcher } from "src/core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats } from "src/core/model";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role } from "src/core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
 
     private num: number = 0;
     
-
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
         const blue: Map<Summoner,Champion> = this.getTeam(summoner);
         const red:  Map<Summoner,Champion> = this.getTeam();
@@ -14,8 +13,7 @@ export class MockMatchFetcher implements MatchFetcher {
                     blue,
                     serverIdentity,
                     id: "" + this.num++
-                }
-
+                };
     }
 
     public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
@@ -39,28 +37,29 @@ export class MockMatchFetcher implements MatchFetcher {
             barons: 1,
             towers: 9,
             performanceStats: this.getPerformanceStatsArray(mapSummChamp, wonTeam)
-        }
+        };
     }
 
     private getPerformanceStatsArray(mapSummChamp: Map<Summoner,Champion>, wonTeam: boolean ): PerformanceStats[] {
-        const performanceStatsJson: PerformanceStats[] = [];
+        const performanceStatsArray: PerformanceStats[] = [];
+        const roles: Role[] = [ Role.TOP, Role.MIDDLE, Role.JUNGLE, Role.CARRY, Role.SUPPORT ];
         let first: boolean = true;
         for (let summoner of mapSummChamp.keys()){
-            const champion: Champion|undefined = mapSummChamp.get(summoner)
-            performanceStatsJson.push(
+            performanceStatsArray.push(
                 this.getPerformanceStats(
                     summoner, 
-                    champion?champion: this.createChampion(69),
+                    mapSummChamp.get(summoner) || this.createChampion(this.num++),
                     first && wonTeam,
-                    first && wonTeam
+                    first && wonTeam,
+                    roles.pop() || Role.UNKNOWN
                 )
             );
             first = false;
         }
-        return performanceStatsJson;
+        return performanceStatsArray;
     }
 
-    private getPerformanceStats(summoner: Summoner, champion: Champion, firstBlood: boolean, firstTower: boolean): PerformanceStats {
+    private getPerformanceStats(summoner: Summoner, champion: Champion, firstBlood: boolean, firstTower: boolean, role: Role): PerformanceStats {
         return {
             summoner,
             champion,
@@ -68,7 +67,7 @@ export class MockMatchFetcher implements MatchFetcher {
             largestKillingSpree: 3,
             firstBlood,
             firstTower,
-            role: "MIDDLE",
+            role,
             assists: 2,
             deaths: 20,
             damageDealtToChampions: 53405,
@@ -80,14 +79,14 @@ export class MockMatchFetcher implements MatchFetcher {
             minutesPlayed: 31,
             visionScore: 21,
             crowdControlScore: 15
-        }
+        };
     }
 
     private createChampion(id:number): Champion{
         return {
                     picture : "https://www.poppy.com",
                     id: id.toString(),
-                    name: "Summoner " + id
+                    name: "Champion " + id
                 };
     }
 
@@ -100,16 +99,14 @@ export class MockMatchFetcher implements MatchFetcher {
         if (summoner){
             teamPlayers = 4;
             team.set(summoner, this.createChampion(this.num++));
-            }
+        }
         else
             teamPlayers = 5;
 
-        
-        
         for (let i = 0; i<teamPlayers; i++) {
             const summ: Summoner = {
                                         id: this.num.toString(),
-                                        name: "Summoner" + this.num++
+                                        name: "Summoner " + this.num++
                                     };
 
             const champ: Champion = this.createChampion(this.num++);
@@ -117,8 +114,5 @@ export class MockMatchFetcher implements MatchFetcher {
             
         }
         return team;
-
-    }
-
-        
+    }   
 }

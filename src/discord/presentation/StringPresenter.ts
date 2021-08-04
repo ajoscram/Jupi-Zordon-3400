@@ -3,6 +3,7 @@ import { ErrorCode } from "src/core/concretions";
 import { Account, SummonerOverallStats, Prediction, CompletedMatch } from "src/core/model";
 import { Presenter } from ".";
 import { errors } from "./english-errors";
+import { TableBuilder } from "./TableBuilder";
 
 export class StringPresenter implements Presenter{
 
@@ -14,6 +15,15 @@ export class StringPresenter implements Presenter{
     }
 
     public createReplyFromTeams(teams: [Account[], Account[]]): StringResolvable | APIMessage {
+        const table = new TableBuilder();
+        table.addHeader(["Team 1", "Team 2"]);
+        const playerCount: number = this.getBiggerTeamPlayerCount(teams);
+        for(let i=0; i < playerCount; i++){
+            const firstSummonerName: string = teams[0][i] ? teams[0][i].summoner.name : "";
+            const secondSummonerName: string = teams[1][i] ? teams[1][i].summoner.name : "";
+            table.addData([firstSummonerName, secondSummonerName]);
+        }
+        return table.addLineSeparator().build();
     }
 
     public createReplyFromSummonerStats(stats: SummonerOverallStats): StringResolvable | APIMessage {
@@ -34,5 +44,11 @@ export class StringPresenter implements Presenter{
 
     public createReplyFromHelp(): StringResolvable | APIMessage {
         throw new Error("Method not implemented.");
+    }
+
+    private getBiggerTeamPlayerCount(teams: [Account[], Account[]]){
+        return teams[0].length > teams[1].length ?
+            teams[0].length :
+            teams[1].length;
     }
 }

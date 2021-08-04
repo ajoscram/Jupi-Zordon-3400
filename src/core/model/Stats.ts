@@ -1,4 +1,4 @@
-import { Champion, Summoner } from ".";
+import { Champion, Role, Summoner } from ".";
 
 interface Stats{
     readonly assists: number,
@@ -21,7 +21,7 @@ export interface PerformanceStats extends Stats{
     readonly largestKillingSpree: number,
     readonly firstBlood: boolean,
     readonly firstTower: boolean,
-    readonly role: "TOP" | "MIDDLE" | "JUNGLE" | "CARRY" | "SUPPORT" | "UNKNOWN"
+    readonly role: Role
 }
 
 interface OverallStats extends Stats{
