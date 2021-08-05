@@ -1,5 +1,5 @@
-import { MatchFetcher } from "src/core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role } from "src/core/model";
+import { MatchFetcher } from "../core/abstractions";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role } from "../core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
 
@@ -48,10 +48,10 @@ export class MockMatchFetcher implements MatchFetcher {
             performanceStatsArray.push(
                 this.getPerformanceStats(
                     summoner, 
-                    mapSummChamp.get(summoner) || this.createChampion(this.num++),
+                    mapSummChamp.get(summoner) ?? this.createChampion(this.num++),
                     first && wonTeam,
                     first && wonTeam,
-                    roles.pop() || Role.UNKNOWN
+                    roles.pop() ?? Role.UNKNOWN
                 )
             );
             first = false;
@@ -82,7 +82,7 @@ export class MockMatchFetcher implements MatchFetcher {
         };
     }
 
-    private createChampion(id:number): Champion{
+    private createChampion(id: number): Champion{
         return {
                     picture : "https://www.poppy.com",
                     id: id.toString(),
