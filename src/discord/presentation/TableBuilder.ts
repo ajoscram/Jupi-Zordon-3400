@@ -3,24 +3,22 @@ export class TableBuilder{
     private columnSizes: number[] = [];
     private rows: Row[] = [];
 
-    public addHeader(titles: string[]): TableBuilder{
-        const formattedTitles: string[] = titles.map(title => Padding.EMPTY + title + Padding.EMPTY);
-        this.addRow(formattedTitles, RowType.HEADER, Padding.LINE);
+    public addHeader(header: string, padding: Padding = Padding.LINE): TableBuilder{
+        const formattedHeader: string = header ? Padding.EMPTY + header + Padding.EMPTY : "";
+        this.addRow([formattedHeader], RowType.HEADER, padding);
         return this;
     }
 
-    public addData(data: string[]): TableBuilder{
-        this.addRow(data, RowType.DATA, Padding.EMPTY);
+    public addData(data: string[], padding: Padding = Padding.EMPTY): TableBuilder{
+        const formattedData: string[] = data.map(dataValue =>
+            dataValue ? Padding.EMPTY + dataValue + Padding.EMPTY : ""
+        );
+        this.addRow(formattedData, RowType.DATA, padding);
         return this;
     }
 
-    public addEmptySeparator(): TableBuilder{
-        this.addRow([], RowType.EMPTY, Padding.EMPTY);
-        return this;
-    }
-
-    public addLineSeparator(): TableBuilder{
-        this.addRow([], RowType.LINE, Padding.LINE);
+    public addSeparator(padding: Padding = Padding.LINE): TableBuilder{
+        this.addRow([], RowType.SEPARATOR, padding);
         return this;
     }
 
@@ -31,7 +29,7 @@ export class TableBuilder{
             const renderedRow: string = this.renderRow(row, edges);
             renderedRows.push(renderedRow);
         }
-        return renderedRows.join("\n");
+        return "```\n" + renderedRows.join("\n") + "\n```";
     }
 
     private updateColumnSizes(items: string[]): void{
@@ -57,9 +55,8 @@ export class TableBuilder{
             case this.rows.length - 1:
                 return { left: "╚", middle: "╩", right: "╝" };
             default:
-                switch(row.type){
-                    case RowType.HEADER:
-                    case RowType.LINE:
+                switch(row.padding){
+                    case Padding.LINE:
                         return { left: "╠", middle: "╬", right: "╣" };
                     default:
                         return { left: "║", middle: "║", right: "║" };
@@ -68,6 +65,18 @@ export class TableBuilder{
     }
 
     private renderRow(row: Row, edges: Edges): string{
+        if(row.type == RowType.HEADER)
+            return this.renderSingleCellRow(row, edges);
+        else
+            return this.renderMultiCellRow(row, edges);
+    }
+
+    private renderSingleCellRow(row: Row, edges: Edges): string{
+        const size: number = this.columnSizes.reduce((totalSize, cellSize) => totalSize + cellSize);
+        return this.renderCell(row.items[0], size, row.padding);
+    }
+
+    private renderMultiCellRow(row: Row, edges: Edges): string{
         let cells: string[] = [];
         for(let i=0; i < this.columnSizes.length; i++){
             const item: string = row.items[i] ? row.items[i] : "";
@@ -104,11 +113,10 @@ interface Edges{
 enum RowType{
     HEADER,
     DATA,
-    LINE,
-    EMPTY
+    SEPARATOR
 }
 
-enum Padding{
+export enum Padding{
     EMPTY = " ",
     LINE = "═"
 }

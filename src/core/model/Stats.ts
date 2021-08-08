@@ -24,7 +24,7 @@ export interface PerformanceStats extends Stats{
     readonly role: Role
 }
 
-interface OverallStats extends Stats{
+export interface OverallStats extends Stats{
     readonly wins: number,
     readonly losses: number,
 }

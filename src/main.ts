@@ -4,6 +4,7 @@
 // bot.initialize();
 // bot.run();
 
+/*
 import { MatchFetcher, Predictor } from "./core/abstractions";
 import { OngoingMatch, Prediction } from "./core/model";
 import { StringPresenter } from "./discord/presentation";
@@ -19,4 +20,19 @@ async function test(): Promise<void>{
     console.log(presenter.createReplyFromPrediction(prediction));
 }
 
+test();*/
+
+/*
+import { Database } from "./core/abstractions";
+import { StringPresenter } from "./discord/presentation";
+import { MockDatabase } from "./mock";
+
+const database: Database = new MockDatabase();
+
+async function test(): Promise<void>{
+    const account = await database.getAccount({id: "user_id", name: "user_name"});
+    console.log(new StringPresenter().createReplyFromAccount(account));
+}
+
 test();
+*/
