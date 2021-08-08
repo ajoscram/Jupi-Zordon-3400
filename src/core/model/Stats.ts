@@ -35,7 +35,7 @@ export interface SummonerOverallStats extends OverallStats{
     readonly picks: Map<Champion, number>,
 }
 
-export interface ChampionOverallStats{
+export interface ChampionOverallStats extends OverallStats{
     readonly champion: Champion,
     readonly bans: number,
 }

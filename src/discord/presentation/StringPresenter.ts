@@ -1,6 +1,6 @@
 import { StringResolvable, APIMessage } from "discord.js";
 import { CalculatedOverallStats, ErrorCode } from "../../core/concretions";
-import { Account, SummonerOverallStats, Prediction, CompletedMatch, Summoner, Champion } from "../../core/model";
+import { Account, SummonerOverallStats, Prediction, CompletedMatch, Summoner, Champion, TeamStats, PerformanceStats } from "../../core/model";
 import { Presenter } from ".";
 import { errors } from "./english-errors";
 import { TableBuilder, Padding } from "./TableBuilder";
@@ -121,7 +121,14 @@ export class StringPresenter implements Presenter{
     }
 
     public createReplyFromCompletedMatch(match: CompletedMatch): StringResolvable | APIMessage {
-        throw new Error("Method not implemented.");
+        let builder: TableBuilder = new TableBuilder();
+        builder
+            .addHeader(match.date.toDateString()+" - " + match.minutesPlayed + " minutes")
+            .addSeparator(Padding.EMPTY);
+        this.addTeamStats(builder, "Red", match.red);
+        builder.addSeparator(Padding.EMPTY);
+        this.addTeamStats(builder, "Blue", match.blue);
+        return builder.build();
     }
 
     public createReplyFromAccount(account: Account): StringResolvable | APIMessage {
@@ -168,6 +175,39 @@ export class StringPresenter implements Presenter{
                 sorted.push({champion, count: pickCount});
         }
         return sorted;
+    }
+
+    private addTeamStats(builder: TableBuilder, teamName: string, stats: TeamStats): TableBuilder{
+        builder.addHeader(teamName + " - " + (stats.won ? "WON" : "LOST"), Padding.EMPTY);
+        this.addPerformanceStats(builder, stats.performanceStats);
+        builder.addSeparator().addHeader(
+            "Dragons: " + stats.dragons +
+            " Heralds: " + stats.heralds + 
+            " Towers: " + stats.towers + 
+            " Barons: " + stats.barons, 
+            Padding.EMPTY
+        );
+        return builder.addSeparator();
+    }
+
+    private addPerformanceStats(builder: TableBuilder, performanceStats: PerformanceStats[]): TableBuilder{
+        builder.addData(
+            ["Summoner", "Champion", "KDA", "Damage","Gold", "CS / Min", "Vision", "CC"],
+            Padding.LINE
+        );
+        for(let performance of performanceStats){
+            builder.addData([
+                performance.summoner.name,
+                performance.champion.name,
+                performance.kills + "/" + performance.deaths + "/" + performance.assists,
+                this.stringify(performance.damageDealtToChampions),
+                this.stringify(performance.gold),
+                this.stringify(performance.minions / performance.minutesPlayed),
+                this.stringify(performance.visionScore),
+                this.stringify(performance.crowdControlScore)
+            ]);
+        }
+        return builder;
     }
 }
 

@@ -61,9 +61,9 @@ export class TableBuilder{
         const currentEdge: boolean = this.doesRowHaveLinePadding(current, true);
         const nextEdge: boolean = this.doesRowHaveLinePadding(next);
         
-        if(current.type == RowType.SEPARATOR && current.padding == Padding.EMPTY)
+        if(current.padding == Padding.EMPTY && current.type != RowType.DATA)
             return Padding.EMPTY;
-        if(previousEdge && currentEdge && nextEdge)
+        else if(previousEdge && currentEdge && nextEdge)
             return "╬";
         else if(!previousEdge && currentEdge && nextEdge)
             return "╦";
