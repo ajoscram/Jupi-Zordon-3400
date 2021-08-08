@@ -12,6 +12,7 @@ interface Stats{
     readonly minutesPlayed: number,
     readonly visionScore: number,
     readonly crowdControlScore: number,
+    readonly pentakills: number
 }
 
 export interface PerformanceStats extends Stats{

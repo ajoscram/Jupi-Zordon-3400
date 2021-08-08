@@ -5,7 +5,7 @@ export class TableBuilder{
 
     public addHeader(header: string, padding: Padding = Padding.LINE): TableBuilder{
         const formattedHeader: string = header ? Padding.EMPTY + header + Padding.EMPTY : "";
-        this.addRow([formattedHeader], RowType.HEADER, padding);
+        this.rows.push({items: [formattedHeader], type: RowType.HEADER, padding });
         return this;
     }
 
@@ -13,12 +13,13 @@ export class TableBuilder{
         const formattedData: string[] = data.map(dataValue =>
             dataValue ? Padding.EMPTY + dataValue + Padding.EMPTY : ""
         );
-        this.addRow(formattedData, RowType.DATA, padding);
+        this.updateColumnSizes(formattedData);
+        this.rows.push({items: formattedData, type: RowType.DATA, padding });
         return this;
     }
 
     public addSeparator(padding: Padding = Padding.LINE): TableBuilder{
-        this.addRow([], RowType.SEPARATOR, padding);
+        this.rows.push({items: [], type: RowType.SEPARATOR, padding });
         return this;
     }
 
@@ -41,11 +42,6 @@ export class TableBuilder{
         for(let i=0; i < items.length; i++)
             if(items[i].length > this.columnSizes[i])
                 this.columnSizes[i] = items[i].length;
-    }
-
-    private addRow(items: string[], type: RowType, padding: Padding): void{
-        this.updateColumnSizes(items);
-        this.rows.push({ items, type, padding });
     }
 
     private getEdgesForCurrent(current: Row, previous?: Row, next?: Row): Edges{

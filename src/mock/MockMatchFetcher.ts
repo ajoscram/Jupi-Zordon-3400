@@ -78,7 +78,8 @@ export class MockMatchFetcher implements MatchFetcher {
             minions: 125,
             minutesPlayed: 31,
             visionScore: 21,
-            crowdControlScore: 15
+            crowdControlScore: 15,
+            pentakills: 0
         };
     }
 

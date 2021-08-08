@@ -36,28 +36,28 @@ export class MockDatabase implements Database {
 
     public async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
         const picksMap = new Map<Champion,number>();
-        const katarina: Champion = {
-            id: "17",
-            name: "Katarina",
-            picture: "BattleAcademyKatarina.png"
-        };
-        picksMap.set(katarina, 17);
+        picksMap.set({ id: "17", name: "Katarina", picture: "Katarina.png" }, 17);
+        picksMap.set({ id: "18", name: "Illaoi", picture: "Illaoi.png" }, 30);
+        picksMap.set({ id: "19", name: "Yuumi", picture: "Yuumi.png" }, 1);
+        picksMap.set({ id: "20", name: "Ezreal", picture: "Ezreal.png" }, 13);
+        picksMap.set({ id: "21", name: "Cho'Gath", picture: "Cho'Gath.png" }, 24);
         return {
             summoner,
             picks: picksMap,
             wins: 17,
             losses: 10,
             assists: 180,
-            deaths: 20,
+            deaths: 200,
             damageDealtToChampions: 850000,
             damageDealtToObjectives: 700000,
             damageReceived: 1050000,
-            gold: 2000000,
+            gold: 200123,
             kills: 300,
             minions: 2000,
             minutesPlayed: 425,
             visionScore: 100,
-            crowdControlScore: 0
+            crowdControlScore: 200,
+            pentakills: 3
         };
     }
 

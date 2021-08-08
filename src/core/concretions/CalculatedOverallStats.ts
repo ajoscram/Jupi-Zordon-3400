@@ -59,6 +59,10 @@ export class CalculatedOverallStats implements OverallStats{
         return this.stats.damageDealtToChampions / this.matches;
     }
 
+    public get damageRate(): number {
+        return this.stats.damageDealtToChampions / this.stats.damageReceived;
+    }
+
     public get damageDealtToObjectives(): number {
         return this.stats.damageDealtToObjectives;
     }
@@ -83,6 +87,10 @@ export class CalculatedOverallStats implements OverallStats{
         return this.stats.gold / this.matches;
     }
 
+    public get goldPerMinute(): number{
+        return this.stats.gold / this.stats.minutesPlayed;
+    }
+
     public get minions(): number {
         return this.stats.minions;
     }
@@ -93,6 +101,10 @@ export class CalculatedOverallStats implements OverallStats{
     
     public get minutesPlayed(): number {
         return this.stats.minutesPlayed;
+    }
+
+    public get minionsPerMinute(): number {
+        return this.stats.minions / this.stats.minutesPlayed;
     }
 
     public get minutesPlayedPerGame(): number {
@@ -113,5 +125,9 @@ export class CalculatedOverallStats implements OverallStats{
 
     public get crowdControlScorePerGame(): number {
         return this.stats.crowdControlScore / this.matches;
+    }
+
+    public get pentakills(): number{
+        return this.stats.pentakills;
     }
 }
