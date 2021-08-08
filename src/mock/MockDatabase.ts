@@ -46,7 +46,7 @@ export class MockDatabase implements Database {
             summoner,
             picks: picksMap,
             wins: 17,
-            losses: 0,
+            losses: 10,
             assists: 180,
             deaths: 20,
             damageDealtToChampions: 850000,

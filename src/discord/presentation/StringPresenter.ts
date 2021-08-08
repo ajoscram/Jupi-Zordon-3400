@@ -30,7 +30,23 @@ export class StringPresenter implements Presenter{
 
     public createReplyFromSummonerStats(overallStats: SummonerOverallStats): StringResolvable | APIMessage {
         const stats: CalculatedOverallStats = new CalculatedOverallStats(overallStats);
-        return stats;
+        return  new TableBuilder()
+            .addHeader(overallStats.summoner.name)
+            .addSeparator(Padding.EMPTY)
+            .addData(["Wins", "Losses", "Winrate"], Padding.LINE)
+            .addData([
+                this.stringify(stats.wins),
+                this.stringify(stats.losses),
+                this.stringify(stats.winrate*100)
+            ])
+            .addData(["Kills", "Deaths", "KDA"], Padding.LINE)
+            .addData([
+                this.stringify(stats.killsPerGame),
+                this.stringify(stats.deathsPerGame),
+                this.stringify(stats.kda*100)
+            ])
+            .addSeparator()
+            .build();
     }
 
     public createReplyFromPrediction(prediction: Prediction): StringResolvable | APIMessage {
@@ -48,8 +64,8 @@ export class StringPresenter implements Presenter{
         return tableBuilder
             .addData(["Win %", "Win %"], Padding.LINE)
             .addData([
-                ""+(prediction.probabilityBlueWins*100).toFixed(2),
-                ""+(prediction.probabilityRedWins*100).toFixed(2)
+                this.stringify(prediction.probabilityBlueWins*100),
+                this.stringify(prediction.probabilityRedWins*100)
             ])
             .addSeparator()
             .build();
@@ -73,5 +89,12 @@ export class StringPresenter implements Presenter{
 
     private getOngoingMatchPlayerEntry(teamMap: Map<Summoner, Champion>, summoner?: Summoner): string{
         return summoner ? summoner.name + " (" + teamMap.get(summoner)?.name + ")" : "";
+    }
+
+    private stringify(value: number){
+        if(value % 1 == 0)
+            return "" + value;
+        else
+            return value.toFixed(2);
     }
 }

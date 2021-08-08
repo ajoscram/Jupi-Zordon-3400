@@ -36,3 +36,16 @@ async function test(): Promise<void>{
 
 test();
 */
+
+import { Database } from "./core/abstractions";
+import { StringPresenter } from "./discord/presentation";
+import { MockDatabase } from "./mock";
+
+const database: Database = new MockDatabase();
+
+async function test(): Promise<void>{
+    const account = await database.getSummonerOverallStats({id: "summ_id", name: "summ_name"});
+    console.log(new StringPresenter().createReplyFromSummonerStats(account));
+}
+
+test();

@@ -24,9 +24,9 @@ export class TableBuilder{
 
     public build(): string{
         const renderedRows: string[] = [];
-        for(const row of this.rows){
-            const edges: Edges = this.getEdges(row);
-            const renderedRow: string = this.renderRow(row, edges);
+        for(let i=0; i < this.rows.length; i++){
+            const edges: Edges = this.getEdgesForCurrent(this.rows[i], this.rows[i-1], this.rows[i+1]);
+            const renderedRow: string = this.renderRow(this.rows[i], edges);
             renderedRows.push(renderedRow);
         }
         return "```\n" + renderedRows.join("\n") + "\n```";
@@ -45,23 +45,49 @@ export class TableBuilder{
 
     private addRow(items: string[], type: RowType, padding: Padding): void{
         this.updateColumnSizes(items);
-        this.rows.push({ index: this.rows.length, items, type, padding });
+        this.rows.push({ items, type, padding });
     }
 
-    private getEdges(row: Row): Edges{
-        switch(row.index){
-            case 0:
-                return { left: "╔", middle: "╦", right: "╗" };
-            case this.rows.length - 1:
-                return { left: "╚", middle: "╩", right: "╝" };
-            default:
-                switch(row.padding){
-                    case Padding.LINE:
-                        return { left: "╠", middle: "╬", right: "╣" };
-                    default:
-                        return { left: "║", middle: "║", right: "║" };
-                }
-        }
+    private getEdgesForCurrent(current: Row, previous?: Row, next?: Row): Edges{
+        const middle: string = this.getMiddleEdge(current, previous, next);
+        if(!previous)
+            return { left: "╔", middle, right: "╗" };
+        else if(!next)
+            return { left: "╚", middle, right: "╝" };
+        else if(current.padding == Padding.LINE)
+            return { left: "╠", middle, right: "╣" };
+        else
+            return { left: "║", middle, right: "║" };
+    }
+
+    private getMiddleEdge(current: Row, previous?: Row, next?: Row): string{
+        const previousEdge: boolean = this.doesRowHaveLinePadding(previous);
+        const currentEdge: boolean = this.doesRowHaveLinePadding(current, true);
+        const nextEdge: boolean = this.doesRowHaveLinePadding(next);
+        
+        if(current.type == RowType.SEPARATOR && current.padding == Padding.EMPTY)
+            return Padding.EMPTY;
+        if(previousEdge && currentEdge && nextEdge)
+            return "╬";
+        else if(!previousEdge && currentEdge && nextEdge)
+            return "╦";
+        else if(previousEdge && currentEdge && !nextEdge)
+            return "╩";
+        else if(previousEdge && !currentEdge && nextEdge)
+            return "║";
+        else if(!previousEdge && currentEdge && !nextEdge)
+            return Padding.LINE;
+        else
+            return Padding.EMPTY;
+    }
+
+    private doesRowHaveLinePadding(row?: Row, isCurrent?: boolean): boolean{
+        if(!row)
+            return false;
+        else if(row.type == RowType.DATA && !isCurrent)
+            return true;
+        else
+            return row.padding == Padding.LINE;
     }
 
     private renderRow(row: Row, edges: Edges): string{
@@ -71,9 +97,12 @@ export class TableBuilder{
             return this.renderMultiCellRow(row, edges);
     }
 
-    private renderSingleCellRow(row: Row, edges: Edges): string{
-        const size: number = this.columnSizes.reduce((totalSize, cellSize) => totalSize + cellSize);
-        return this.renderCell(row.items[0], size, row.padding);
+    private renderSingleCellRow(row: Row, edges: Edges): string {
+        const intermediaryRow: Row = { items: [], type: row.type, padding: row.padding};
+        const renderedRow: string = this.renderMultiCellRow(intermediaryRow, edges);
+        const dataStart: number = Math.floor(renderedRow.length/2) - Math.floor(row.items[0].length/2);
+        const dataEnd: number = Math.floor(renderedRow.length/2) + Math.ceil(row.items[0].length/2);
+        return renderedRow.substring(0, dataStart) + row.items[0] + renderedRow.substring(dataEnd);
     }
 
     private renderMultiCellRow(row: Row, edges: Edges): string{
@@ -98,7 +127,6 @@ export class TableBuilder{
 }
 
 interface Row{
-    readonly index: number;
     readonly items: string[];
     readonly type: RowType;
     readonly padding: Padding;
