@@ -1,6 +1,6 @@
-import { Server } from "src/core/abstractions";
-import { Channel, User, ServerIdentity } from "src/core/model";
-import { BotError, ErrorCode } from "src/core/concretions";
+import { Server } from "../core/abstractions";
+import { Channel, User, ServerIdentity } from "../core/model";
+import { BotError, ErrorCode } from "../core/concretions";
 import { Guild, VoiceChannel, GuildChannel, GuildMember } from 'discord.js';
 
 export class DiscordServer implements Server{

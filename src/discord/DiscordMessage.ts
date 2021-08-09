@@ -1,8 +1,9 @@
-import { Message } from "src/core/abstractions";
-import { BotError, ErrorCode } from "src/core/concretions";
-import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch } from "src/core/model";
-import { Message as DiscordAPIMessage, GuildChannel, StringResolvable, APIMessage } from "discord.js";
+import { Message, Server } from "../core/abstractions";
+import { BotError, ErrorCode } from "../core/concretions";
+import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch } from "../core/model";
 import { Presenter } from "./presentation";
+import { DiscordServer } from ".";
+import { Message as DiscordAPIMessage, GuildChannel, StringResolvable, APIMessage } from "discord.js";
 
 export class DiscordMessage implements Message{
 
@@ -10,6 +11,13 @@ export class DiscordMessage implements Message{
         private readonly message: DiscordAPIMessage,
         private readonly presenter: Presenter
     ){}
+
+    public getServer(): Server{
+        if(this.message.guild)
+            return new DiscordServer(this.message.guild);
+        else
+            throw new BotError(ErrorCode.NOT_IN_A_SERVER);
+    }
 
     public getAuthor(): User {
         return { id: this.message.author.id, name: this.message.author.username };
@@ -25,44 +33,47 @@ export class DiscordMessage implements Message{
     }
 
     public async replyWithError(error: ErrorCode): Promise<void> {
-        await this.reply(this.presenter.createReplyFromError, error);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromError(error);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithTeams(teams: [Account[], Account[]]): Promise<void> {
-        await this.reply(this.presenter.createReplyFromTeams, teams);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromTeams(teams);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithSummonerStats(stats: SummonerOverallStats): Promise<void> {
-        await this.reply(this.presenter.createReplyFromSummonerStats, stats);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromSummonerStats(stats);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithPrediction(prediction: Prediction): Promise<void> {
-        await this.reply(this.presenter.createReplyFromPrediction, prediction);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromPrediction(prediction);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
-        await this.reply(this.presenter.createReplyFromCompletedMatch, match);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromCompletedMatch(match);
+        console.log(reply);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithAccount(account: Account): Promise<void> {
-        await this.reply(this.presenter.createReplyFromAccount, account);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromAccount(account);
+        await this.message.channel.send(reply);
     }
 
     public async replyWithHelp(): Promise<void> {
-        await this.reply(this.presenter.createReplyFromHelp);
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromHelp();
+        await this.message.channel.send(reply);
     }
 
     private getGuildChannel(): GuildChannel{
         if(!(this.message.channel instanceof GuildChannel))
-            throw new BotError(ErrorCode.CHANNEL_IS_NOT_IN_A_SERVER);
+            throw new BotError(ErrorCode.NOT_IN_A_SERVER);
         else if(!this.message.channel.isText())
             throw new BotError(ErrorCode.CHANNEL_IS_NOT_TEXT);
         else
             return this.message.channel as GuildChannel;
-    }
-
-    private async reply(presenter: (...args: any) => StringResolvable | APIMessage, ...args: any): Promise<void>{
-        const reply: StringResolvable | APIMessage = presenter(args);
-        await this.message.channel.send(reply);
     }
 }

@@ -1,6 +1,7 @@
-import { Message } from "src/core/abstractions";
+import { Message, Server } from "src/core/abstractions";
 import { ErrorCode } from "src/core/concretions";
 import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction } from "src/core/model";
+import { MockServer } from ".";
 
 export class MockMessage implements Message{
 
@@ -10,6 +11,10 @@ export class MockMessage implements Message{
     constructor(
         private readonly content: string
     ){}
+
+    public getServer(): Server{
+        return new MockServer();
+    }
 
     public getAuthor(): User {
         return { id: "user_id", name: "user_name" };

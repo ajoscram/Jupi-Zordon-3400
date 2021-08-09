@@ -32,6 +32,7 @@
   "homepage": "https://github.com/ajoscram/Jupi-Zordon-3400#readme",
   "devDependencies": {
     "@types/jasmine": "^3.7.7",
+    "@types/node": "^16.4.13",
     "dotenv": "^10.0.0",
     "jasmine": "^3.8.0",
     "jasmine-ts": "^0.4.0",

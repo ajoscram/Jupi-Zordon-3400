@@ -1,7 +1,9 @@
 import { ErrorCode } from '../concretions';
 import { Channel, CompletedMatch, User, Account, SummonerOverallStats, Prediction } from '../model'
+import { Server } from '.';
 
 export interface Message{
+    getServer(): Server;
     getAuthor(): User;
     getChannel(): Channel;
     getContent(): string;

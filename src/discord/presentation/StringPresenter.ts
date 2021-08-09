@@ -192,7 +192,7 @@ export class StringPresenter implements Presenter{
 
     private addPerformanceStats(builder: TableBuilder, performanceStats: PerformanceStats[]): TableBuilder{
         builder.addData(
-            ["Summoner", "Champion", "KDA", "Damage","Gold", "CS / Min", "Vision", "CC"],
+            ["Summoner", "Champion", "KDA", "Damage","CS / Min"],
             Padding.LINE
         );
         for(let performance of performanceStats){
@@ -201,10 +201,7 @@ export class StringPresenter implements Presenter{
                 performance.champion.name,
                 performance.kills + "/" + performance.deaths + "/" + performance.assists,
                 this.stringify(performance.damageDealtToChampions),
-                this.stringify(performance.gold),
-                this.stringify(performance.minions / performance.minutesPlayed),
-                this.stringify(performance.visionScore),
-                this.stringify(performance.crowdControlScore)
+                this.stringify(performance.minions / performance.minutesPlayed)
             ]);
         }
         return builder;
