@@ -11,8 +11,7 @@ interface Stats{
     readonly minions: number,
     readonly minutesPlayed: number,
     readonly visionScore: number,
-    readonly crowdControlScore: number,
-    readonly pentakills: number
+    readonly crowdControlScore: number
 }
 
 export interface PerformanceStats extends Stats{
@@ -28,6 +27,7 @@ export interface PerformanceStats extends Stats{
 export interface OverallStats extends Stats{
     readonly wins: number,
     readonly losses: number,
+    readonly pentakills: number
 }
 
 export interface SummonerOverallStats extends OverallStats{
