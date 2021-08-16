@@ -63,8 +63,8 @@ export class MockMatchFetcher implements MatchFetcher {
         return {
             summoner,
             champion,
-            largestMultikill: 4,
-            largestKillingSpree: 3,
+            largestMultikill: 5,
+            largestKillingSpree: 6,
             firstBlood,
             firstTower,
             role,
@@ -78,7 +78,8 @@ export class MockMatchFetcher implements MatchFetcher {
             minions: 125,
             minutesPlayed: 31,
             visionScore: 21,
-            crowdControlScore: 15
+            crowdControlScore: 15,
+            pentakills: 1
         };
     }
 
