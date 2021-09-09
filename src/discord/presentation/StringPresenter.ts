@@ -1,6 +1,6 @@
 import { StringResolvable, APIMessage } from "discord.js";
 import { CalculatedOverallStats, ErrorCode } from "../../core/concretions";
-import { Account, SummonerOverallStats, Prediction, CompletedMatch, Summoner, Champion, TeamStats, PerformanceStats } from "../../core/model";
+import { Account, SummonerOverallStats, Prediction, CompletedMatch, TeamStats, PerformanceStats, Pick, Participant } from "../../core/model";
 import { Presenter } from ".";
 import { errors } from "./english-errors";
 import { TableBuilder, Padding } from "./TableBuilder";
@@ -30,7 +30,7 @@ export class StringPresenter implements Presenter{
 
     public createReplyFromSummonerStats(overallStats: SummonerOverallStats): StringResolvable | APIMessage {
         const stats: CalculatedOverallStats = new CalculatedOverallStats(overallStats);
-        const sortedPicks: Pick[] = this.sortPicksByFrequency(overallStats.picks);
+        const sortedPicks: Pick[] = overallStats.picks.sort((x, y) => y.count - x.count);
         return new TableBuilder()
             .addHeader(overallStats.summoner.name)
             .addSeparator(Padding.EMPTY)
@@ -99,15 +99,13 @@ export class StringPresenter implements Presenter{
     }
 
     public createReplyFromPrediction(prediction: Prediction): StringResolvable | APIMessage {
-        const playerCount: number = this.getLargestPlayerCount(prediction.match.blue.size, prediction.match.red.size);
-        const redPlayers: Summoner[] = Array.from(prediction.match.red.keys());
-        const bluePlayers: Summoner[] = Array.from(prediction.match.blue.keys());
+        const playerCount: number = this.getLargestPlayerCount(prediction.match.blue.length, prediction.match.red.length);
         const tableBuilder: TableBuilder = new TableBuilder();
         tableBuilder.addData(["Blue Team", "Red Team"], Padding.LINE);
         for(let i=0; i < playerCount; i++){
             tableBuilder.addData([
-                this.getOngoingMatchPlayerEntry(prediction.match.blue, bluePlayers[i]),
-                this.getOngoingMatchPlayerEntry(prediction.match.red, redPlayers[i])
+                this.getOngoingMatchPlayerEntry(prediction.match.blue[i]),
+                this.getOngoingMatchPlayerEntry(prediction.match.red[i])
             ]);
         }
         return tableBuilder
@@ -143,8 +141,8 @@ export class StringPresenter implements Presenter{
         return firstTeamSize > secondTeamSize ? firstTeamSize : secondTeamSize;
     }
 
-    private getOngoingMatchPlayerEntry(teamMap: Map<Summoner, Champion>, summoner?: Summoner): string{
-        return summoner ? summoner.name + " (" + teamMap.get(summoner)?.name + ")" : "";
+    private getOngoingMatchPlayerEntry(participant?: Participant): string{
+        return participant ? participant.summoner.name + " (" + participant.champion.name + ")" : "";
     }
 
     private stringify(value: number){
@@ -157,24 +155,6 @@ export class StringPresenter implements Presenter{
         return value % 1 == 0 ?
             value + suffix :
             value.toFixed(2) + suffix;
-    }
-
-    private sortPicksByFrequency(picks: Map<Champion, number>): Pick[]{
-        const sorted: Pick[] = [];
-        for(const champion of picks.keys()){
-            const pickCount: number = picks.get(champion) || 0;
-            let i: number = 0;
-            for(i; i < sorted.length; i++){
-                if(sorted[i].count < pickCount){
-                    sorted.splice(i, 0, {champion, count: pickCount});
-                    break;
-                }
-            }
-
-            if(i == sorted.length)
-                sorted.push({champion, count: pickCount});
-        }
-        return sorted;
     }
 
     private addTeamStats(builder: TableBuilder, teamName: string, stats: TeamStats): TableBuilder{
@@ -206,9 +186,4 @@ export class StringPresenter implements Presenter{
         }
         return builder;
     }
-}
-
-interface Pick{
-    readonly champion: Champion,
-    readonly count: number
 }

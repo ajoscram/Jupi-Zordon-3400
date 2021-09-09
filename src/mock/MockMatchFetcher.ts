@@ -1,34 +1,33 @@
 import { MatchFetcher } from "../core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role } from "../core/model";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role, Participant } from "../core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
 
     private num: number = 0;
     
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
-        const blue: Map<Summoner,Champion> = this.getTeam(summoner);
-        const red:  Map<Summoner,Champion> = this.getTeam();
+        const blue: Participant[] = this.getParticipants(summoner);
+        const red:  Participant[] = this.getParticipants();
         return {
-                    red,
-                    blue,
-                    serverIdentity,
-                    id: "" + this.num++
-                };
+            blue,        
+            red,        
+            serverIdentity,
+            id: "" + this.num++
+        };
     }
 
     public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
         return {
-                id: ongoingMatch.id,
-                serverIdentity: ongoingMatch.serverIdentity,
-                blue : this.getTeamStats(ongoingMatch.blue, true),
-                red : this.getTeamStats(ongoingMatch.red, false),
-                minutesPlayed : 31,
-                date : new Date()
-            };
+            id: ongoingMatch.id,
+            serverIdentity: ongoingMatch.serverIdentity,
+            blue : this.getTeamStats(ongoingMatch.blue, true),
+            red : this.getTeamStats(ongoingMatch.red, false),
+            minutesPlayed : 31,
+            date : new Date()
+        };
     }
 
-    private getTeamStats(mapSummChamp: Map<Summoner,Champion>, wonTeam: boolean): TeamStats{
-        
+    private getTeamStats(participants: Participant[], wonTeam: boolean): TeamStats{ 
         return {
             bans: [],
             won: wonTeam,
@@ -36,19 +35,19 @@ export class MockMatchFetcher implements MatchFetcher {
             heralds: 1,
             barons: 1,
             towers: 9,
-            performanceStats: this.getPerformanceStatsArray(mapSummChamp, wonTeam)
+            performanceStats: this.getPerformanceStatsArray(participants, wonTeam)
         };
     }
 
-    private getPerformanceStatsArray(mapSummChamp: Map<Summoner,Champion>, wonTeam: boolean ): PerformanceStats[] {
+    private getPerformanceStatsArray(participants: Participant[], wonTeam: boolean ): PerformanceStats[] {
         const performanceStatsArray: PerformanceStats[] = [];
         const roles: Role[] = [ Role.TOP, Role.MIDDLE, Role.JUNGLE, Role.CARRY, Role.SUPPORT ];
         let first: boolean = true;
-        for (let summoner of mapSummChamp.keys()){
+        for (let participant of participants){
             performanceStatsArray.push(
                 this.getPerformanceStats(
-                    summoner, 
-                    mapSummChamp.get(summoner) ?? this.createChampion(this.num++),
+                    participant.summoner, 
+                    participant.champion,
                     first && wonTeam,
                     first && wonTeam,
                     roles.pop() ?? Role.UNKNOWN
@@ -92,28 +91,31 @@ export class MockMatchFetcher implements MatchFetcher {
     }
 
         
-    private getTeam(summoner?: Summoner): Map<Summoner,Champion> {
+    private getParticipants(summoner?: Summoner): Participant[] {
 
         let teamPlayers: number;
-        const team: Map<Summoner,Champion> = new Map();
+        const participants: Participant[] = [];
 
         if (summoner){
             teamPlayers = 4;
-            team.set(summoner, this.createChampion(this.num++));
+            participants.push({
+                summoner,
+                champion: this.createChampion(this.num++)
+            });
         }
         else
             teamPlayers = 5;
 
-        for (let i = 0; i<teamPlayers; i++) {
-            const summ: Summoner = {
+        for (let i = 0; i < teamPlayers; i++) {
+            const summoner: Summoner = {
                                         id: this.num.toString(),
                                         name: "Summoner " + this.num++
                                     };
 
-            const champ: Champion = this.createChampion(this.num++);
-            team.set(summ,champ);
+            const champion: Champion = this.createChampion(this.num++);
+            participants.push({summoner,champion});
             
         }
-        return team;
+        return participants;
     }   
 }

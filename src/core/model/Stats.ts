@@ -1,4 +1,4 @@
-import { Champion, Role, Summoner } from ".";
+import { Champion, Pick, Role, Summoner } from ".";
 
 interface Stats{
     readonly assists: number,
@@ -32,12 +32,12 @@ export interface OverallStats extends Stats{
 
 export interface SummonerOverallStats extends OverallStats{
     readonly summoner: Summoner,
-    readonly picks: Map<Champion, number>,
+    readonly picks: Pick[]
 }
 
 export interface ChampionOverallStats extends OverallStats{
     readonly champion: Champion,
-    readonly bans: number,
+    readonly bans: number
 }
 
 export interface TeamStats{
@@ -47,5 +47,5 @@ export interface TeamStats{
     readonly heralds: number, 
     readonly barons: number,
     readonly towers: number,
-    readonly performanceStats: PerformanceStats[],
+    readonly performanceStats: PerformanceStats[]
 }

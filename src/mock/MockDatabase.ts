@@ -1,5 +1,5 @@
-import { Database } from "src/core/abstractions";
-import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Champion } from "src/core/model";
+import { Database } from "../core/abstractions";
+import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Pick } from "../core/model";
 
 export class MockDatabase implements Database {
 
@@ -35,15 +35,15 @@ export class MockDatabase implements Database {
     }
 
     public async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
-        const picksMap = new Map<Champion,number>();
-        picksMap.set({ id: "17", name: "Katarina", picture: "Katarina.png" }, 17);
-        picksMap.set({ id: "18", name: "Illaoi", picture: "Illaoi.png" }, 30);
-        picksMap.set({ id: "19", name: "Yuumi", picture: "Yuumi.png" }, 1);
-        picksMap.set({ id: "20", name: "Ezreal", picture: "Ezreal.png" }, 13);
-        picksMap.set({ id: "21", name: "Cho'Gath", picture: "Cho'Gath.png" }, 24);
+        const picks: Pick[] = [];
+        picks.push(this.getPick("17", "Katarina", 17));
+        picks.push(this.getPick("18", "Illaoi", 30));
+        picks.push(this.getPick("19", "Yuumi", 1));
+        picks.push(this.getPick("20", "Ezreal", 13));
+        picks.push(this.getPick("21", "Cho'Gath", 24));
         return {
             summoner,
-            picks: picksMap,
+            picks: picks,
             wins: 17,
             losses: 10,
             assists: 180,
@@ -59,6 +59,17 @@ export class MockDatabase implements Database {
             crowdControlScore: 200,
             pentakills: 3
         };
+    }
+
+    private getPick(championId: string, championName: string, count: number): Pick{
+        return {
+            champion: {
+                id: championId,
+                name: championName,
+                picture: championName + ".png"
+            },
+            count
+        }
     }
 
     public async getAIModel(): Promise<AIModel> {
