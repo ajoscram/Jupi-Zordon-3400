@@ -65,7 +65,8 @@ export class MongoDatabase implements Database {
     }
 
     async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
-        //INSERT INTO THE DB
+        console.log(completedMatch);
+        await this.insertIntoDb(completedMatch, constantsValues.COMPLETEDMATCHES);
 
     }
 
