@@ -3,7 +3,7 @@ from common import fetcher
 
 def parse_raw_match(raw_match, serverIdentity=None):
     return {
-        "id": raw_match["gameId"],
+        "id": str(raw_match["gameId"]),
         "date": get_date(raw_match),
         "minutesPlayed": get_minutes_played(raw_match),
         "serverIdentity": serverIdentity,

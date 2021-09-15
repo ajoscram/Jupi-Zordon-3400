@@ -1,11 +1,13 @@
 import requests
+from common import dotenv
 
 versions_url = "https://ddragon.leagueoflegends.com/api/versions.json"
 champions_url = "https://ddragon.leagueoflegends.com/cdn/{}/data/en_US/champion.json"
 summoner_url = "https://la1.api.riotgames.com/lol/summoner/v4/summoners/by-name/"
 match_url = "https://la1.api.riotgames.com/lol/match/v4/matches/"
+match_history_url = "https://la1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
 
-token = None
+token = dotenv.vars()["RIOT_API_KEY"]
 champions = None
 summoners = {}
 
@@ -54,11 +56,21 @@ def get_summoner(name):
     return summoners[name]
 
 def get_match(id):
-    return perform_riot_api_request(match_url + id)
+    match = perform_riot_api_request(match_url + id)
+    if "participantIdentities" in match:
+        for participant in match["participantIdentities"]:
+            participant_name = participant["player"]["summonerName"]
+            if participant_name not in summoners:
+                participant_id = participant["player"]["accountId"]
+                summoners[participant_name] = { "id": participant_id, "name": participant_name }
+    return match
 
-def perform_riot_api_request(url, header={}):
+def get_match_history(account_id):
+    params = { "queue": 420, "endIndex": 9, "beginIndex": 0 }
+    url = match_history_url + account_id
+    return perform_riot_api_request(url, params)["matches"]
+
+def perform_riot_api_request(url, params={}):
     global token
-    if token == None:
-        raise PermissionError("You must provide an API key by setting the global token variable to it")
-    header["X-Riot-Token"] = token
-    return requests.get(url, headers=header).json()
+    header = { "X-Riot-Token": token }
+    return requests.get(url, headers=header, params=params).json()
