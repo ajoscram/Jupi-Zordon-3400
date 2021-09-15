@@ -84,10 +84,10 @@ export class MockMatchFetcher implements MatchFetcher {
 
     private createChampion(id: number): Champion{
         return {
-                    picture : "https://www.poppy.com",
-                    id: id.toString(),
-                    name: "Champion " + id
-                };
+            picture : "https://www.poppy.com",
+            id: id.toString(),
+            name: "Champion " + id
+        };
     }
 
         
@@ -108,13 +108,11 @@ export class MockMatchFetcher implements MatchFetcher {
 
         for (let i = 0; i < teamPlayers; i++) {
             const summoner: Summoner = {
-                                        id: this.num.toString(),
-                                        name: "Summoner " + this.num++
-                                    };
-
+                id: this.num.toString(),
+                name: "Summoner " + this.num++
+            };
             const champion: Champion = this.createChampion(this.num++);
             participants.push({summoner,champion});
-            
         }
         return participants;
     }   
