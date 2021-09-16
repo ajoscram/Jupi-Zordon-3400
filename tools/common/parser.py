@@ -40,7 +40,12 @@ def get_raw_team_stats(raw_match, team_id):
     raise ValueError("Raw team with id " + team_id + " not found")
 
 def get_team_bans(raw_bans):
-    return [ fetcher.get_champion(str(ban["championId"])) for ban in raw_bans ]
+    bans = []
+    for raw_ban in raw_bans:
+        ban_id = raw_ban["championId"]
+        if ban_id != -1:
+            bans += [ fetcher.get_champion(str(ban_id)) ]
+    return bans
 
 def get_team_performances(raw_match, team_id):
     performances = []

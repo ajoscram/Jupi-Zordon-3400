@@ -4,7 +4,7 @@ def write(match, directory):
     if not os.path.exists(directory):
         os.makedirs(directory)
     filepath = directory + "/" + get_filename(match)
-    with open(filepath, "w+") as file:
+    with open(filepath, "w+", encoding='utf8') as file:
         json.dump(match, file, indent=4, ensure_ascii=False)
 
 def get_filename(match):

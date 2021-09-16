@@ -7,10 +7,6 @@ summoner_url = "https://la1.api.riotgames.com/lol/summoner/v4/summoners/by-name/
 match_url = "https://la1.api.riotgames.com/lol/match/v4/matches/"
 match_history_url = "https://la1.api.riotgames.com/lol/match/v4/matchlists/by-account/"
 
-token = dotenv.vars()["RIOT_API_KEY"]
-champions = None
-summoners = {}
-
 current_summoner_names = {
     "Cannábi Nutria": "McLOVIN Fogell",
     "Divella96": "KeresMight",
@@ -20,10 +16,6 @@ current_summoner_names = {
     "EI Pescador": "El Pescatore"
 }
 
-def initialize(api_key):
-    global token
-    token = api_key
-
 def create_champion_dictionary():
     version = requests.get(versions_url).json()[0]
     raw_champions = requests.get(champions_url.format(version)).json()
@@ -32,10 +24,12 @@ def create_champion_dictionary():
         champions[raw_champion["key"]] = raw_champion
     return champions
 
+champions = create_champion_dictionary()
+token = dotenv.vars()["RIOT_API_KEY"]
+summoners = {}
+
 def get_champion(id):
     global champions
-    if champions == None:
-        champions = create_champion_dictionary()
     return {
         "id": id,
         "name": champions[id]["name"],
