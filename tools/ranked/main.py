@@ -17,11 +17,15 @@ while current_summoner != None:
     for match_metadata in recent_matches:
         match_id = str(match_metadata["gameId"])
         
-        if register.try_register_match(match_id):
-            print("Added new match: " + match_id)
-        else:
-            print("Skipped match since it was already added: " + match_id)
-        
+        try:
+            if register.try_register_match(match_id):
+                print("Added new match: " + match_id)
+            else:
+                print("Skipped match since it was already added: " + match_id)
+        except Exception as exception:
+            print("An error occurred while registering match: " + match_id)
+            print("\t" + str(exception))
+
         time.sleep(5)
     print("\n---------------------------------------------\n")
     current_summoner = register.get_next_summoner()

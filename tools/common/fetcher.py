@@ -60,7 +60,7 @@ def get_match(id):
     return match
 
 def get_match_history(account_id):
-    params = { "queue": 420, "endIndex": 9, "beginIndex": 0 }
+    params = { "queue": 420, "endIndex": 10, "beginIndex": 0 }
     url = match_history_url + account_id
     return perform_riot_api_request(url, params)["matches"]
 

@@ -36,9 +36,9 @@ def try_register_match(match_id):
     is_match_new = not writer.exists(raw_output_directory + match_id + ".json")
     if is_match_new:
         raw_match = fetcher.get_match(match_id)
-        writer.write(raw_match, raw_output_directory)
-        
         jupi_match = parser.parse_raw_match(raw_match)
+
+        writer.write(raw_match, raw_output_directory)
         writer.write(jupi_match, jupi_output_directory)
 
         register_team_summoners(jupi_match["blue"])
