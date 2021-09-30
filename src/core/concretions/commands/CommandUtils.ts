@@ -1,5 +1,5 @@
-import { Context } from '../..';
-import { User, Account, Summoner } from '../../../model';
+import { Context } from '../../concretions';
+import { User, Account, Summoner } from '../../model';
 
 export class CommandUtils{
     public async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{

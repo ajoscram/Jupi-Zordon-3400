@@ -1,8 +1,8 @@
 import "jasmine";
-import { Command, Message } from "../../src/core/abstractions";
-import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "../../src/core/concretions/commands";
-import { CommandFactory } from "../../src/core/concretions/commands/creation";
-import { MockMessage } from "../../src/mock";
+import { Command, Message } from "../../../../../src/core/abstractions";
+import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "../../../../../src/core/concretions/commands";
+import { CommandFactory } from "../../../../../src/core/concretions/commands/creation";
+import { MockMessage } from "../../../../../src/mock";
 
 describe('CommandFactory', () => {
 
