@@ -1,14 +1,11 @@
-import { Command, Message } from ".";
+import { Command, Message, CommandFactory } from ".";
 import { Context, BotError, ErrorCode } from "../concretions";
-import { CommandFactory } from "../concretions/commands/creation";
 import { Logger } from "../concretions/logging";
 
 export abstract class Bot{
-    private readonly commandFactory: CommandFactory;
-
-    constructor(commandIdentifier: string){
-        this.commandFactory = new CommandFactory(commandIdentifier);
-    }
+    constructor(
+        private readonly commandFactory: CommandFactory
+    ){}
 
     public abstract initialize(): Promise<void>;
     public abstract run(): Promise<void>;
@@ -17,14 +14,15 @@ export abstract class Bot{
     protected async process(message: Message): Promise<void>{
         try{
             const command: Command | null = this.commandFactory.tryCreateCommand(message);
-            await command?.execute(this.getContext(message));
+            const context: Context = this.getContext(message);
+            await command?.execute(context);
         }
         catch(error){
             this.handleError(error, message);
         }
     }
 
-    private handleError(error: any, message: Message): void{
+    private handleError(error: any, message: Message): void {
         if(!(error instanceof Error))
             error = new Error("Someone was stupid enough to throw this: " + error);
 

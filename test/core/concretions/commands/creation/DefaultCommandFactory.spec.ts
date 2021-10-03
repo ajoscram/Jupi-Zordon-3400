@@ -1,13 +1,13 @@
 import "jasmine";
 import { Command, Message } from "../../../../../src/core/abstractions";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "../../../../../src/core/concretions/commands";
-import { CommandFactory } from "../../../../../src/core/concretions/commands/creation";
+import { DefaultCommandFactory } from "../../../../../src/core/concretions/commands/creation";
 import { MockMessage } from "../../../../../src/mock";
 
-describe('CommandFactory', () => {
+describe('DefaultCommandFactory', () => {
 
     const identifier: string = "!";
-    const factory: CommandFactory = new CommandFactory(identifier);
+    const factory: DefaultCommandFactory = new DefaultCommandFactory(identifier);
 
     function createCommandVariationStrings(aliases: string[], parameters: string[] = []): string[]{
         const parameterList: string = parameters.reduce((list, parameter) => list + " " + parameter, "");
@@ -19,8 +19,9 @@ describe('CommandFactory', () => {
         const variations: Command[] = [];
         for(let variation of variationStrings){
             const message: Message = new MockMessage(variation);
-            const command: Command = factory.tryCreateCommand(message);
-            variations.push(command);
+            const command: Command | null = factory.tryCreateCommand(message);
+            if(command)
+                variations.push(command);
         }
         return variations;
     }
@@ -39,21 +40,21 @@ describe('CommandFactory', () => {
             );
     });
 
-    it('tryCreateCommand(): returns a LinkAccountCommand if given its alias', () => {
+    it('tryCreateCommand(): returns a RecordMatchCommand if given its alias', () => {
         getCommandVariations(["record", "r"])
             .forEach(variation =>
                 expect(variation instanceof RecordMatchCommand).toBeTrue()
             );
     });
 
-    it('tryCreateCommand(): returns a LinkAccountCommand if given its alias', () => {
+    it('tryCreateCommand(): returns a GetPlayerStatsCommand if given its alias', () => {
         getCommandVariations(["stats", "s"])
             .forEach(variation =>
                 expect(variation instanceof GetPlayerStatsCommand).toBeTrue()
             );
     });
 
-    it('tryCreateCommand(): returns a LinkAccountCommand if given its alias', () => {
+    it('tryCreateCommand(): returns a HelpCommand if given its alias', () => {
         getCommandVariations(["help", "h"])
             .forEach(variation =>
                 expect(variation instanceof HelpCommand).toBeTrue()

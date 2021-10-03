@@ -1,10 +1,9 @@
-import { Client } from "discord.js";
+import { Client,Message as DiscordAPIMessage } from "discord.js";
 import { Logger } from "../core/concretions/logging";
-import { Bot, Database, MatchFetcher, Message, Predictor, SummonerFetcher } from "../core/abstractions";
+import { Bot, CommandFactory, Database, MatchFetcher, Message, Predictor, SummonerFetcher } from "../core/abstractions";
 import { Context } from "../core/concretions";
 import { AIModel } from "../core/model";
-import { Message as DiscordAPIMessage } from "discord.js";
-import { DiscordMessage } from "./DiscordMessage";
+import { DiscordMessage } from ".";
 import { StringPresenter } from "./presentation";
 
 export class DiscordBot extends Bot{
@@ -13,13 +12,13 @@ export class DiscordBot extends Bot{
     private readonly client: Client;
 
     public constructor(
-        commandIdentifier: string,
+        commandFactory: CommandFactory,
         private readonly database: Database,    
         private readonly matchFetcher: MatchFetcher,
         private readonly summonerFetcher: SummonerFetcher,
         private readonly predictor: Predictor
     ){
-        super(commandIdentifier);
+        super(commandFactory);
         this.client = new Client();
         DiscordBot.self = this;
     }

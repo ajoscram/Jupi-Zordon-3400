@@ -1,9 +1,9 @@
-import { Command, Message } from "../../../abstractions";
+import { Command, CommandFactory, Message } from "../../../abstractions";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "..";
 import { CommandMetadataExtractor } from "./CommandMetadataExtractor";
 import { CommandMetadata } from "./CommandMetadata";
 
-export class CommandFactory{
+export class DefaultCommandFactory implements CommandFactory{
 
     private readonly extractor: CommandMetadataExtractor;
 

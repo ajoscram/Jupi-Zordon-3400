@@ -9,7 +9,7 @@
   },
   "scripts": {
     "exec": "node build/src/main.js",
-    "build": "npx tsc",
+    "build": "npx tsc -p tsconfig-build.json",
     "jasmine": "npx jasmine-ts \"test/**/*.spec.ts\"",
     "start": "npm run build && npm run exec",
     "dev": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./test -i ./docs -x npm run start --s",
@@ -37,6 +37,8 @@
     "jasmine": "^3.8.0",
     "jasmine-ts": "^0.4.0",
     "nodemon": "^2.0.9",
+    "ts-node": "^10.2.1",
+    "typemoq": "^2.1.0",
     "typescript": "^4.3.5"
   },
   "dependencies": {
