@@ -4,21 +4,19 @@ import { IMock, Mock } from "typemoq";
 
 export class ContextMockBuilder{
 
-    public readonly predictor: IMock<Predictor> = Mock.ofType<Predictor>();
-    public readonly summonerFetcher: IMock<SummonerFetcher> = Mock.ofType<SummonerFetcher>();
-    public readonly matchFetcher: IMock<MatchFetcher> = Mock.ofType<MatchFetcher>();
-    public readonly server: IMock<Server> = Mock.ofType<Server>();
-    public readonly database: IMock<Database> = Mock.ofType<Database>();
-    public readonly message: IMock<Message> = Mock.ofType<Message>();
+    public readonly predictorMock: IMock<Predictor> = Mock.ofType<Predictor>();
+    public readonly summonerFetcherMock: IMock<SummonerFetcher> = Mock.ofType<SummonerFetcher>();
+    public readonly matchFetcherMock: IMock<MatchFetcher> = Mock.ofType<MatchFetcher>();
+    public readonly serverMock: IMock<Server> = Mock.ofType<Server>();
+    public readonly databaseMock: IMock<Database> = Mock.ofType<Database>();
+    public readonly messageMock: IMock<Message> = Mock.ofType<Message>();
 
-    public build(): Context{
-        return {
-            message: this.message.object,
-            predictor: this.predictor.object,
-            summonerFetcher: this.summonerFetcher.object,
-            matchFetcher: this.matchFetcher.object,
-            server: this.server.object,
-            database: this.database.object
-        }
+    public readonly context: Context = {
+        message: this.messageMock.object,
+        predictor: this.predictorMock.object,
+        summonerFetcher: this.summonerFetcherMock.object,
+        matchFetcher: this.matchFetcherMock.object,
+        server: this.serverMock.object,
+        database: this.databaseMock.object
     }
 }

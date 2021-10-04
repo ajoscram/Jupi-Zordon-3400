@@ -13,10 +13,10 @@ export class TestableBot extends Bot{
     public async initialize(): Promise<void> { }
     
     public async run(): Promise<void> {
-        await this.process(this.contextMockBuilder.message.object);
+        await this.process(this.contextMockBuilder.context.message);
     }
 
     protected getContext(message: Message): Context {
-        return this.contextMockBuilder.build();
+        return this.contextMockBuilder.context;
     }
 }
