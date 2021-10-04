@@ -2,7 +2,7 @@ import { Database, MatchFetcher, Message, Predictor, Server, SummonerFetcher } f
 import { Context } from "../../src/core/concretions";
 import { IMock, Mock } from "typemoq";
 
-export class ContextMockBuilder{
+export class ContextMock{
 
     public readonly predictorMock: IMock<Predictor> = Mock.ofType<Predictor>();
     public readonly summonerFetcherMock: IMock<SummonerFetcher> = Mock.ofType<SummonerFetcher>();
@@ -11,7 +11,7 @@ export class ContextMockBuilder{
     public readonly databaseMock: IMock<Database> = Mock.ofType<Database>();
     public readonly messageMock: IMock<Message> = Mock.ofType<Message>();
 
-    public readonly context: Context = {
+    public readonly object: Context = {
         message: this.messageMock.object,
         predictor: this.predictorMock.object,
         summonerFetcher: this.summonerFetcherMock.object,

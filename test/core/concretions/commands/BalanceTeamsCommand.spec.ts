@@ -1,7 +1,7 @@
 import "jasmine";
 import { Account, Channel, User } from "../../../../src/core/model";
 import { BalanceTeamsCommand } from "../../../../src/core/concretions/commands";
-import { ContextMockBuilder, DummyModelFactory } from "../../../utils";
+import { ContextMock, DummyModelFactory } from "../../../utils";
 import { Times } from "typemoq";
 
 describe('BalanceTeamsCommand', () => {
@@ -18,45 +18,45 @@ describe('BalanceTeamsCommand', () => {
         [accounts[0], accounts[1]],
         [accounts[2], accounts[3]]
     ];
-    let contextMockBuilder: ContextMockBuilder;
+    let contextMock: ContextMock;
 
     beforeEach(async () => {
-        contextMockBuilder = new ContextMockBuilder();
-        contextMockBuilder.serverMock
+        contextMock = new ContextMock();
+        contextMock.serverMock
             .setup(x => x.getUsersInChannel(channel))
             .returns(() => users);
-        contextMockBuilder.databaseMock
+        contextMock.databaseMock
             .setup(x => x.getAccounts(users))
             .returns(async () => accounts);
-        contextMockBuilder.predictorMock
+        contextMock.predictorMock
             .setup(x => x.balance(accounts))
             .returns(async () => teams);
     });
 
     it('execute(): should reply with the expected teams if given a channel', async () => {
         const channelName: string = "channel name";
-        contextMockBuilder.serverMock
+        contextMock.serverMock
             .setup(x => x.getChannel(channelName))
             .returns(() => channel);
 
         const command: BalanceTeamsCommand = new BalanceTeamsCommand([channelName]);
-        await command.execute(contextMockBuilder.context);
+        await command.execute(contextMock.object);
 
-        contextMockBuilder.messageMock.verify(x => x.replyWithTeams(teams), Times.once());
+        contextMock.messageMock.verify(x => x.replyWithTeams(teams), Times.once());
     });
 
     it('execute(): should reply with the expected teams for the message authors current channel if no channel is given', async () => {
         const user: User = dummyFactory.createUser();
-        contextMockBuilder.messageMock
+        contextMock.messageMock
             .setup(x => x.getAuthor())
             .returns(() => user);
-        contextMockBuilder.serverMock
+        contextMock.serverMock
             .setup(x => x.getCurrentChannel(user))
             .returns(() => channel);
 
         const command: BalanceTeamsCommand = new BalanceTeamsCommand([]);
-        await command.execute(contextMockBuilder.context);
+        await command.execute(contextMock.object);
 
-        contextMockBuilder.messageMock.verify(x => x.replyWithTeams(teams), Times.once());
+        contextMock.messageMock.verify(x => x.replyWithTeams(teams), Times.once());
     });
 });
