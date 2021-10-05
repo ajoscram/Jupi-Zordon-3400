@@ -4,10 +4,9 @@ import { HelpCommand } from "../../../../src/core/concretions/commands";
 import { ContextMock } from "../../../utils";
 
 describe('HelpCommand', () => {
+    const contextMock: ContextMock = new ContextMock();
 
     it('execute(): should reply with help', async () => {
-        const contextMock: ContextMock = new ContextMock();
-
         const command: HelpCommand = new HelpCommand();
         await command.execute(contextMock.object);
 

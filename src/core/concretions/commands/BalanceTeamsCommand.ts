@@ -17,7 +17,7 @@ export class BalanceTeamsCommand implements Command{
         const users: User[] = context.server.getUsersInChannel(channel);
         const accounts: Account[] = await context.database.getAccounts(users);
         const balancedTeams: [Account[], Account[]] = await context.predictor.balance(accounts);
-        context.message.replyWithTeams(balancedTeams);
+        await context.message.replyWithTeams(balancedTeams);
     }
 
     private getChannel(context: Context): Channel{

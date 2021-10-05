@@ -5,12 +5,13 @@ import { GetPlayerStatsCommand } from "../../../../src/core/concretions/commands
 import { ContextMock, DummyModelFactory } from "../../../utils";
 
 describe('GetPlayerStatsCommand', () => {
+    const dummyFactory: DummyModelFactory = new DummyModelFactory();
+    const contextMock: ContextMock = new ContextMock();
+
     it('execute(): should reply the summoners overall stats', async () => {
         const summonerName: string = "summoner name";
-        const dummyFactory: DummyModelFactory = new DummyModelFactory();
         const summoner: Summoner = dummyFactory.createSummoner();
         const stats: SummonerOverallStats = dummyFactory.createSummonerOverallStats();
-        const contextMock: ContextMock = new ContextMock();
         contextMock.summonerFetcherMock
             .setup(x => x.getSummoner(summonerName))
             .returns(async () => summoner);

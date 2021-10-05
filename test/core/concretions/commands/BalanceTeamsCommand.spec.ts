@@ -15,8 +15,8 @@ describe('BalanceTeamsCommand', () => {
     ];
     const users: User[] = accounts.map(account => account.user);
     const teams: [ Account[], Account[] ] = [
-        [accounts[0], accounts[1]],
-        [accounts[2], accounts[3]]
+        [ accounts[0], accounts[1] ],
+        [ accounts[2], accounts[3] ]
     ];
     let contextMock: ContextMock;
 

@@ -41,11 +41,11 @@ export interface ChampionOverallStats extends OverallStats{
 }
 
 export interface TeamStats{
-    readonly bans: Champion[],
     readonly won: boolean,
     readonly dragons: number,
     readonly heralds: number, 
     readonly barons: number,
     readonly towers: number,
+    readonly bans: Champion[],
     readonly performanceStats: PerformanceStats[]
 }
