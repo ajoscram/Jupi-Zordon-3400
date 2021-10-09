@@ -1,5 +1,5 @@
+.env
 build/
 node_modules/
-.env
 tools/output/
-__pycache__
+__pycache__/
