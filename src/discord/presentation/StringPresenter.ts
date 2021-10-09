@@ -44,9 +44,9 @@ export class StringPresenter implements Presenter{
             ])
             .addData(["Kills", "Deaths", "Assists", "KDA"], Padding.LINE)
             .addData([
-                this.stringify(stats.killsPerGame),
-                this.stringify(stats.deathsPerGame),
-                this.stringify(stats.assistsPerGame),
+                this.stringify(stats.killsPerMatch),
+                this.stringify(stats.deathsPerMatch),
+                this.stringify(stats.assistsPerMatch),
                 this.stringify(stats.kda)
             ])
             .addSeparator()
@@ -69,9 +69,9 @@ export class StringPresenter implements Presenter{
             .addHeader("Damage", Padding.EMPTY)
             .addData(["Champions", "Objectives", "Received", "Rate"], Padding.LINE)
             .addData([
-                this.stringify(stats.damageDealtToChampionsPerGame),
-                this.stringify(stats.damageDealtToObjectivesPerGame),
-                this.stringify(stats.damageReceivedPerGame),
+                this.stringify(stats.damageDealtToChampionsPerMatch),
+                this.stringify(stats.damageDealtToObjectivesPerMatch),
+                this.stringify(stats.damageReceivedPerMatch),
                 this.stringify(stats.damageRate)
             ])
             .addSeparator()
@@ -79,9 +79,9 @@ export class StringPresenter implements Presenter{
             .addHeader("Income", Padding.EMPTY)
             .addData(["Gold", "Gold / Min", "CS", "CS / Min"], Padding.LINE)
             .addData([
-                this.stringify(stats.goldPerGame),
+                this.stringify(stats.goldPerMatch),
                 this.stringify(stats.goldPerMinute),
-                this.stringify(stats.minionsPerGame),
+                this.stringify(stats.minionsPerMatch),
                 this.stringify(stats.minionsPerMinute),
             ])
             .addSeparator()
@@ -89,9 +89,9 @@ export class StringPresenter implements Presenter{
             .addHeader("Others", Padding.EMPTY)
             .addData(["Minutes", "Vision", "CC", "Pentas"], Padding.LINE)
             .addData([
-                this.stringify(stats.minutesPlayedPerGame), 
-                this.stringify(stats.visionScorePerGame),
-                this.stringify(stats.crowdControlScorePerGame),
+                this.stringify(stats.minutesPlayedPerMatch), 
+                this.stringify(stats.visionScorePerMatch),
+                this.stringify(stats.crowdControlScorePerMatch),
                 this.stringify(overallStats.pentakills)
             ])
             .addSeparator()
