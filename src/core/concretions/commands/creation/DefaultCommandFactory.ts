@@ -1,17 +1,17 @@
-import { Command, Message } from "../../../abstractions";
+import { Command, CommandFactory, Message } from "../../../abstractions";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "..";
 import { CommandMetadataExtractor } from "./CommandMetadataExtractor";
 import { CommandMetadata } from "./CommandMetadata";
 
-export class CommandFactory{
+export class DefaultCommandFactory implements CommandFactory{
 
-    private extractor: CommandMetadataExtractor
+    private readonly extractor: CommandMetadataExtractor;
 
     constructor(identifier: string){
         this.extractor = new CommandMetadataExtractor(identifier);
     }
 
-    public tryCreateCommand(message: Message): Command{
+    public tryCreateCommand(message: Message): Command | null{
         const metadata: CommandMetadata = this.extractor.extract(message);
         switch(metadata.alias){
             case "link":

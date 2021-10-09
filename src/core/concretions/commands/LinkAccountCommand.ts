@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
 import { User, Account, Summoner } from "../../model";
-import { CommandUtils } from "./util";
+import { CommandUtils } from "./CommandUtils";
 
 export class LinkAccountCommand implements Command{
 
@@ -18,6 +18,6 @@ export class LinkAccountCommand implements Command{
         const summoner: Summoner = await context.summonerFetcher.getSummoner(this.summonerName);
         const account: Account = { summoner, user };
         await context.database.upsert(account);
-        context.message.send(account);
+        await context.message.replyWithAccount(account);
     }
 }

@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
 import { Summoner, SummonerOverallStats } from "../../model";
-import { CommandUtils } from "./util";
+import { CommandUtils } from "./CommandUtils";
 
 export class GetPlayerStatsCommand implements Command{
 
@@ -17,6 +17,6 @@ export class GetPlayerStatsCommand implements Command{
     public async execute(context: Context): Promise<void> {
         const summoner: Summoner = await this.utils.getSummoner(context, this.summonerName);
         const stats: SummonerOverallStats = await context.database.getSummonerOverallStats(summoner);
-        context.message.send(stats);
+        await context.message.replyWithSummonerStats(stats);
     }
 }

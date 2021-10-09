@@ -9,11 +9,11 @@
   },
   "scripts": {
     "exec": "node build/src/main.js",
-    "build": "npx tsc",
+    "build": "npx tsc -p tsconfig-build.json",
     "jasmine": "npx jasmine-ts \"test/**/*.spec.ts\"",
     "start": "npm run build && npm run exec",
-    "dev": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./test -x npm run start --s",
-    "test": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -x npm run jasmine --s"
+    "dev": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./test -i ./docs -x npm run start --s",
+    "test": "npx nodemon -e js,ts,json,env -i ./node_modules -i ./build -i ./docs -x npm run jasmine --s"
   },
   "repository": {
     "type": "git",
@@ -32,10 +32,18 @@
   "homepage": "https://github.com/ajoscram/Jupi-Zordon-3400#readme",
   "devDependencies": {
     "@types/jasmine": "^3.7.7",
+    "@types/node": "^16.4.13",
     "dotenv": "^10.0.0",
     "jasmine": "^3.8.0",
     "jasmine-ts": "^0.4.0",
     "nodemon": "^2.0.9",
+    "ts-node": "^10.2.1",
+    "typemoq": "^2.1.0",
     "typescript": "^4.3.5"
+  },
+  "dependencies": {
+    "axios": "^0.21.1",
+    "discord.js": "^12.5.3",
+    "mongodb": "^4.1.1"
   }
 }

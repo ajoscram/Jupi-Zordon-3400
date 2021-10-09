@@ -1,7 +1,7 @@
 import { Command } from "../../abstractions";
 import { Context } from "..";
-import { CompletedMatch, OngoingMatch, ServerIdentity, Summoner } from "../../model";
-import { CommandUtils } from "./util";
+import { CompletedMatch, OngoingMatch, Prediction, ServerIdentity, Summoner } from "../../model";
+import { CommandUtils } from "./CommandUtils";
 
 export class RecordMatchCommand implements Command{
 
@@ -19,12 +19,12 @@ export class RecordMatchCommand implements Command{
         const serverIdentity: ServerIdentity = context.server.getIdentity();
 
         const ongoingMatch: OngoingMatch = await context.matchFetcher.getOngoingMatch(summoner, serverIdentity);
-        const probabilityBlueWins: number = await context.predictor.predict(ongoingMatch);
-        await context.database.insert(ongoingMatch);
-        context.message.send(ongoingMatch, probabilityBlueWins);
+        const prediction: Prediction = await context.predictor.predict(ongoingMatch);
+        await context.database.insertOngoingMatch(ongoingMatch);
+        await context.message.replyWithPrediction(prediction);
 
         const completedMatch: CompletedMatch = await context.matchFetcher.getCompletedMatch(ongoingMatch);
-        await context.database.insert(completedMatch);
-        context.message.send(completedMatch);
+        await context.database.insertCompletedMatch(completedMatch);
+        await context.message.replyWithCompletedMatch(completedMatch);
     }
 }

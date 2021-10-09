@@ -1,18 +1,18 @@
-import { ServerIdentity, Summoner, Champion, TeamStats } from ".";
+import { ServerIdentity, TeamStats, Participant } from ".";
 
 interface Match{
-    id: string,
-    serverIdentity: ServerIdentity
+    readonly id: string,
+    readonly serverIdentity: ServerIdentity
 }
 
 export interface OngoingMatch extends Match{
-    blue: Map<Summoner, Champion>
-    red: Map<Summoner, Champion>
+    readonly blue: Participant[],
+    readonly red: Participant[]
 }
 
 export interface CompletedMatch extends Match{
-    red: TeamStats,
-    blue: TeamStats,
-    minutesPlayed: number,
-    date: Date,
+    readonly red: TeamStats,
+    readonly blue: TeamStats,
+    readonly minutesPlayed: number,
+    readonly date: Date,
 }

@@ -1,5 +1,5 @@
 build/
 node_modules/
-types/
 .env
-tsconfig.tsbuildinfo
+tools/output/
+__pycache__

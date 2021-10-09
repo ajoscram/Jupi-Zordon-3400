@@ -1,16 +1,16 @@
 interface Identity{
-    id: string,
-    name: string,
+    readonly id: string,
+    readonly name: string,
 }
 
 export interface Champion extends Identity {
-    picture: string
+    readonly picture: string
 }
 
 export interface Summoner extends Identity { }
 
 export interface User extends Identity { }
 
-export interface ServerIdentity { }
+export interface ServerIdentity extends Identity{ }
 
 export interface Channel extends Identity { }

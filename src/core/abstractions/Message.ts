@@ -1,15 +1,17 @@
-import { BotError } from '../concretions';
-import { Channel, CompletedMatch, User, OngoingMatch, Account, SummonerOverallStats } from '../model'
+import { ErrorCode } from '../concretions';
+import { Channel, CompletedMatch, User, Account, SummonerOverallStats, Prediction } from '../model'
+import { Server } from '.';
 
 export interface Message{
-    getInvoker(): User;
-    getInvokingChannel(): Channel;
+    getServer(): Server;
+    getAuthor(): User;
+    getChannel(): Channel;
     getContent(): string;
-    send(error: BotError): void;
-    send(teams: [Account[], Account[]]): void;
-    send(stats: SummonerOverallStats): void;
-    send(match: OngoingMatch, probabilityBlueWins: number): void;
-    send(match: CompletedMatch): void;
-    send(account: Account): void;
-    send(text: string): void;
+    replyWithError(error: ErrorCode): Promise<void>;
+    replyWithTeams(teams: [Account[], Account[]]): Promise<void>;
+    replyWithSummonerStats(stats: SummonerOverallStats): Promise<void>;
+    replyWithPrediction(prediction: Prediction): Promise<void>;
+    replyWithCompletedMatch(match: CompletedMatch): Promise<void>;
+    replyWithAccount(account: Account): Promise<void>;
+    replyWithHelp(): Promise<void>;
 }

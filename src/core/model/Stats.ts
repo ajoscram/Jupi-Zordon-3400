@@ -1,49 +1,51 @@
-import { Champion, Summoner } from ".";
+import { Champion, Pick, Role, Summoner } from ".";
 
 interface Stats{
-    assists: number,
-    deaths: number,
-    damageDealtToChampions: number,
-    damageDealtToObjectives: number,
-    damageReceived: number,
-    gold: number,
-    kills: number,
-    minions: number,
-    minutesPlayed: number,
-    visionScore: number,
-    crowdControlScore: number,
+    readonly assists: number,
+    readonly deaths: number,
+    readonly damageDealtToChampions: number,
+    readonly damageDealtToObjectives: number,
+    readonly damageReceived: number,
+    readonly gold: number,
+    readonly kills: number,
+    readonly minions: number,
+    readonly minutesPlayed: number,
+    readonly visionScore: number,
+    readonly crowdControlScore: number,
+    readonly pentakills: number
 }
 
 export interface PerformanceStats extends Stats{
-    summoner: Summoner,
-    champion: Champion,
-    largestMultikill: number,
-    largestKillingSpree: number,
-    firstBlood: boolean,
-    firstTower: boolean,
+    readonly summoner: Summoner,
+    readonly champion: Champion,
+    readonly largestMultikill: number,
+    readonly largestKillingSpree: number,
+    readonly firstBlood: boolean,
+    readonly firstTower: boolean,
+    readonly role: Role
 }
 
-interface OverallStats extends Stats{
-    wins: number,
-    losses: number,
+export interface OverallStats extends Stats{
+    readonly wins: number,
+    readonly losses: number
 }
 
 export interface SummonerOverallStats extends OverallStats{
-    summoner: Summoner,
-    picks: Map<Champion, number>,
+    readonly summoner: Summoner,
+    readonly picks: Pick[]
 }
 
-export interface ChampionOverallStats{
-    champion: Champion,
-    bans: number,
+export interface ChampionOverallStats extends OverallStats{
+    readonly champion: Champion,
+    readonly bans: number
 }
 
 export interface TeamStats{
-    bans: Champion[],
-    won: boolean,
-    dragons: number,
-    heralds: number, 
-    barons: number,
-    towers: number,
-    performanceStats: PerformanceStats[],
+    readonly won: boolean,
+    readonly dragons: number,
+    readonly heralds: number, 
+    readonly barons: number,
+    readonly towers: number,
+    readonly bans: Champion[],
+    readonly performanceStats: PerformanceStats[]
 }
