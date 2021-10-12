@@ -51,7 +51,7 @@ export class DiscordBot extends Bot{
         Logger.logInformation('Jupi-Zordon 3400 is up and running!');
     }
 
-    private onMessage(message: DiscordAPIMessage): void{
+    private onMessage(message: DiscordAPIMessage): void {
         if(!message.author.bot){
             const wrappedMessage: Message = new DiscordMessage(message, new StringPresenter());
             DiscordBot.self.process(wrappedMessage);

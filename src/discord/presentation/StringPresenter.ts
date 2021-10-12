@@ -5,13 +5,13 @@ import { Presenter } from ".";
 import { errors } from "./english-errors";
 import { TableBuilder, Padding } from "./TableBuilder";
 
-export class StringPresenter implements Presenter{
+export class StringPresenter implements Presenter {
 
     public createReplyFromError(error: ErrorCode): StringResolvable | APIMessage {
         if(errors[ErrorCode[error]])
             return `ERROR: ${errors[ErrorCode[error]]}`;
         else
-            return `ERROR: An unexpected error occurred with code ${ErrorCode[error]}.`;
+            return `${errors.UNKNOWN} (${ErrorCode[error]})"`;
     }
 
     public createReplyFromTeams(teams: [Account[], Account[]]): StringResolvable | APIMessage {

@@ -7,11 +7,6 @@ export interface RawMatch {
     readonly participants: RawParticipant[] 
 }
 
-export interface RawSummoner {
-    readonly accountId: string, 
-    readonly name: string
-}
-
 export interface RawTeam {
     readonly teamId: number,
     readonly win: string,
@@ -58,3 +53,7 @@ export interface RawTimeline {
     readonly lane: string
 }
 
+export interface RawSummoner {
+    readonly accountId: string, 
+    readonly name: string
+}
