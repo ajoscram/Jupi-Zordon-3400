@@ -107,7 +107,6 @@ const expectedPredictionString: string = `
 ╚═══════════════════════════════════════╩═══════════════════════════════════════╝`;
 
 const expectedCompletedMatchString: string = `
-╔══════════════════════════ Wed Dec 31 1969 - 231 minutes ══════════════════════════╗
 ║                                                                                   ║
 ║                                    Red - LOST                                     ║
 ╠═════ Summoner ══════╦═════ Champion ══════╦═════ KDA ═════╦═ Damage ═╦═ CS / Min ═╣
