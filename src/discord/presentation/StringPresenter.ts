@@ -147,7 +147,7 @@ export class StringPresenter implements Presenter {
 
     private stringify(value: number){
         let suffix: string = "";
-        if(value > 1000 || value < -1000){
+        if(Math.abs(value) > 1000){
             value = value / 1000;
             suffix = "k";
         }
