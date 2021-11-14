@@ -1,4 +1,4 @@
-import { Bot } from "./core/abstractions";
+/*import { Bot } from "./core/abstractions";
 import { DiscordBot } from "./discord";
 import { MockDatabase, MockMatchFetcher, MockPredictor, MockSummonerFetcher } from "./mock";
 import { config as loadEnvironmentVariables } from "dotenv";
@@ -17,6 +17,20 @@ async function main(): Promise<void>{
     );
     await bot.initialize();
     await bot.run();
+}
+
+main();*/
+
+import { Champion } from "./core/model";
+import { ChampionFetcher, DataDragonChampionFetcher } from "./riot/champions";
+import { AxiosHttpClient, HttpClient } from "./riot/http";
+
+
+async function main(): Promise<void>{
+    const client: HttpClient = new AxiosHttpClient();
+    const fetcher: ChampionFetcher = new DataDragonChampionFetcher(client);
+    const champion: Champion = await fetcher.getChampion(266);
+    console.log(champion);
 }
 
 main();

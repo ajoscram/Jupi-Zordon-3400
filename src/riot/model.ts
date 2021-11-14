@@ -1,14 +1,49 @@
-export interface RawMatch {
-    readonly gameId: string,
+export enum TeamId {
+    BLUE = 100,
+    RED = 200
+}
+
+export enum RawRole {
+    SOLO = "SOLO",
+    DUO_CARRY = "DUO_CARRY",
+    DUO_SUPPORT = "DUO_SUPPORT",
+    JUNGLE = "JUNGLE"
+}
+
+export enum RawLane{
+    TOP = "TOP",
+    MIDDLE = "MIDDLE",
+    BOTTOM = "BOTTOM"
+}
+
+interface RawMatch {
+    readonly gameId: number,
+    readonly gameType: string
+}
+
+interface RawParticipant {
+    readonly teamId: TeamId,
+    readonly championId: number,
+}
+
+export interface RawOngoingMatch extends RawMatch {
+    readonly participants: RawOngoingMatchParticipant[]
+}
+
+export interface RawOngoingMatchParticipant extends RawParticipant {
+    readonly summonerId: string,
+    readonly summonerName: string
+}
+
+export interface RawCompletedMatch extends RawMatch {
     readonly gameCreation: number,
     readonly gameDuration: number,
-    readonly queueId: number,
     readonly teams: RawTeam[],
-    readonly participants: RawParticipant[] 
+    readonly participants: RawCompletedMatchParticipant[] 
 }
 
 export interface RawTeam {
-    readonly teamId: number,
+    readonly teamId: TeamId,
     readonly win: string,
     readonly towerKills: number,
     readonly baronKills: number,
@@ -21,10 +56,8 @@ export interface RawBan {
     readonly championId: number
 }
 
-export interface RawParticipant {
+export interface RawCompletedMatchParticipant extends RawParticipant {
     readonly participantId: number,
-    readonly teamId: number,
-    readonly championId: number,
     readonly stats: RawStats
 }
 
@@ -49,11 +82,23 @@ export interface RawStats {
 }
 
 export interface RawTimeline {
-    readonly role: string,
-    readonly lane: string
+    readonly role: RawRole,
+    readonly lane: RawLane
 }
 
 export interface RawSummoner {
     readonly accountId: string, 
     readonly name: string
+}
+
+export interface RawChampionContainer {
+    readonly data: { [championNameId: string]: RawChampion }
+}
+
+export interface RawChampion {
+    key: string,
+    name: string,
+    image: {
+        full: string
+    }
 }
