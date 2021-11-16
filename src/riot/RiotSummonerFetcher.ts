@@ -6,7 +6,7 @@ import { createRiotTokenHeader } from "./utils";
 
 export class RiotSummonerFetcher implements SummonerFetcher {
 
-    private readonly summonerUrl: string = "https://la1.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
+    public static readonly SUMMONER_URL: string = "https://la1.api.riotgames.com/lol/summoner/v4/summoners/by-name/";
 
     constructor(
         private readonly client: HttpClient
@@ -14,7 +14,7 @@ export class RiotSummonerFetcher implements SummonerFetcher {
 
     public async getSummoner(name: string): Promise<Summoner> {
         const urlSafeName: string = encodeURIComponent(name);
-        const requestUrl: string = this.summonerUrl + urlSafeName;
+        const requestUrl: string = RiotSummonerFetcher.SUMMONER_URL + urlSafeName;
         const header: Header = createRiotTokenHeader(); 
         const rawSummoner: RawSummoner = await this.client.get(requestUrl, [ header ]) as RawSummoner;
         return {

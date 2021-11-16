@@ -92,13 +92,13 @@ export interface RawSummoner {
 }
 
 export interface RawChampionContainer {
-    readonly data: { [championNameId: string]: RawChampion }
+    readonly data: { [ championNameId: string ]: RawChampion }
 }
 
 export interface RawChampion {
-    key: string,
-    name: string,
-    image: {
-        full: string
+    readonly key: string,
+    readonly name: string,
+    readonly image: {
+        readonly full: string
     }
 }

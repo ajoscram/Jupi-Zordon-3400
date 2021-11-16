@@ -5,9 +5,9 @@ describe('ConsoleWriter', () => {
     let loggedText: string;
     let consoleWriter: ConsoleWriter;
     
-    let originalInfoFunction: (...data: any[]) => void = console.info;
-    let originalErrorFunction: (...data: any[]) => void = console.error;
-    let originalWarnFunction: (...data: any[]) => void = console.warn;
+    const originalInfoFunction: (...data: any[]) => void = console.info;
+    const originalErrorFunction: (...data: any[]) => void = console.error;
+    const originalWarnFunction: (...data: any[]) => void = console.warn;
 
     function intercept(...data: any[]): void {
         loggedText = data[0];
@@ -21,7 +21,7 @@ describe('ConsoleWriter', () => {
 
     beforeEach(async () => {
         consoleWriter = new ConsoleWriter();
-        loggedText = "actual text";
+        loggedText = "actual text goes here";
     });
 
     it('logInformation: should log the via console.info', async () => {

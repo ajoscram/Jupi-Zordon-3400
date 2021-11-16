@@ -7,9 +7,9 @@ import { RawChampion, RawChampionContainer } from "../model";
 
 export class DataDragonChampionFetcher implements ChampionFetcher{
     
-    private static readonly VERSION_WILDCARD = "[VERSION]";
-    private static readonly VERSION_URL: string = "https://ddragon.leagueoflegends.com/api/versions.json";
-    private static readonly CHAMPIONS_URL: string = `https://ddragon.leagueoflegends.com/cdn/${DataDragonChampionFetcher.VERSION_WILDCARD}/data/en_US/champion.json`;
+    public static readonly VERSION_WILDCARD = "[VERSION]";
+    public static readonly VERSION_URL: string = "https://ddragon.leagueoflegends.com/api/versions.json";
+    public static readonly CHAMPIONS_URL: string = `https://ddragon.leagueoflegends.com/cdn/${DataDragonChampionFetcher.VERSION_WILDCARD}/data/en_US/champion.json`;
 
     private idToChampionsMap: Map<number, Champion>;
 

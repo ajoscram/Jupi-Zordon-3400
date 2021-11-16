@@ -1,3 +1,4 @@
+import { RawChampion, RawChampionContainer, RawSummoner } from "src/riot/model";
 import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role } from "../../src/core/model";
 
 export class DummyModelFactory{
@@ -107,6 +108,33 @@ export class DummyModelFactory{
             blue: this.createTeamStats(),
             minutesPlayed: this.createNumber(),
             date: this.createDate()
+        };
+    }
+
+    public createRawChampionContainer(): RawChampionContainer {
+        return {
+            data: {
+                champion1: this.createRawChampion(),
+                champion2: this.createRawChampion(),
+                champion3: this.createRawChampion(),
+            }
+        };
+    }
+
+    public createRawSummoner(): RawSummoner {
+        return {
+            accountId: this.createString("raw summoner accountId"),
+            name: this.createString("raw summoner id")
+        };
+    }
+
+    private createRawChampion(): RawChampion {
+        return {
+            key: this.createNumber().toString(),
+            name: this.createString("raw champion name"),
+            image: {
+                full: this.createString("raw champion image")
+            }
         };
     }
 
