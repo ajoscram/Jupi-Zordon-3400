@@ -1,4 +1,4 @@
-import { RawChampion, RawChampionContainer, RawSummoner } from "src/riot/model";
+import { RawChampion, RawChampionContainer, RawOngoingMatch, RawOngoingMatchParticipant, RawSummoner, TeamId } from "../../src/riot/model";
 import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role } from "../../src/core/model";
 
 export class DummyModelFactory{
@@ -125,6 +125,34 @@ export class DummyModelFactory{
         return {
             accountId: this.createString("raw summoner accountId"),
             name: this.createString("raw summoner id")
+        };
+    }
+
+    public createRawOngoingMatch(gameType: string): RawOngoingMatch {
+        return {
+            gameId: this.createNumber(),
+            gameType,
+            participants: [
+                this.createRawOngoingMatchParticipant(TeamId.BLUE),
+                this.createRawOngoingMatchParticipant(TeamId.BLUE),
+                this.createRawOngoingMatchParticipant(TeamId.BLUE),
+                this.createRawOngoingMatchParticipant(TeamId.BLUE),
+                this.createRawOngoingMatchParticipant(TeamId.BLUE),
+                this.createRawOngoingMatchParticipant(TeamId.RED),
+                this.createRawOngoingMatchParticipant(TeamId.RED),
+                this.createRawOngoingMatchParticipant(TeamId.RED),
+                this.createRawOngoingMatchParticipant(TeamId.RED),
+                this.createRawOngoingMatchParticipant(TeamId.RED)
+            ]
+        };
+    }
+
+    private createRawOngoingMatchParticipant(teamId: TeamId): RawOngoingMatchParticipant{
+        return {
+            teamId: teamId,
+            championId: this.createNumber(),
+            summonerId: this.createString("raw ongoing match participant id"),
+            summonerName: this.createString("raw ongoing match participant name")
         };
     }
 

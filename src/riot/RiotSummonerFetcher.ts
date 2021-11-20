@@ -13,8 +13,7 @@ export class RiotSummonerFetcher implements SummonerFetcher {
     ){ };
 
     public async getSummoner(name: string): Promise<Summoner> {
-        const urlSafeName: string = encodeURIComponent(name);
-        const requestUrl: string = RiotSummonerFetcher.SUMMONER_URL + urlSafeName;
+        const requestUrl: string = RiotSummonerFetcher.SUMMONER_URL + encodeURIComponent(name);
         const header: Header = createRiotTokenHeader(); 
         const rawSummoner: RawSummoner = await this.client.get(requestUrl, [ header ]) as RawSummoner;
         return {
