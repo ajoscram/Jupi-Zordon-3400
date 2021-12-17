@@ -230,7 +230,7 @@ export class DummyModelFactory{
     }
 
     private createDate(): Date{
-        return new Date(this.counter++);
+        return new Date(0);
     }
 
     private createNumber(): number{

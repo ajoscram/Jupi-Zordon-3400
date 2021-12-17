@@ -37,7 +37,7 @@ describe('StringPresenter', () => {
     it('createReplyFromRecordedMatch(): should return a table with the recorded match and its prediction', async () => {
         const match: OngoingMatch = factory.createOngoingMatch();
         const prediction: Prediction = factory.createPrediction();
-        const reply: string = presenter.createReplyFromRecordedMatch(match, prediction);        
+        const reply: string = presenter.createReplyFromRecordedMatch(match, prediction);
         expect(reply).toContain(expectedRecordedMatchString);
     });
 
@@ -69,13 +69,13 @@ describe('StringPresenter', () => {
         expect(reply).toContain(expectedKeptMatchesString);
     });
 
-    it('createReplyFromDeletedMatches(): should return a table with the deleted ongoing match if only one match is passed in', async () => {
+    it('createReplyFromDiscardedMatches(): should return a table with the deleted ongoing match if only one match is passed in', async () => {
         const match: OngoingMatch = factory.createOngoingMatch();
         const reply: string = presenter.createReplyFromDiscardedMatches([ match ]);
-        expect(reply).toContain(expectedDeletedMatchString);
+        expect(reply).toContain(expectedDiscardedMatchString);
     });
 
-    it('createReplyFromDeletedMatches(): should return a list of deleted ongoing matches if multiple matches are passed in', async () => {
+    it('createReplyFromDiscardedMatches(): should return a list of deleted ongoing matches if multiple matches are passed in', async () => {
         const matches: OngoingMatch[] = [
             factory.createOngoingMatch(),
             factory.createOngoingMatch(),
@@ -83,7 +83,7 @@ describe('StringPresenter', () => {
             factory.createOngoingMatch()
         ];
         const reply: string = presenter.createReplyFromDiscardedMatches(matches);
-        expect(reply).toContain(expectedDeletedMatchesString);
+        expect(reply).toContain(expectedDiscardedMatchesString);
     });
 
     it('createReplyFromAccount(): should return a string with the account', async () => {
@@ -138,47 +138,53 @@ const expectedSummonerStatsString: string =`
 ╚═══════════════════╩═══════════════════╩════════════╩════════════╝`;
 
 const expectedRecordedMatchString: string = `
+╔═════════════════════════════════════════╗
+║           New Match Recorded            ║
+╠════════════ Wed Dec 31 1969 ════════════╣
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 30  ║  champion name 32  ║
-║  summoner name 35  ║  champion name 37  ║
-║  summoner name 40  ║  champion name 42  ║
-║  summoner name 45  ║  champion name 47  ║
-║  summoner name 50  ║  champion name 52  ║
+║  summoner name 29  ║  champion name 31  ║
+║  summoner name 34  ║  champion name 36  ║
+║  summoner name 39  ║  champion name 41  ║
+║  summoner name 44  ║  champion name 46  ║
+║  summoner name 49  ║  champion name 51  ║
 ╠════════════════════╩════════════════════╣
-║            55% chance to win            ║
+║            54% chance to win            ║
 ╠═════════════════════════════════════════╣
 ║                                         ║
 ║                  Blue                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 5   ║  champion name 7   ║
-║  summoner name 10  ║  champion name 12  ║
-║  summoner name 15  ║  champion name 17  ║
-║  summoner name 20  ║  champion name 22  ║
-║  summoner name 25  ║  champion name 27  ║
+║  summoner name 4   ║  champion name 6   ║
+║  summoner name 9   ║  champion name 11  ║
+║  summoner name 14  ║  champion name 16  ║
+║  summoner name 19  ║  champion name 21  ║
+║  summoner name 24  ║  champion name 26  ║
 ╠════════════════════╩════════════════════╣
-║            55% chance to win            ║
+║            54% chance to win            ║
 ╚═════════════════════════════════════════╝`;
 
 const expectedRecordedMatchesString: string = `
 ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                Recorded Matches                                                 ║
 ╠═ # ═╦═ Teams ═╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  0  ║  Blue   ║     champion name 7, champion name 12, champion name 17, champion name 22, champion name 27     ║
-║     ║   Red   ║    champion name 32, champion name 37, champion name 42, champion name 47, champion name 52     ║
+║  0  ║  Blue   ║     champion name 6, champion name 11, champion name 16, champion name 21, champion name 26     ║
+║     ║   Red   ║    champion name 31, champion name 36, champion name 41, champion name 46, champion name 51     ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  1  ║  Blue   ║    champion name 61, champion name 66, champion name 71, champion name 76, champion name 81     ║
-║     ║   Red   ║   champion name 86, champion name 91, champion name 96, champion name 101, champion name 106    ║
+║  1  ║  Blue   ║    champion name 59, champion name 64, champion name 69, champion name 74, champion name 79     ║
+║     ║   Red   ║    champion name 84, champion name 89, champion name 94, champion name 99, champion name 104    ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  2  ║  Blue   ║  champion name 115, champion name 120, champion name 125, champion name 130, champion name 135  ║
-║     ║   Red   ║  champion name 140, champion name 145, champion name 150, champion name 155, champion name 160  ║
+║  2  ║  Blue   ║  champion name 112, champion name 117, champion name 122, champion name 127, champion name 132  ║
+║     ║   Red   ║  champion name 137, champion name 142, champion name 147, champion name 152, champion name 157  ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  3  ║  Blue   ║  champion name 169, champion name 174, champion name 179, champion name 184, champion name 189  ║
-║     ║   Red   ║  champion name 194, champion name 199, champion name 204, champion name 209, champion name 214  ║
+║  3  ║  Blue   ║  champion name 165, champion name 170, champion name 175, champion name 180, champion name 185  ║
+║     ║   Red   ║  champion name 190, champion name 195, champion name 200, champion name 205, champion name 210  ║
 ╚═════╩═════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedKeptMatchString: string = `
+╔═══════════════════════════════════════════════════════════════════════════════════╗
+║                                  New Match Kept                                   ║
+╠══════════════════════════ Wed Dec 31 1969 - 231 minutes ══════════════════════════╣
 ║                                                                                   ║
 ║                                    Red - LOST                                     ║
 ╠═════ Summoner ══════╦═════ Champion ══════╦═════ KDA ═════╦═ Damage ═╦═ CS / Min ═╣
@@ -209,51 +215,54 @@ const expectedKeptMatchesString: string = `
 ║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 139, champion name 158, champion name 177, champion name 196, champion name 215  ║
 ║     231 mins      ║    Red     ║    champion name 25, champion name 44, champion name 63, champion name 82, champion name 101    ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 372, champion name 391, champion name 410, champion name 429, champion name 448  ║
-║     464 mins      ║    Red     ║  champion name 258, champion name 277, champion name 296, champion name 315, champion name 334  ║
+║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 371, champion name 390, champion name 409, champion name 428, champion name 447  ║
+║     463 mins      ║    Red     ║  champion name 257, champion name 276, champion name 295, champion name 314, champion name 333  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 605, champion name 624, champion name 643, champion name 662, champion name 681  ║
-║     697 mins      ║    Red     ║  champion name 491, champion name 510, champion name 529, champion name 548, champion name 567  ║
+║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 603, champion name 622, champion name 641, champion name 660, champion name 679  ║
+║     695 mins      ║    Red     ║  champion name 489, champion name 508, champion name 527, champion name 546, champion name 565  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 838, champion name 857, champion name 876, champion name 895, champion name 914  ║
-║     930 mins      ║    Red     ║  champion name 724, champion name 743, champion name 762, champion name 781, champion name 800  ║
+║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 835, champion name 854, champion name 873, champion name 892, champion name 911  ║
+║     927 mins      ║    Red     ║  champion name 721, champion name 740, champion name 759, champion name 778, champion name 797  ║
 ╚═══════════════════╩════════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
-const expectedDeletedMatchString: string = `
+const expectedDiscardedMatchString: string = `
+╔═════════════════════════════════════════╗
+║           New Match Discarded           ║
+╠════════════ Wed Dec 31 1969 ════════════╣
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 30  ║  champion name 32  ║
-║  summoner name 35  ║  champion name 37  ║
-║  summoner name 40  ║  champion name 42  ║
-║  summoner name 45  ║  champion name 47  ║
-║  summoner name 50  ║  champion name 52  ║
+║  summoner name 29  ║  champion name 31  ║
+║  summoner name 34  ║  champion name 36  ║
+║  summoner name 39  ║  champion name 41  ║
+║  summoner name 44  ║  champion name 46  ║
+║  summoner name 49  ║  champion name 51  ║
 ╠════════════════════╩════════════════════╣
 ║                                         ║
 ║                  Blue                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 5   ║  champion name 7   ║
-║  summoner name 10  ║  champion name 12  ║
-║  summoner name 15  ║  champion name 17  ║
-║  summoner name 20  ║  champion name 22  ║
-║  summoner name 25  ║  champion name 27  ║
+║  summoner name 4   ║  champion name 6   ║
+║  summoner name 9   ║  champion name 11  ║
+║  summoner name 14  ║  champion name 16  ║
+║  summoner name 19  ║  champion name 21  ║
+║  summoner name 24  ║  champion name 26  ║
 ╚════════════════════╩════════════════════╝`;
 
-const expectedDeletedMatchesString: string = `
+const expectedDiscardedMatchesString: string = `
 ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                           New Matches Discarded                                           ║
 ╠═ Teams ═╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  Blue   ║     champion name 7, champion name 12, champion name 17, champion name 22, champion name 27     ║
-║   Red   ║    champion name 32, champion name 37, champion name 42, champion name 47, champion name 52     ║
+║  Blue   ║     champion name 6, champion name 11, champion name 16, champion name 21, champion name 26     ║
+║   Red   ║    champion name 31, champion name 36, champion name 41, champion name 46, champion name 51     ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║    champion name 61, champion name 66, champion name 71, champion name 76, champion name 81     ║
-║   Red   ║   champion name 86, champion name 91, champion name 96, champion name 101, champion name 106    ║
+║  Blue   ║    champion name 59, champion name 64, champion name 69, champion name 74, champion name 79     ║
+║   Red   ║    champion name 84, champion name 89, champion name 94, champion name 99, champion name 104    ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║  champion name 115, champion name 120, champion name 125, champion name 130, champion name 135  ║
-║   Red   ║  champion name 140, champion name 145, champion name 150, champion name 155, champion name 160  ║
+║  Blue   ║  champion name 112, champion name 117, champion name 122, champion name 127, champion name 132  ║
+║   Red   ║  champion name 137, champion name 142, champion name 147, champion name 152, champion name 157  ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║  champion name 169, champion name 174, champion name 179, champion name 184, champion name 189  ║
-║   Red   ║  champion name 194, champion name 199, champion name 204, champion name 209, champion name 214  ║
+║  Blue   ║  champion name 165, champion name 170, champion name 175, champion name 180, champion name 185  ║
+║   Red   ║  champion name 190, champion name 195, champion name 200, champion name 205, champion name 210  ║
 ╚═════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedAccountString: string = "Linked Discord account **user name 1** with LoL account **summoner name 3**.";
