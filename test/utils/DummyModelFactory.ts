@@ -230,7 +230,8 @@ export class DummyModelFactory{
     }
 
     private createDate(): Date{
-        return new Date(0);
+        const secondsInAday: number = 86300000;
+        return new Date(secondsInAday);
     }
 
     private createNumber(): number{
