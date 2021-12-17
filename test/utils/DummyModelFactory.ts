@@ -74,6 +74,7 @@ export class DummyModelFactory{
     public createOngoingMatch(): OngoingMatch{
         return{
             id: this.createString("ongoing match id"),
+            date: this.createDate(),
             serverIdentity: this.createServerIndentity(),
             blue: [
                 this.createParticipant(),
@@ -94,7 +95,6 @@ export class DummyModelFactory{
 
     public createPrediction(): Prediction{
         return {
-            match: this.createOngoingMatch(),
             probabilityBlueWins: this.createNumber(),
             probabilityRedWins: this.createNumber()
         };
@@ -104,8 +104,8 @@ export class DummyModelFactory{
         return {
             id: this.createString("completed match id"),
             serverIdentity: this.createServerIndentity(),
-            red: this.createTeamStats(),
-            blue: this.createTeamStats(),
+            red: this.createTeamStats(false),
+            blue: this.createTeamStats(true),
             minutesPlayed: this.createNumber(),
             date: this.createDate()
         };
@@ -131,6 +131,7 @@ export class DummyModelFactory{
     public createRawOngoingMatch(gameType: string): RawOngoingMatch {
         return {
             gameId: this.createNumber(),
+            gameStartTime: this.createNumber(),
             gameType,
             participants: [
                 this.createRawOngoingMatchParticipant(TeamId.BLUE),
@@ -166,9 +167,9 @@ export class DummyModelFactory{
         };
     }
 
-    private createTeamStats(): TeamStats{
+    private createTeamStats(won: boolean): TeamStats{
         return {
-            won: false,
+            won,
             dragons: this.createNumber(),
             heralds: this.createNumber(),
             barons: this.createNumber(),

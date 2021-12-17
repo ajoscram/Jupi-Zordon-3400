@@ -1,4 +1,4 @@
-import { CompletedMatch, User, OngoingMatch, Account, Summoner, SummonerOverallStats, AIModel } from "../model";
+import { CompletedMatch, User, OngoingMatch, Account, Summoner, SummonerOverallStats, AIModel, ServerIdentity } from "../model";
 
 export interface Database{
     initialize(): Promise<void>;
@@ -6,7 +6,10 @@ export interface Database{
     getAccounts(users: User[]): Promise<Account[]>;
     getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats>;
     getAIModel(): Promise<AIModel>;
-    upsert(account: Account): Promise<void>;
+    getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]>;
+    getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch>;
+    upsertAccount(account: Account): Promise<void>;
     insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void>;
     insertCompletedMatch(completedMatch: CompletedMatch): Promise<void>;
+    deleteOngoingMatch(matches: OngoingMatch): Promise<void>;
 }

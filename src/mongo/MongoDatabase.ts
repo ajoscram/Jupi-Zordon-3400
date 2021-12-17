@@ -1,5 +1,5 @@
 import { Database } from "../core/abstractions";
-import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch } from "src/core/model";
+import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, ServerIdentity } from "src/core/model";
 import { MongoClient } from "mongodb";
 import { constantsValues } from './Constants';
 import { BotError } from "../core/concretions";
@@ -22,7 +22,7 @@ export class MongoDatabase implements Database {
     async getAccount(user: User): Promise<Account> {
         const db = this.client.db(constantsValues.DATABASE_NAME);
         const result = await db.collection("summoner").findOne();
-        if (result !== null && result !== undefined) {
+        if (result) {
             return {
                 summoner: {
                     id: result.id,
@@ -55,7 +55,15 @@ export class MongoDatabase implements Database {
         return {};
     }
 
-    async upsert(account: Account): Promise<void> {
+    public async getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]> {
+        throw new Error("Method not implemented.");
+    }
+
+    public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
+        throw new Error("Method not implemented.");
+    }
+
+    async upsertAccount(account: Account): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
@@ -68,6 +76,10 @@ export class MongoDatabase implements Database {
         console.log(completedMatch);
         await this.insertIntoDb(completedMatch, constantsValues.COMPLETEDMATCHES);
 
+    }
+
+    public async deleteOngoingMatch(match: OngoingMatch): Promise<void> {
+        throw new Error("Method not implemented.");
     }
 
     private async insertIntoDb(object: any, collectionName: string) {

@@ -1,6 +1,6 @@
 import { Message, Server } from "src/core/abstractions";
 import { ErrorCode } from "src/core/concretions";
-import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction } from "src/core/model";
+import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction, OngoingMatch } from "src/core/model";
 import { MockServer } from ".";
 
 export class MockMessage implements Message{
@@ -40,12 +40,21 @@ export class MockMessage implements Message{
         this.sentItems.push(stats);
     }
 
-    public async replyWithPrediction(prediction: Prediction): Promise<void> {
+    public async replyWithRecordedMatch(match: OngoingMatch, prediction: Prediction): Promise<void> {
+        this.sentItems.push(match);
         this.sentItems.push(prediction);
     }
 
-    public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
-        this.sentItems.push(match);
+    public async replyWithKeptMatches(matches: CompletedMatch[]): Promise<void> {
+        this.sentItems.push(matches);
+    }
+
+    public async replyWithRecordedMatches(matches: OngoingMatch[]): Promise<void> {
+        this.sentItems.push(matches);
+    }
+
+    public async replyWithDiscardedMatches(matches: OngoingMatch[]): Promise<void> {
+        this.sentItems.push(matches);
     }
 
     public async replyWithAccount(account: Account): Promise<void> {

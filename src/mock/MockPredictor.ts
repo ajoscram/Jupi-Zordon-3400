@@ -11,7 +11,6 @@ export class MockPredictor implements Predictor {
 
     public async predict(ongoingMatch: OngoingMatch): Promise<Prediction> {
         return {
-            match: ongoingMatch,
             probabilityBlueWins: 0.5,
             probabilityRedWins: 0.5
         };

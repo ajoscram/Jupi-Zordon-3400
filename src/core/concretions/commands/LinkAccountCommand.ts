@@ -17,7 +17,7 @@ export class LinkAccountCommand implements Command{
         const user: User = context.server.getUser(this.username);
         const summoner: Summoner = await context.summonerFetcher.getSummoner(this.summonerName);
         const account: Account = { summoner, user };
-        await context.database.upsert(account);
+        await context.database.upsertAccount(account);
         await context.message.replyWithAccount(account);
     }
 }

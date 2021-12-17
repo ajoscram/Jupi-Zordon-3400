@@ -12,7 +12,8 @@ export class MockMatchFetcher implements MatchFetcher {
             blue,        
             red,        
             serverIdentity,
-            id: "" + this.num++
+            id: "" + this.num++,
+            date: new Date()
         };
     }
 

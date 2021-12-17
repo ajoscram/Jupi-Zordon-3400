@@ -2,6 +2,7 @@ import { ServerIdentity, TeamStats, Participant } from ".";
 
 interface Match{
     readonly id: string,
+    readonly date: Date,
     readonly serverIdentity: ServerIdentity
 }
 
@@ -13,6 +14,5 @@ export interface OngoingMatch extends Match {
 export interface CompletedMatch extends Match {
     readonly red: TeamStats,
     readonly blue: TeamStats,
-    readonly minutesPlayed: number,
-    readonly date: Date,
+    readonly minutesPlayed: number
 }

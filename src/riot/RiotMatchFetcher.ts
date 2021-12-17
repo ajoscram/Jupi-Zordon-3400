@@ -21,9 +21,10 @@ export class RiotMatchFetcher implements MatchFetcher {
         const requestUrl: string = RiotMatchFetcher.ONGOING_MATCH_URL + encodeURIComponent(summoner.id);
         const header: Header = createRiotTokenHeader();
         const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]) as RawOngoingMatch;
-        this.validateRawOngoingMatch(match); //TODO: pull this out of here to the command itself
+        this.validateRawOngoingMatch(match); //TODO: pull this out of here to the db when it's saved
         return {
             id: match.gameId.toString(),
+            date: new Date(match.gameStartTime),
             serverIdentity,
             blue: await this.getTeamParticipants(match.participants, TeamId.BLUE),
             red: await this.getTeamParticipants(match.participants, TeamId.RED)

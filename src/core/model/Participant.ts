@@ -1,6 +1,6 @@
 import { Champion, Summoner } from ".";
 
-export interface Participant{
+export interface Participant {
     readonly summoner: Summoner,
     readonly champion: Champion
 }

@@ -1,6 +1,6 @@
 import { StringResolvable, APIMessage } from "discord.js";
 import { CalculatedOverallStats, ErrorCode } from "../../core/concretions";
-import { Account, SummonerOverallStats, Prediction, CompletedMatch, TeamStats, PerformanceStats, Pick, Participant } from "../../core/model";
+import { Account, SummonerOverallStats, Prediction, CompletedMatch, TeamStats, PerformanceStats, Pick, Participant, OngoingMatch } from "../../core/model";
 import { Presenter } from ".";
 import { errors } from "./english-errors";
 import { TableBuilder, Padding } from "./TableBuilder";
@@ -16,8 +16,10 @@ export class StringPresenter implements Presenter {
 
     public createReplyFromTeams(teams: [Account[], Account[]]): StringResolvable | APIMessage {
         const playerCount: number = this.getLargestPlayerCount(teams[0].length, teams[0].length);
-        const tableBuilder: TableBuilder = new TableBuilder();
-        tableBuilder.addData(["Team 1", "Team 2"], Padding.LINE);
+        const tableBuilder: TableBuilder = new TableBuilder()
+            .addSeparator()
+            .addHeader("Balanced Teams", Padding.EMPTY)
+            .addData(["Team 1", "Team 2"], Padding.LINE);
         for(let i=0; i < playerCount; i++){
             const firstSummonerName: string = teams[0][i]?.summoner.name;
             const secondSummonerName: string = teams[1][i]?.summoner.name;
@@ -98,34 +100,57 @@ export class StringPresenter implements Presenter {
             .build();
     }
 
-    public createReplyFromPrediction(prediction: Prediction): StringResolvable | APIMessage {
-        const playerCount: number = this.getLargestPlayerCount(prediction.match.blue.length, prediction.match.red.length);
-        const tableBuilder: TableBuilder = new TableBuilder();
-        tableBuilder.addData(["Blue Team", "Red Team"], Padding.LINE);
-        for(let i=0; i < playerCount; i++){
-            tableBuilder.addData([
-                this.getOngoingMatchPlayerEntry(prediction.match.blue[i]),
-                this.getOngoingMatchPlayerEntry(prediction.match.red[i])
-            ]);
-        }
-        return tableBuilder
-            .addData(["Win %", "Win %"], Padding.LINE)
-            .addData([
-                this.stringify(prediction.probabilityBlueWins*100),
-                this.stringify(prediction.probabilityRedWins*100)
-            ])
+    public createReplyFromRecordedMatch(match: OngoingMatch, prediction: Prediction): StringResolvable | APIMessage {
+        const builder: TableBuilder = new TableBuilder()
             .addSeparator()
-            .build();
+            .addHeader("New Match Recorded", Padding.EMPTY);
+        this.addOngoingMatchToBuilder(builder, match, prediction);
+        return builder.build();
     }
 
-    public createReplyFromCompletedMatch(match: CompletedMatch): StringResolvable | APIMessage {
-        let builder: TableBuilder = new TableBuilder();
-        builder
-            .addHeader(match.date.toDateString()+" - " + match.minutesPlayed + " minutes")
-            .addSeparator(Padding.EMPTY);
-        this.addTeamStats(builder, "Red", match.red);
-        builder.addSeparator(Padding.EMPTY);
-        this.addTeamStats(builder, "Blue", match.blue);
+    public createReplyFromRecordedMatches(matches: OngoingMatch[]): StringResolvable | APIMessage {
+        const builder: TableBuilder = new TableBuilder()
+            .addSeparator(Padding.LINE)
+            .addHeader("Recorded Matches", Padding.EMPTY)
+            .addData(["#", "Teams", "Picks"], Padding.LINE);
+        for(let i = 0; i < matches.length; i++){
+            builder
+                .addData([
+                    i.toString(),
+                    "Blue",
+                    matches[i].blue.map(x => x.champion.name).join(", ")
+                ])
+                .addData([
+                    "",
+                    "Red",
+                    matches[i].red.map(x => x.champion.name).join(", ")
+                ])
+                .addSeparator();
+        }
+        return builder.build();
+    }
+
+    public createReplyFromKeptMatches(matches: CompletedMatch[]): StringResolvable | APIMessage {
+        const builder: TableBuilder = new TableBuilder().addSeparator(Padding.LINE);
+        if(matches.length == 1){
+            builder.addHeader("New Match Kept", Padding.EMPTY);
+            this.addCompletedMatchToBuilder(builder, matches[0]);
+        } else {
+            builder.addHeader("New Matches Kept", Padding.EMPTY);
+            this.addSummarizedCompletedMatchesToBuilder(builder, matches);
+        }
+        return builder.build();
+    }
+
+    public createReplyFromDiscardedMatches(matches: OngoingMatch[]): StringResolvable | APIMessage {
+        const builder: TableBuilder = new TableBuilder().addSeparator(Padding.LINE);
+        if(matches.length == 1){
+            builder.addHeader("New Match Discarded", Padding.EMPTY);
+            this.addOngoingMatchToBuilder(builder, matches[0]);
+        } else {
+            builder.addHeader("New Matches Discarded", Padding.EMPTY);
+            this.addSummarizedOngoingMatchesToBuilder(builder, matches);
+        }
         return builder.build();
     }
 
@@ -141,10 +166,6 @@ export class StringPresenter implements Presenter {
         return firstTeamSize > secondTeamSize ? firstTeamSize : secondTeamSize;
     }
 
-    private getOngoingMatchPlayerEntry(participant?: Participant): string{
-        return participant ? participant.summoner.name + " (" + participant.champion.name + ")" : "";
-    }
-
     private stringify(value: number){
         let suffix: string = "";
         if(Math.abs(value) > 1000){
@@ -157,9 +178,18 @@ export class StringPresenter implements Presenter {
             value.toFixed(2) + suffix;
     }
 
-    private addTeamStats(builder: TableBuilder, teamName: string, stats: TeamStats): TableBuilder{
+    private addCompletedMatchToBuilder(builder: TableBuilder, match: CompletedMatch): void {
+        builder
+            .addHeader(match.date.toDateString()+" - " + match.minutesPlayed + " minutes")
+            .addSeparator(Padding.EMPTY);
+        this.addTeamStatsToBuilder(builder, "Red", match.red);
+        builder.addSeparator(Padding.EMPTY);
+        this.addTeamStatsToBuilder(builder, "Blue", match.blue);
+    }
+
+    private addTeamStatsToBuilder(builder: TableBuilder, teamName: string, stats: TeamStats): void {
         builder.addHeader(teamName + " - " + (stats.won ? "WON" : "LOST"), Padding.EMPTY);
-        this.addPerformanceStats(builder, stats.performanceStats);
+        this.addPerformanceStatsToBuilder(builder, stats.performanceStats);
         builder.addSeparator().addHeader(
             "Dragons: " + stats.dragons +
             " Heralds: " + stats.heralds + 
@@ -167,10 +197,10 @@ export class StringPresenter implements Presenter {
             " Barons: " + stats.barons, 
             Padding.EMPTY
         );
-        return builder.addSeparator();
+        builder.addSeparator();
     }
 
-    private addPerformanceStats(builder: TableBuilder, performanceStats: PerformanceStats[]): TableBuilder{
+    private addPerformanceStatsToBuilder(builder: TableBuilder, performanceStats: PerformanceStats[]): void {
         builder.addData(
             ["Summoner", "Champion", "KDA", "Damage","CS / Min"],
             Padding.LINE
@@ -184,6 +214,65 @@ export class StringPresenter implements Presenter {
                 this.stringify(performance.minions / performance.minutesPlayed)
             ]);
         }
-        return builder;
+    }
+
+    private addSummarizedCompletedMatchesToBuilder(builder: TableBuilder, matches: CompletedMatch[]): void {
+        builder.addData(["Date & Duration", "Teams", "Picks"], Padding.LINE);
+        for(const match of matches){
+            builder
+                .addData([
+                    match.date.toDateString(),
+                    "Blue" + (match.blue.won ? " (W)" : ""),
+                    match.blue.performanceStats.map(x => x.champion.name).join(", "),
+                ])
+                .addData([
+                    match.minutesPlayed.toString() + " mins",
+                    "Red" + (match.red.won ? " (W)" : ""),
+                    match.red.performanceStats.map(x => x.champion.name).join(", "),
+                ])
+                .addSeparator();
+        }
+    }
+
+    private addOngoingMatchToBuilder(builder: TableBuilder, match: OngoingMatch, prediction?: Prediction): void {
+        builder.addHeader(match.date.toDateString(), Padding.LINE)
+        this.addOngoingMatchTeamToBuilder(builder, "Red", match.red, prediction?.probabilityRedWins);
+        this.addOngoingMatchTeamToBuilder(builder, "Blue", match.blue, prediction?.probabilityRedWins);
+    }
+
+    private addOngoingMatchTeamToBuilder(builder: TableBuilder, teamName: string, participants: Participant[], probabilityToWin?: number){
+        builder
+            .addSeparator(Padding.EMPTY)
+            .addHeader(teamName, Padding.EMPTY);
+        this.addParticipantsToBuilder(builder, participants);
+        
+        if(probabilityToWin !== undefined){
+            builder
+                .addHeader(`${this.stringify(probabilityToWin)}% chance to win`, Padding.EMPTY)
+                .addSeparator();
+        }
+    }
+
+    private addParticipantsToBuilder(builder: TableBuilder, participants: Participant[]): void{
+        builder.addData(["Summoner", "Champion"], Padding.LINE);
+        for(const participant of participants)
+            builder.addData([participant.summoner.name, participant.champion.name]);
+        builder.addSeparator();
+    }
+
+    private addSummarizedOngoingMatchesToBuilder(builder: TableBuilder, matches: OngoingMatch[]): void {
+        builder.addData(["Teams", "Picks"], Padding.LINE);
+        for(const match of matches){
+            builder
+                .addData([
+                    "Blue",
+                    match.blue.map(x => x.champion.name).join(", ")
+                ])
+                .addData([
+                    "Red",
+                    match.red.map(x => x.champion.name).join(", ")
+                ])
+                .addSeparator();
+        }
     }
 }

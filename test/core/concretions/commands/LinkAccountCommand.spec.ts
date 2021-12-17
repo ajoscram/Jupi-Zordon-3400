@@ -22,7 +22,7 @@ describe('LinkAccountCommand', () => {
         const command: LinkAccountCommand = new LinkAccountCommand([username, summonerName]);
         await command.execute(contextMock.object);
 
-        contextMock.databaseMock.verify(x => x.upsert(account), Times.once());
+        contextMock.databaseMock.verify(x => x.upsertAccount(account), Times.once());
         contextMock.messageMock.verify(x => x.replyWithAccount(account), Times.once());
     });
 });

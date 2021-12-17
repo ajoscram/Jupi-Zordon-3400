@@ -1,14 +1,12 @@
 import { Database } from "../core/abstractions";
-import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Pick } from "../core/model";
+import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Pick, ServerIdentity } from "../core/model";
 
 export class MockDatabase implements Database {
 
     private id: number = 0;
 
     public readonly ongoingMatches: OngoingMatch[] = [];
-
     public readonly completedMatches: CompletedMatch[] = [];
-
     public readonly accounts: Account[] = [];
 
     public async initialize(): Promise<void> { }
@@ -76,7 +74,15 @@ export class MockDatabase implements Database {
         return {};
     }
 
-    public async upsert(account: Account): Promise<void> {
+    public async getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]> {
+        return [...this.ongoingMatches];
+    }
+
+    public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
+        return this.ongoingMatches[index];
+    }
+
+    public async upsertAccount(account: Account): Promise<void> {
         //Check if account is created to update it or add it
         const desiredAccount: Account|undefined = this.accounts.find(element => 
             element.summoner.id === account.summoner.id &&
@@ -99,5 +105,11 @@ export class MockDatabase implements Database {
 
     public async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
         this.completedMatches.push(completedMatch);
+    }
+
+    public async deleteOngoingMatch(match: OngoingMatch): Promise<void> {
+        const index: number = this.ongoingMatches.indexOf(match);
+        if(index != -1)
+            this.ongoingMatches.splice(index, 1);
     }
 }

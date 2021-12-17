@@ -1,6 +1,6 @@
 import { Message, Server } from "../core/abstractions";
 import { BotError, ErrorCode } from "../core/concretions";
-import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch } from "../core/model";
+import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch, OngoingMatch } from "../core/model";
 import { Presenter } from "./presentation";
 import { DiscordServer } from ".";
 import { Message as DiscordAPIMessage, GuildChannel, StringResolvable, APIMessage } from "discord.js";
@@ -47,14 +47,23 @@ export class DiscordMessage implements Message{
         await this.message.channel.send(reply);
     }
 
-    public async replyWithPrediction(prediction: Prediction): Promise<void> {
-        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromPrediction(prediction);
+    public async replyWithRecordedMatch(match: OngoingMatch, prediction: Prediction): Promise<void> {
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromRecordedMatch(match, prediction);
         await this.message.channel.send(reply);
     }
 
-    public async replyWithCompletedMatch(match: CompletedMatch): Promise<void> {
-        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromCompletedMatch(match);
-        console.log(reply);
+    public async replyWithKeptMatches(matches: CompletedMatch[]): Promise<void> {
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromKeptMatches(matches);
+        await this.message.channel.send(reply);
+    }
+
+    public async replyWithRecordedMatches(matches: OngoingMatch[]): Promise<void> {
+        const reply: StringResolvable | APIMessage = this.presenter.createReplyFromRecordedMatches(matches);
+        await this.message.channel.send(reply);
+    }
+
+    public async replyWithDiscardedMatches(matches: OngoingMatch[]): Promise<void>{
+        const reply = this.presenter.createReplyFromDiscardedMatches(matches);
         await this.message.channel.send(reply);
     }
 

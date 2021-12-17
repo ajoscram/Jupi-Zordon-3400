@@ -27,6 +27,7 @@ interface RawParticipant {
 }
 
 export interface RawOngoingMatch extends RawMatch {
+    readonly gameStartTime: number,
     readonly participants: RawOngoingMatchParticipant[]
 }
 
