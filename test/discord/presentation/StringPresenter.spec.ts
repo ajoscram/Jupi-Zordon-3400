@@ -140,7 +140,7 @@ const expectedSummonerStatsString: string =`
 const expectedRecordedMatchString: string = `
 ╔═════════════════════════════════════════╗
 ║           New Match Recorded            ║
-╠════════════ Wed Dec 31 1969 ════════════╣
+╠════════════ Thu Jan 01 1970 ════════════╣
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
@@ -184,7 +184,7 @@ const expectedRecordedMatchesString: string = `
 const expectedKeptMatchString: string = `
 ╔═══════════════════════════════════════════════════════════════════════════════════╗
 ║                                  New Match Kept                                   ║
-╠══════════════════════════ Wed Dec 31 1969 - 231 minutes ══════════════════════════╣
+╠══════════════════════════ Thu Jan 01 1970 - 231 minutes ══════════════════════════╣
 ║                                                                                   ║
 ║                                    Red - LOST                                     ║
 ╠═════ Summoner ══════╦═════ Champion ══════╦═════ KDA ═════╦═ Damage ═╦═ CS / Min ═╣
@@ -212,23 +212,23 @@ const expectedKeptMatchesString: string = `
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                         New Matches Kept                                                         ║
 ╠═ Date & Duration ═╦══ Teams ═══╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 139, champion name 158, champion name 177, champion name 196, champion name 215  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 139, champion name 158, champion name 177, champion name 196, champion name 215  ║
 ║     231 mins      ║    Red     ║    champion name 25, champion name 44, champion name 63, champion name 82, champion name 101    ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 371, champion name 390, champion name 409, champion name 428, champion name 447  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 371, champion name 390, champion name 409, champion name 428, champion name 447  ║
 ║     463 mins      ║    Red     ║  champion name 257, champion name 276, champion name 295, champion name 314, champion name 333  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 603, champion name 622, champion name 641, champion name 660, champion name 679  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 603, champion name 622, champion name 641, champion name 660, champion name 679  ║
 ║     695 mins      ║    Red     ║  champion name 489, champion name 508, champion name 527, champion name 546, champion name 565  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Wed Dec 31 1969  ║  Blue (W)  ║  champion name 835, champion name 854, champion name 873, champion name 892, champion name 911  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 835, champion name 854, champion name 873, champion name 892, champion name 911  ║
 ║     927 mins      ║    Red     ║  champion name 721, champion name 740, champion name 759, champion name 778, champion name 797  ║
 ╚═══════════════════╩════════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedDiscardedMatchString: string = `
 ╔═════════════════════════════════════════╗
 ║           New Match Discarded           ║
-╠════════════ Wed Dec 31 1969 ════════════╣
+╠════════════ Thu Jan 01 1970 ════════════╣
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
