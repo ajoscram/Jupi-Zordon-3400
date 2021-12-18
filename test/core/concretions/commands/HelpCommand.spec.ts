@@ -12,5 +12,4 @@ describe('HelpCommand', () => {
 
         contextMock.messageMock.verify(x => x.replyWithHelp(), Times.once());
     });
-
 });

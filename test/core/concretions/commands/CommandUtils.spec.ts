@@ -1,12 +1,20 @@
 import "jasmine";
 import { CommandUtils } from "../../../../src/core/concretions/commands/CommandUtils";
-import { Account, Summoner } from "../../../../src/core/model";
+import { Account, OngoingMatch, ServerIdentity, Summoner } from "../../../../src/core/model";
 import { ContextMock, DummyModelFactory } from "../../../../test/utils";
 
 describe('CommandUtils', () => {
     const dummyFactory: DummyModelFactory = new DummyModelFactory();
-    const contextMock: ContextMock = new ContextMock();
+    const serverIdentity: ServerIdentity = dummyFactory.createServerIndentity();
     const utils: CommandUtils = new CommandUtils();
+    let contextMock: ContextMock = new ContextMock();
+
+    beforeEach(() => {
+        contextMock = new ContextMock();
+        contextMock.serverMock
+            .setup(x => x.getIdentity())
+            .returns(() => serverIdentity);
+    });
 
     it('getSummoner(): returns a summoner given their name', async () => {
         const summonerName: string = "summoner name";
@@ -31,6 +39,34 @@ describe('CommandUtils', () => {
         
         const summoner: Summoner = await utils.getSummoner(contextMock.object);
         expect(summoner).toBe(account.summoner);
+    });
+
+    it('getOngoingMatches(): returns ongoing matches for the server in the context if no match index is given', async () =>{
+        const expectedMatches: OngoingMatch[] = [
+            dummyFactory.createOngoingMatch(),
+            dummyFactory.createOngoingMatch(),
+            dummyFactory.createOngoingMatch(),
+        ];
+        contextMock.databaseMock
+            .setup(x => x.getOngoingMatches(serverIdentity))
+            .returns(async () => expectedMatches);
+        
+        const matches: OngoingMatch[] = await utils.getOngoingMatches(contextMock.object);
+
+        expect(matches).toBe(expectedMatches);
+    });
+
+    it('getOngoingMatches(): returns a list with only one match if its index is given', async () =>{
+        const expectedMatch: OngoingMatch = dummyFactory.createOngoingMatch();
+        const index: number = 1;
+        contextMock.databaseMock
+            .setup(x => x.getOngoingMatch(serverIdentity, index))
+            .returns(async () => expectedMatch);
+        
+        const matches: OngoingMatch[] = await utils.getOngoingMatches(contextMock.object, index);
+
+        expect(matches.length).toBe(1);
+        expect(matches[0]).toBe(expectedMatch);
     });
 
     it('validateOptionsLength(): doesnt throw if options length is in admissible lengths', async () => {

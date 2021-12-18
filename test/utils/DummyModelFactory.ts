@@ -230,8 +230,10 @@ export class DummyModelFactory{
     }
 
     private createDate(): Date{
-        const secondsInAday: number = 86300000;
-        return new Date(secondsInAday);
+        // this "seconds" variable is needed so that both local and CI dates
+        // are printed the same for the StringPresenter tests
+        const seconds: number = 86300000;
+        return new Date(seconds);
     }
 
     private createNumber(): number{
