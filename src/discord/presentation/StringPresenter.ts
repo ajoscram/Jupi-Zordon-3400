@@ -182,14 +182,14 @@ export class StringPresenter implements Presenter {
         builder
             .addHeader(match.date.toDateString()+" - " + match.minutesPlayed + " minutes")
             .addSeparator(Padding.EMPTY);
-        this.addTeamStatsToBuilder(builder, "Red", match.red);
+        this.addTeamStatsToBuilder(builder, "Red", match.red, match.minutesPlayed);
         builder.addSeparator(Padding.EMPTY);
-        this.addTeamStatsToBuilder(builder, "Blue", match.blue);
+        this.addTeamStatsToBuilder(builder, "Blue", match.blue, match.minutesPlayed);
     }
 
-    private addTeamStatsToBuilder(builder: TableBuilder, teamName: string, stats: TeamStats): void {
+    private addTeamStatsToBuilder(builder: TableBuilder, teamName: string, stats: TeamStats, minutesPlayed: number): void {
         builder.addHeader(teamName + " - " + (stats.won ? "WON" : "LOST"), Padding.EMPTY);
-        this.addPerformanceStatsToBuilder(builder, stats.performanceStats);
+        this.addPerformanceStatsToBuilder(builder, stats.performanceStats, minutesPlayed);
         builder.addSeparator().addHeader(
             "Dragons: " + stats.dragons +
             " Heralds: " + stats.heralds + 
@@ -200,7 +200,7 @@ export class StringPresenter implements Presenter {
         builder.addSeparator();
     }
 
-    private addPerformanceStatsToBuilder(builder: TableBuilder, performanceStats: PerformanceStats[]): void {
+    private addPerformanceStatsToBuilder(builder: TableBuilder, performanceStats: PerformanceStats[], minutesPlayed: number): void {
         builder.addData(
             ["Summoner", "Champion", "KDA", "Damage","CS / Min"],
             Padding.LINE
@@ -211,7 +211,7 @@ export class StringPresenter implements Presenter {
                 performance.champion.name,
                 performance.kills + "/" + performance.deaths + "/" + performance.assists,
                 this.stringify(performance.damageDealtToChampions),
-                this.stringify(performance.minions / performance.minutesPlayed)
+                this.stringify(performance.minions / minutesPlayed)
             ]);
         }
     }

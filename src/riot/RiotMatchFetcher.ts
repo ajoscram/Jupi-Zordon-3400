@@ -9,6 +9,7 @@ import { createRiotTokenHeader } from "./utils";
 export class RiotMatchFetcher implements MatchFetcher {
     
     public static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
+    public static readonly WIN_STRING: string = "Win";
     public static readonly ONGOING_MATCH_URL: string = "https://la1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/";
     public static readonly COMPLETED_MATCH_URL: string = "https://la1.api.riotgames.com/lol/match/v4/matches/";
 
@@ -21,7 +22,7 @@ export class RiotMatchFetcher implements MatchFetcher {
         const requestUrl: string = RiotMatchFetcher.ONGOING_MATCH_URL + encodeURIComponent(summoner.id);
         const header: Header = createRiotTokenHeader();
         const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]) as RawOngoingMatch;
-        this.validateRawOngoingMatch(match); //TODO: pull this out of here to the db when it's saved
+        this.validateRawOngoingMatch(match);
         return {
             id: match.gameId.toString(),
             date: new Date(match.gameStartTime),
@@ -59,7 +60,7 @@ export class RiotMatchFetcher implements MatchFetcher {
         const completedMatch: RawCompletedMatch = await this.client.get(requestUrl, [ header ]) as RawCompletedMatch;
         const minutesPlayed: number = Math.round(completedMatch.gameDuration / 60);
         return {
-            id: ongoingMatch.id,
+            id: completedMatch.gameId.toString(),
             serverIdentity: ongoingMatch.serverIdentity,
             date: new Date(completedMatch.gameCreation),
             minutesPlayed,
@@ -73,13 +74,13 @@ export class RiotMatchFetcher implements MatchFetcher {
         const rawCompletedMatchParticipants: RawCompletedMatchParticipant[] = completedMatch.participants.filter(x => x.teamId == teamId);
         const participants: Participant[] = teamId == TeamId.BLUE ? ongoingMatch.blue : ongoingMatch.red;
         return {
-            won: rawTeam.win == "Win",
+            won: rawTeam.win == RiotMatchFetcher.WIN_STRING,
             dragons: rawTeam.dragonKills,
             heralds: rawTeam.riftHeraldKills,
             barons: rawTeam.baronKills,
             towers: rawTeam.towerKills,
             bans: await this.getBans(rawTeam.bans),
-            performanceStats: this.getPerformanceStats(rawCompletedMatchParticipants, participants, minutesPlayed)
+            performanceStats: this.getPerformanceStats(rawCompletedMatchParticipants, participants)
         }
     }
 
@@ -87,7 +88,7 @@ export class RiotMatchFetcher implements MatchFetcher {
         const rawTeam: RawTeam | undefined = teams.find(x => x.teamId == teamId);
         if(rawTeam)
             return rawTeam;
-        else{
+        else {
             const innerError: Error = new Error(`Could not find a team with ID ${teamId} in the RawCompletedMatchData.`);
             throw new BotError(ErrorCode.MISSING_MATCH_DATA, innerError);
         }
@@ -102,7 +103,7 @@ export class RiotMatchFetcher implements MatchFetcher {
         return bans;
     }
 
-    private getPerformanceStats(rawParticipants: RawCompletedMatchParticipant[], participants: Participant[], minutesPlayed: number): PerformanceStats[] {
+    private getPerformanceStats(rawParticipants: RawCompletedMatchParticipant[], participants: Participant[]): PerformanceStats[] {
         const performances: PerformanceStats[] = [];
         for(const rawParticipant of rawParticipants){
             const participant: Participant = this.findParticipant(rawParticipant, participants);
@@ -122,23 +123,22 @@ export class RiotMatchFetcher implements MatchFetcher {
                 gold: rawParticipant.stats.goldEarned,
                 kills: rawParticipant.stats.kills,
                 minions: rawParticipant.stats.totalMinionsKilled + rawParticipant.stats.neutralMinionsKilled,
-                minutesPlayed,
                 visionScore: rawParticipant.stats.visionScore,
                 crowdControlScore: rawParticipant.stats.timeCCingOthers,
                 pentakills: rawParticipant.stats.pentaKills
-            }
+            };
             performances.push(performance);
         }
         return performances;
     }
 
-    private findParticipant(rawParticipant: RawCompletedMatchParticipant, participants: Participant[]): Participant{
-        const championIdStr: string = rawParticipant.championId.toString();
-        const participant: Participant | undefined = participants.find(x => x.champion.id === championIdStr);
+    private findParticipant(rawParticipant: RawCompletedMatchParticipant, ongoingMatchParticipants: Participant[]): Participant{
+        const championId: string = rawParticipant.championId.toString();
+        const participant: Participant | undefined = ongoingMatchParticipants.find(x => x.champion.id === championId);
         if(participant)
             return participant;
         else{
-            const innerError: Error = new Error(`Could not find a participant which used a champion with ID ${championIdStr} in the RawCompletedMatchData.`);
+            const innerError: Error = new Error(`Could not find a participant which used a champion with ID ${championId} in the RawCompletedMatchData.`);
             throw new BotError(ErrorCode.MISSING_MATCH_DATA, innerError);
         }
     }

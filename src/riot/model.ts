@@ -10,7 +10,7 @@ export enum RawRole {
     JUNGLE = "JUNGLE"
 }
 
-export enum RawLane{
+export enum RawLane {
     TOP = "TOP",
     MIDDLE = "MIDDLE",
     BOTTOM = "BOTTOM"

@@ -9,18 +9,6 @@ describe('KeepMatchesCommand', () => {
     const dummyFactory: DummyModelFactory = new DummyModelFactory();
     const serverIdentity: ServerIdentity = dummyFactory.createServerIndentity();
 
-    function setupOngoingMatchesToCompletedAndGetList(ongoingMatches: OngoingMatch[]): CompletedMatch[]{
-        const completedMatches: CompletedMatch[] = [];
-        for(const ongoingMatch of ongoingMatches){
-            const completedMatch: CompletedMatch = dummyFactory.createCompletedMatch();
-            contextMock.matchFetcherMock
-                .setup(x => x.getCompletedMatch(ongoingMatch))
-                .returns(async () => completedMatch);
-            completedMatches.push(completedMatch);
-        }
-        return completedMatches;
-    }
-
     beforeEach(() => {
         contextMock = new ContextMock();
         contextMock.serverMock
@@ -34,10 +22,10 @@ describe('KeepMatchesCommand', () => {
             dummyFactory.createOngoingMatch(),
             dummyFactory.createOngoingMatch(),
         ];
+        const completedMatches: CompletedMatch[] = setupOngoingMatchesToCompletedAndGetList(ongoingMatches);
         contextMock.databaseMock
             .setup(x => x.getOngoingMatches(serverIdentity))
-            .returns(async () => ongoingMatches);
-        const completedMatches: CompletedMatch[] = setupOngoingMatchesToCompletedAndGetList(ongoingMatches);
+            .returns(async () => ongoingMatches);        
 
         const command: KeepMatchesCommand = new KeepMatchesCommand([]);
         await command.execute(contextMock.object);
@@ -64,4 +52,16 @@ describe('KeepMatchesCommand', () => {
         contextMock.databaseMock.verify(x => x.insertCompletedMatch(completedMatch), Times.once());
         contextMock.messageMock.verify(x => x.replyWithKeptMatches([ completedMatch ]), Times.once());
     });
+
+    function setupOngoingMatchesToCompletedAndGetList(ongoingMatches: OngoingMatch[]): CompletedMatch[]{
+        const completedMatches: CompletedMatch[] = [];
+        for(const ongoingMatch of ongoingMatches){
+            const completedMatch: CompletedMatch = dummyFactory.createCompletedMatch();
+            contextMock.matchFetcherMock
+                .setup(x => x.getCompletedMatch(ongoingMatch))
+                .returns(async () => completedMatch);
+            completedMatches.push(completedMatch);
+        }
+        return completedMatches;
+    }
 });

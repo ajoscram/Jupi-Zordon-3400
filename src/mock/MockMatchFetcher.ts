@@ -76,7 +76,6 @@ export class MockMatchFetcher implements MatchFetcher {
             gold: 11350,
             kills: 10,
             minions: 125,
-            minutesPlayed: 31,
             visionScore: 21,
             crowdControlScore: 15,
             pentakills: 1

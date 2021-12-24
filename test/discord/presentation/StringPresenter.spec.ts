@@ -184,45 +184,45 @@ const expectedRecordedMatchesString: string = `
 const expectedKeptMatchString: string = `
 ╔═══════════════════════════════════════════════════════════════════════════════════╗
 ║                                  New Match Kept                                   ║
-╠══════════════════════════ Thu Jan 01 1970 - 231 minutes ══════════════════════════╣
+╠══════════════════════════ Thu Jan 01 1970 - 221 minutes ══════════════════════════╣
 ║                                                                                   ║
 ║                                    Red - LOST                                     ║
 ╠═════ Summoner ══════╦═════ Champion ══════╦═════ KDA ═════╦═ Damage ═╦═ CS / Min ═╣
-║  summoner name 23   ║  champion name 25   ║   35/30/29    ║    31    ║    0.97    ║
-║  summoner name 42   ║  champion name 44   ║   54/49/48    ║    50    ║    0.98    ║
-║  summoner name 61   ║  champion name 63   ║   73/68/67    ║    69    ║    0.99    ║
-║  summoner name 80   ║  champion name 82   ║   92/87/86    ║    88    ║    0.99    ║
-║  summoner name 99   ║  champion name 101  ║  111/106/105  ║   107    ║    0.99    ║
+║  summoner name 23   ║  champion name 25   ║   35/30/29    ║    31    ║    0.16    ║
+║  summoner name 41   ║  champion name 43   ║   53/48/47    ║    49    ║    0.24    ║
+║  summoner name 59   ║  champion name 61   ║   71/66/65    ║    67    ║    0.33    ║
+║  summoner name 77   ║  champion name 79   ║   89/84/83    ║    85    ║    0.41    ║
+║  summoner name 95   ║  champion name 97   ║  107/102/101  ║   103    ║    0.49    ║
 ╠═════════════════════╩═════════════════════╩═══════════════╩══════════╩════════════╣
 ║                     Dragons: 3 Heralds: 4 Towers: 6 Barons: 5                     ║
 ╠═══════════════════════════════════════════════════════════════════════════════════╣
 ║                                                                                   ║
 ║                                    Blue - WON                                     ║
 ╠═════ Summoner ══════╦═════ Champion ══════╦═════ KDA ═════╦═ Damage ═╦═ CS / Min ═╣
-║  summoner name 137  ║  champion name 139  ║  149/144/143  ║   145    ║    0.99    ║
-║  summoner name 156  ║  champion name 158  ║  168/163/162  ║   164    ║    0.99    ║
-║  summoner name 175  ║  champion name 177  ║  187/182/181  ║   183    ║    0.99    ║
-║  summoner name 194  ║  champion name 196  ║  206/201/200  ║   202    ║    1.00    ║
-║  summoner name 213  ║  champion name 215  ║  225/220/219  ║   221    ║    1.00    ║
+║  summoner name 132  ║  champion name 134  ║  144/139/138  ║   140    ║    0.66    ║
+║  summoner name 150  ║  champion name 152  ║  162/157/156  ║   158    ║    0.74    ║
+║  summoner name 168  ║  champion name 170  ║  180/175/174  ║   176    ║    0.82    ║
+║  summoner name 186  ║  champion name 188  ║  198/193/192  ║   194    ║    0.90    ║
+║  summoner name 204  ║  champion name 206  ║  216/211/210  ║   212    ║    0.98    ║
 ╠═════════════════════╩═════════════════════╩═══════════════╩══════════╩════════════╣
-║                 Dragons: 117 Heralds: 118 Towers: 120 Barons: 119                 ║
+║                 Dragons: 112 Heralds: 113 Towers: 115 Barons: 114                 ║
 ╚═══════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedKeptMatchesString: string = `
 ╔══════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                         New Matches Kept                                                         ║
 ╠═ Date & Duration ═╦══ Teams ═══╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 139, champion name 158, champion name 177, champion name 196, champion name 215  ║
-║     231 mins      ║    Red     ║    champion name 25, champion name 44, champion name 63, champion name 82, champion name 101    ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 134, champion name 152, champion name 170, champion name 188, champion name 206  ║
+║     221 mins      ║    Red     ║    champion name 25, champion name 43, champion name 61, champion name 79, champion name 97     ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 371, champion name 390, champion name 409, champion name 428, champion name 447  ║
-║     463 mins      ║    Red     ║  champion name 257, champion name 276, champion name 295, champion name 314, champion name 333  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 356, champion name 374, champion name 392, champion name 410, champion name 428  ║
+║     443 mins      ║    Red     ║  champion name 247, champion name 265, champion name 283, champion name 301, champion name 319  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 603, champion name 622, champion name 641, champion name 660, champion name 679  ║
-║     695 mins      ║    Red     ║  champion name 489, champion name 508, champion name 527, champion name 546, champion name 565  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 578, champion name 596, champion name 614, champion name 632, champion name 650  ║
+║     665 mins      ║    Red     ║  champion name 469, champion name 487, champion name 505, champion name 523, champion name 541  ║
 ╠═══════════════════╬════════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 835, champion name 854, champion name 873, champion name 892, champion name 911  ║
-║     927 mins      ║    Red     ║  champion name 721, champion name 740, champion name 759, champion name 778, champion name 797  ║
+║  Thu Jan 01 1970  ║  Blue (W)  ║  champion name 800, champion name 818, champion name 836, champion name 854, champion name 872  ║
+║     887 mins      ║    Red     ║  champion name 691, champion name 709, champion name 727, champion name 745, champion name 763  ║
 ╚═══════════════════╩════════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedDiscardedMatchString: string = `

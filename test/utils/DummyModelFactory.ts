@@ -1,5 +1,6 @@
-import { RawChampion, RawChampionContainer, RawOngoingMatch, RawOngoingMatchParticipant, RawSummoner, TeamId } from "../../src/riot/model";
+import { RawBan, RawChampion, RawChampionContainer, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawStats, RawSummoner, RawTeam, RawTimeline, TeamId } from "../../src/riot/model";
 import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role } from "../../src/core/model";
+import { RiotMatchFetcher } from "../../src/riot";
 
 export class DummyModelFactory{
     private counter: number = 0;
@@ -20,7 +21,7 @@ export class DummyModelFactory{
 
     public createSummoner(): Summoner{
         return {
-            id: this.createString("summoner id"),
+            id: this.createNumber().toString(),
             name: this.createString("summoner name")
         };
     }
@@ -34,7 +35,7 @@ export class DummyModelFactory{
 
     public createChampion(): Champion{
         return {
-            id: this.createString("champion id"),
+            id: this.createNumber().toString(),
             name: this.createString("champion name"),
             picture: this.createString("champion picture")
         };
@@ -148,6 +149,85 @@ export class DummyModelFactory{
         };
     }
 
+    public createRawCompletedMatch(ongoingMatch: OngoingMatch, includeRedTeam: boolean = true): RawCompletedMatch {
+        const teams: RawTeam[] = [ this.createRawTeam(TeamId.BLUE) ];
+        const participants: RawCompletedMatchParticipant[] = ongoingMatch.blue.map(x => 
+            this.createRawCompletedMatchParticipant(TeamId.BLUE, x));
+        
+        if(includeRedTeam){
+            teams.push(this.createRawTeam(TeamId.RED));
+            for(const participant of ongoingMatch.red)
+                participants.push(this.createRawCompletedMatchParticipant(TeamId.RED, participant));
+        }
+
+        return {
+            gameId: this.createNumber(),
+            gameType: this.createString("raw completed match gameType"),
+            gameCreation: this.createNumber(),
+            gameDuration: this.createNumber(),
+            teams,
+            participants: participants
+        };
+    }
+
+    private createRawTeam(teamId: TeamId): RawTeam{
+        return {
+            teamId,
+            win: teamId == TeamId.BLUE ? RiotMatchFetcher.WIN_STRING : "Loss",
+            towerKills: this.createNumber(),
+            baronKills: this.createNumber(),
+            dragonKills: this.createNumber(),
+            riftHeraldKills: this.createNumber(),
+            bans: [
+                this.createRawBan(),
+                this.createRawBan(),
+                this.createRawBan(),
+            ]
+        };
+    }
+
+    private createRawBan(): RawBan{
+        return { championId: this.createNumber() };
+    }
+
+    private createRawCompletedMatchParticipant(teamId: TeamId, participant: Participant): RawCompletedMatchParticipant{
+        return {
+            teamId,
+            championId: Number.parseInt(participant.champion.id),
+            participantId: Number.parseInt(participant.summoner.id),
+            stats: this.createRawStats()
+        }
+    }
+
+    private createRawStats(): RawStats{
+        return {
+            kills: this.createNumber(),
+            deaths: this.createNumber(),
+            assists: this.createNumber(),
+            largestKillingSpree: this.createNumber(),
+            largestMultiKill: this.createNumber(),
+            pentaKills: this.createNumber(),
+            totalDamageDealtToChampions: this.createNumber(),
+            damageDealtToObjectives: this.createNumber(),
+            visionScore: this.createNumber(),
+            timeCCingOthers: this.createNumber(),
+            totalDamageTaken: this.createNumber(),
+            goldEarned: this.createNumber(),
+            totalMinionsKilled: this.createNumber(),
+            neutralMinionsKilled: this.createNumber(),
+            firstBloodKill: false,
+            firstTowerKill: false,
+            timeline: this.createRawTimeline()
+        };
+    }
+
+    private createRawTimeline(): RawTimeline{
+        return {
+            role: RawRole.SOLO,
+            lane: RawLane.MIDDLE
+        };
+    }
+
     private createRawOngoingMatchParticipant(teamId: TeamId): RawOngoingMatchParticipant{
         return {
             teamId: teamId,
@@ -208,7 +288,6 @@ export class DummyModelFactory{
             gold: this.createNumber(),
             kills: this.createNumber(),
             minions: this.createNumber(),
-            minutesPlayed: this.createNumber(),
             visionScore: this.createNumber(),
             crowdControlScore: this.createNumber(),
             pentakills: this.createNumber()

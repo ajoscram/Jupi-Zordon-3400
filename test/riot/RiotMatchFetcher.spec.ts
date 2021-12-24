@@ -5,8 +5,9 @@ import { RiotMatchFetcher } from "../../src/riot";
 import { ChampionFetcher } from "../../src/riot/champions";
 import { DummyModelFactory } from "../utils";
 import { HttpClient } from "../../src/riot/http";
-import { RawOngoingMatch, RawOngoingMatchParticipant, TeamId } from "../../src/riot/model";
-import { OngoingMatch, Participant, ServerIdentity, Summoner } from "../../src/core/model";
+import { RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
+import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, TeamStats } from "../../src/core/model";
+import { BotError, ErrorCode } from "../../src/core/concretions";
 
 describe('RiotMatchFetcher', () => {
     const modelFactory: DummyModelFactory = new DummyModelFactory();
@@ -38,17 +39,99 @@ describe('RiotMatchFetcher', () => {
         
         expect(match.id).toBe(rawMatch.gameId.toString());
         expect(match.serverIdentity).toBe(serverIdentity);
-        for(const participant of match.blue)
-            expect(findParticipant(rawMatch.participants, participant, TeamId.BLUE)).toBeDefined();
-        for(const participant of match.red)
-            expect(findParticipant(rawMatch.participants, participant, TeamId.RED)).toBeDefined();
+        expect(match.date).toEqual(new Date(rawMatch.gameStartTime));
+        validateParticipants(match.blue, rawMatch.participants, TeamId.BLUE);
+        validateParticipants(match.red, rawMatch.participants, TeamId.RED);
     });
-});
 
-function findParticipant(rawParticipants: RawOngoingMatchParticipant[], participant: Participant, team: TeamId): RawOngoingMatchParticipant | undefined {
-    return rawParticipants.find(
-        raw => raw.teamId == team &&
-            raw.summonerName == participant.summoner.name &&
-            raw.summonerId == participant.summoner.id
-    );
-}
+    it('getOngoingMatch(): should return correctly if a custom match is queried', async () => {
+        const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch("not custom game type");
+        const error: BotError = new BotError(ErrorCode.ONGOING_MATCH_IS_NOT_CUSTOM);
+        clientMock
+            .setup(x => x.get(ongoingMatchUrl, It.isAny()))
+            .returns(async () => rawMatch);
+        
+        await expectAsync(fetcher.getOngoingMatch(summoner, serverIdentity)).toBeRejectedWith(error);        
+    });
+
+    it('getCompletedMatch(): should return correctly when given a custom match with all the expected data in it', async () => {
+        const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
+        const completedMatchUrl: string = RiotMatchFetcher.COMPLETED_MATCH_URL + encodeURIComponent(ongoingMatch.id);
+        const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch);
+        clientMock
+            .setup(x => x.get(completedMatchUrl, It.isAny()))
+            .returns(async () => rawCompletedMatch);
+        
+        const completedMatch: CompletedMatch = await fetcher.getCompletedMatch(ongoingMatch);
+
+        validateCompletedMatch(completedMatch, rawCompletedMatch, ongoingMatch);
+    });
+
+    // missing team id by omitting the red team
+    // missing champion's participant (mock the championFetcher for this one)
+
+    function validateParticipants(participants: Participant[], rawParticipants: RawOngoingMatchParticipant[], teamId: TeamId): void {
+        for(const participant of participants){
+            const rawParticipant: RawOngoingMatchParticipant | undefined = rawParticipants.find(raw =>
+                    raw.teamId == teamId &&
+                    raw.summonerName == participant.summoner.name &&
+                    raw.summonerId == participant.summoner.id
+            );
+            expect(rawParticipant).toBeDefined();
+        }
+    }
+
+    function validateCompletedMatch(completedMatch: CompletedMatch, rawCompletedMatch: RawCompletedMatch, ongoingMatch: OngoingMatch): void{
+        expect(completedMatch.id).toBe(rawCompletedMatch.gameId.toString());
+        expect(completedMatch.serverIdentity).toEqual(ongoingMatch.serverIdentity);
+        expect(completedMatch.date).toEqual(new Date(rawCompletedMatch.gameCreation));
+        expect(completedMatch.minutesPlayed).toBe(Math.round(rawCompletedMatch.gameDuration / 60));
+        validateTeamStats(TeamId.BLUE, completedMatch.blue, rawCompletedMatch, ongoingMatch.blue);
+        validateTeamStats(TeamId.RED, completedMatch.red, rawCompletedMatch, ongoingMatch.red);
+    }
+
+    function validateTeamStats(teamId: TeamId, teamStats: TeamStats, rawCompletedMatch: RawCompletedMatch, ongoingMatchParticipants: Participant[]): void{
+        const rawTeam: RawTeam | undefined = rawCompletedMatch.teams.find(x => x.teamId == teamId);
+        const rawTeamParticipants: RawCompletedMatchParticipant[] = rawCompletedMatch.participants.filter(x => x.teamId == teamId);
+        if(rawTeam){
+            expect(teamStats.won).toBe(rawTeam.win == RiotMatchFetcher.WIN_STRING);
+            expect(teamStats.dragons).toBe(rawTeam.dragonKills);
+            expect(teamStats.heralds).toBe(rawTeam.riftHeraldKills);
+            expect(teamStats.barons).toBe(rawTeam.baronKills);
+            expect(teamStats.towers).toBe(rawTeam.towerKills);
+            validatePerformanceStats(teamStats.performanceStats, rawTeamParticipants, ongoingMatchParticipants);
+        }
+        else
+            fail("failed to find the " + TeamId[teamId] + " team");
+    }
+
+    function validatePerformanceStats(performances: PerformanceStats[], rawCompletedMatchParticipants: RawCompletedMatchParticipant[], ongoingMatchParticipants: Participant[]): void{
+        for(const rawParticipant of rawCompletedMatchParticipants){
+            const ongoingMatchParticipant: Participant | undefined = ongoingMatchParticipants.find(x =>
+                x.champion.id == rawParticipant.championId.toString()
+            );
+            const performance: PerformanceStats | undefined = performances.find(x =>
+                x.summoner.id == ongoingMatchParticipant?.summoner.id &&
+                x.champion.id == ongoingMatchParticipant?.champion.id
+            );
+            if(performance){
+                expect(performance.largestMultikill).toBe(rawParticipant.stats.largestMultiKill);
+                expect(performance.largestKillingSpree).toBe(rawParticipant.stats.largestKillingSpree);
+                expect(performance.firstBlood).toBe(rawParticipant.stats.firstBloodKill);
+                expect(performance.firstTower).toBe(rawParticipant.stats.firstTowerKill);
+                expect(performance.assists).toBe(rawParticipant.stats.assists);
+                expect(performance.deaths).toBe(rawParticipant.stats.deaths);
+                expect(performance.damageDealtToChampions).toBe(rawParticipant.stats.totalDamageDealtToChampions);
+                expect(performance.damageReceived).toBe(rawParticipant.stats.totalDamageTaken);
+                expect(performance.gold).toBe(rawParticipant.stats.goldEarned);
+                expect(performance.kills).toBe(rawParticipant.stats.kills);
+                expect(performance.minions).toBe(rawParticipant.stats.totalMinionsKilled + rawParticipant.stats.neutralMinionsKilled);
+                expect(performance.visionScore).toBe(rawParticipant.stats.visionScore);
+                expect(performance.crowdControlScore).toBe(rawParticipant.stats.timeCCingOthers);
+                expect(performance.pentakills).toBe(rawParticipant.stats.pentaKills);
+            }
+            else
+                fail("couldn't find a PerformanceStats with the same summoner and champion id in the match");
+        }
+    }
+});
