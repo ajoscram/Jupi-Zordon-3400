@@ -89,7 +89,7 @@ export class RiotMatchFetcher implements MatchFetcher {
         if(rawTeam)
             return rawTeam;
         else {
-            const innerError: Error = new Error(`Could not find a team with ID ${teamId} in the RawCompletedMatchData.`);
+            const innerError: Error = new Error(`Could not find the ${TeamId[teamId]} (ID = ${teamId}) team in the RawCompletedMatchData.`);
             throw new BotError(ErrorCode.MISSING_MATCH_DATA, innerError);
         }
     }

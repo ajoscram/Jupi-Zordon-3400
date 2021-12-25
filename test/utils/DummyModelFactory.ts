@@ -149,15 +149,15 @@ export class DummyModelFactory{
         };
     }
 
-    public createRawCompletedMatch(ongoingMatch: OngoingMatch, includeRedTeam: boolean = true): RawCompletedMatch {
+    public createRawCompletedMatch(ongoingMatch: OngoingMatch, includeRedTeam: boolean = true, includeCorrectChampionIds: boolean = true): RawCompletedMatch {
         const teams: RawTeam[] = [ this.createRawTeam(TeamId.BLUE) ];
         const participants: RawCompletedMatchParticipant[] = ongoingMatch.blue.map(x => 
-            this.createRawCompletedMatchParticipant(TeamId.BLUE, x));
+            this.createRawCompletedMatchParticipant(TeamId.BLUE, x, includeCorrectChampionIds));
         
         if(includeRedTeam){
             teams.push(this.createRawTeam(TeamId.RED));
             for(const participant of ongoingMatch.red)
-                participants.push(this.createRawCompletedMatchParticipant(TeamId.RED, participant));
+                participants.push(this.createRawCompletedMatchParticipant(TeamId.RED, participant, includeCorrectChampionIds));
         }
 
         return {
@@ -190,10 +190,10 @@ export class DummyModelFactory{
         return { championId: this.createNumber() };
     }
 
-    private createRawCompletedMatchParticipant(teamId: TeamId, participant: Participant): RawCompletedMatchParticipant{
+    private createRawCompletedMatchParticipant(teamId: TeamId, participant: Participant, includeCorrectChampionIds: boolean): RawCompletedMatchParticipant{
         return {
             teamId,
-            championId: Number.parseInt(participant.champion.id),
+            championId: includeCorrectChampionIds ? Number.parseInt(participant.champion.id) : -1,
             participantId: Number.parseInt(participant.summoner.id),
             stats: this.createRawStats()
         }

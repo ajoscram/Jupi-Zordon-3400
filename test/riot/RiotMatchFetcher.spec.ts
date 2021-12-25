@@ -44,7 +44,7 @@ describe('RiotMatchFetcher', () => {
         validateParticipants(match.red, rawMatch.participants, TeamId.RED);
     });
 
-    it('getOngoingMatch(): should return correctly if a custom match is queried', async () => {
+    it('getOngoingMatch(): should throw if a non-custom match is queried', async () => {
         const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch("not custom game type");
         const error: BotError = new BotError(ErrorCode.ONGOING_MATCH_IS_NOT_CUSTOM);
         clientMock
@@ -67,8 +67,27 @@ describe('RiotMatchFetcher', () => {
         validateCompletedMatch(completedMatch, rawCompletedMatch, ongoingMatch);
     });
 
-    // missing team id by omitting the red team
-    // missing champion's participant (mock the championFetcher for this one)
+    it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when missing information for a team', async () => {
+        const error: BotError = new BotError(ErrorCode.MISSING_MATCH_DATA);
+        const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
+        const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch, false);
+        clientMock
+            .setup(x => x.get(It.isAny(), It.isAny()))
+            .returns(async () => rawCompletedMatch);
+        
+        await expectAsync(fetcher.getCompletedMatch(ongoingMatch)).toBeRejectedWith(error);
+    });
+
+    it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when paricipant identities fail to be linked', async () => {
+        const error: BotError = new BotError(ErrorCode.MISSING_MATCH_DATA);
+        const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
+        const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch, true, false);
+        clientMock
+            .setup(x => x.get(It.isAny(), It.isAny()))
+            .returns(async () => rawCompletedMatch);
+        
+        await expectAsync(fetcher.getCompletedMatch(ongoingMatch)).toBeRejectedWith(error);
+    });
 
     function validateParticipants(participants: Participant[], rawParticipants: RawOngoingMatchParticipant[], teamId: TeamId): void {
         for(const participant of participants){
