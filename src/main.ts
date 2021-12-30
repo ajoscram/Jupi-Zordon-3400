@@ -1,4 +1,4 @@
-import { Bot } from "./core/abstractions";
+/*import { Bot } from "./core/abstractions";
 import { DiscordBot } from "./discord";
 import { MockDatabase, MockMatchFetcher, MockPredictor, MockSummonerFetcher } from "./mock";
 import { config as loadEnvironmentVariables } from "dotenv";
@@ -17,6 +17,15 @@ async function main(): Promise<void>{
     );
     await bot.initialize();
     await bot.run();
+}*/
+
+import { MongoDatabase } from "./mongo/MongoDatabase";
+import { config as loadEnvironmentVariables } from "dotenv";
+
+async function main(): Promise<void>{
+    loadEnvironmentVariables();
+    const database: MongoDatabase = new MongoDatabase();
+    await database.initialize();
 }
 
 main();

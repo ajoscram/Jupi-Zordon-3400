@@ -2,9 +2,8 @@ import "jasmine";
 
 describe('TableBuilder', () => {
 
-    beforeEach(async () => { });
+// not testing this since it takes too much work
+// it also gets tested indirectly by the StringPresenter
+// might do later!
 
-    it('', async () => { });
-
-    afterAll(async () => { });
 });
