@@ -37,5 +37,6 @@ export interface SummonerOverallStats extends OverallStats{
 
 export interface ChampionOverallStats extends OverallStats{
     readonly champion: Champion,
-    readonly bans: number
+    readonly bans: number,
+    readonly picks: number
 }
