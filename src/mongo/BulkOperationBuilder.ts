@@ -1,13 +1,32 @@
 import { AnyBulkWriteOperation, PushOperator } from "mongodb";
-import { Champion, PerformanceStats, Summoner } from "../core/model";
+import { Champion, PerformanceStats, Summoner, TeamStats } from "../core/model";
+import { IndexKey } from "./enums";
 
 export class BulkOperationBuilder{
     private readonly operations: AnyBulkWriteOperation[] = [];
 
-    public addInsertBan(ban: Champion): BulkOperationBuilder{
+    public addInsertSummonerStatsOperations(team: TeamStats, minutesPlayed: number): BulkOperationBuilder {
+        for(const performance of team.performanceStats)
+            this.addInsertSummonerStatsOperation(performance, team.won, minutesPlayed);
+        return this;
+    }
+
+    public addInsertChampionStatsOperations(team: TeamStats, minutesPlayed: number): BulkOperationBuilder {
+        for(const performance of team.performanceStats)
+            this.addInsertChampionStatsOperation(performance, team.won, minutesPlayed);
+        return this;
+    }
+
+    public addInsertBanOperations(bans: Champion[]): BulkOperationBuilder {
+        for(const ban of bans)
+            this.addInsertBanOperation(ban);
+        return this;
+    }
+
+    private addInsertBanOperation(ban: Champion): BulkOperationBuilder{
         this.operations.push({
             updateOne: {
-                filter: { "champion.id": ban.id },
+                filter: { [IndexKey.CHAMPION_ID]: ban.id },
                 update: { 
                     $setOnInsert: { champion: ban },
                     $inc: { bans: 1 }
@@ -18,7 +37,7 @@ export class BulkOperationBuilder{
         return this;
     }
 
-    public addInsertSummonerStats(performance: PerformanceStats, won: boolean, minutesPlayed: number): BulkOperationBuilder{
+    private addInsertSummonerStatsOperation(performance: PerformanceStats, won: boolean, minutesPlayed: number): BulkOperationBuilder{
         this.operations.push(
             this.createSummonerStatsOperation(performance, won, minutesPlayed),
             this.createPickOperation(performance.summoner, performance.champion),
@@ -30,7 +49,7 @@ export class BulkOperationBuilder{
     private createSummonerStatsOperation(performance: PerformanceStats, won: boolean, minutesPlayed: number): AnyBulkWriteOperation{
         return {
             updateOne: {
-                filter: { "summoner.id": performance.summoner.id },
+                filter: { [IndexKey.SUMMONER_ID]: performance.summoner.id },
                 update: {
                     $setOnInsert: {
                         summoner: performance.summoner,
@@ -47,13 +66,11 @@ export class BulkOperationBuilder{
         return {
             updateOne: {
                 filter: {
-                    "summoner.id": summoner.id,
-                    "picks.champion.id": { $ne: champion.id }
+                    [IndexKey.SUMMONER_ID]: summoner.id,
+                    [IndexKey.PICKS_CHAMPION_ID]: { $ne: champion.id }
                 },
                 update: {
-                    $push: {
-                        picks: { champion }
-                    } as PushOperator<Document>
+                    $push: { picks: { champion } } as PushOperator<Document>
                 }
             }
         }
@@ -63,8 +80,8 @@ export class BulkOperationBuilder{
         return {
             updateOne: {
                 filter: {
-                    "summoner.id": summoner.id,
-                    "picks.champion.id": champion.id
+                    [IndexKey.SUMMONER_ID]: summoner.id,
+                    [IndexKey.PICKS_CHAMPION_ID]: champion.id
                 },
                 update: {
                     $inc: { "picks.$.count": 1 }
@@ -73,10 +90,10 @@ export class BulkOperationBuilder{
         }
     }
 
-    public addInsertChampionStats(performance: PerformanceStats, won: boolean, minutesPlayed: number): BulkOperationBuilder{
+    private addInsertChampionStatsOperation(performance: PerformanceStats, won: boolean, minutesPlayed: number): BulkOperationBuilder{
         this.operations.push({
             updateOne:{
-                filter: { "champion.id": performance.champion.id },
+                filter: { [IndexKey.CHAMPION_ID]: performance.champion.id },
                 update: {
                     $setOnInsert: { "champion": performance.champion },
                     $inc: {

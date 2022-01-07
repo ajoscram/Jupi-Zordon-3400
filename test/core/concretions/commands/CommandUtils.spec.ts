@@ -1,4 +1,5 @@
 import "jasmine";
+import { BotError, ErrorCode } from "../../../../src/core/concretions";
 import { CommandUtils } from "../../../../src/core/concretions/commands/CommandUtils";
 import { Account, OngoingMatch, ServerIdentity, Summoner } from "../../../../src/core/model";
 import { ContextMock, DummyModelFactory } from "../../../../test/utils";
@@ -77,11 +78,10 @@ describe('CommandUtils', () => {
     });
 
     it('validateOptionsLength(): throws if options length is not in admissible lengths', async () => {
-        const expectedErrorMessage: string = "Incorrect number of arguments passed in. Expected 1 argument(s). Got 2.";
         const options: string[] = [ "option1", "option2" ];
         const admissibleLengths: number[] = [ 1 ];
         
         expect(() => utils.validateOptionsLength(options, admissibleLengths))
-            .toThrowError(expectedErrorMessage);
+            .toThrow(new BotError(ErrorCode.COMMAND_ARGUMENT_COUNT));
     });
 });

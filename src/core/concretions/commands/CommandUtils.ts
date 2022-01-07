@@ -1,5 +1,6 @@
 import { Context } from '../../concretions';
 import { User, Account, Summoner, OngoingMatch, ServerIdentity } from '../../model';
+import { BotError, ErrorCode } from '../BotError';
 
 export class CommandUtils{
     public async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
@@ -23,20 +24,6 @@ export class CommandUtils{
 
     public validateOptionsLength(options: string[], admissibleLengths: number[]): void {
         if(!admissibleLengths.includes(options.length))
-            throw this.createValidateOptionsLengthError(options.length, admissibleLengths);
-    }
-
-    private createValidateOptionsLengthError(optionsLength: number, admissibleLengths: number[]): Error{
-        let message: string = "Incorrect number of arguments passed in. Expected ";
-        for(let i = 0; i < admissibleLengths.length; i++){
-            if(i < admissibleLengths.length - 1 )
-                message += admissibleLengths[i] + ", ";
-            else if( admissibleLengths.length > 1)
-                message += "or " + admissibleLengths[i];
-            else
-                message += admissibleLengths[i];
-        }
-        message += " argument(s). Got " + optionsLength + ".";
-        return new Error(message);
+            throw new BotError(ErrorCode.COMMAND_ARGUMENT_COUNT);
     }
 }

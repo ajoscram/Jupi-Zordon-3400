@@ -29,7 +29,9 @@ export abstract class Bot{
         if(!(error instanceof BotError))
             error = new BotError(ErrorCode.UNKNOWN, error);
 
-        Logger.logError(error.inner?.message);
+        if(error.inner)
+            Logger.logError(error.inner.message);
+
         message.replyWithError(error.code);
     }
 }

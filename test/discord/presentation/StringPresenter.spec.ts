@@ -13,7 +13,7 @@ describe('StringPresenter', () => {
         factory = new DummyModelFactory();
     });
 
-    it('createReplyFromError(): should include a message for each ErrorCode', async () => {
+    it('createReplyFromError(): should include ERROR in its message', async () => {
         const code: ErrorCode = ErrorCode.ACCOUNT_NOT_FOUND; //arbitrarily chosen
         const reply: string = presenter.createReplyFromError(code);
         expect(reply).toContain("ERROR");
