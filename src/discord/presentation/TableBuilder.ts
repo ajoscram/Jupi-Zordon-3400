@@ -1,7 +1,7 @@
 export class TableBuilder{
 
-    private columnSizes: number[] = [];
-    private rows: Row[] = [];
+    private readonly columnSizes: number[] = [];
+    private readonly rows: Row[] = [];
 
     public addHeader(header: string, padding: Padding = Padding.LINE): TableBuilder{
         const formattedHeader: string = header ? Padding.EMPTY + header + Padding.EMPTY : "";
@@ -36,7 +36,7 @@ export class TableBuilder{
     private updateColumnSizes(items: string[]): void{
         if(items.length > this.columnSizes.length){
             const newColumns: number[] = new Array(items.length - this.columnSizes.length).fill(0);
-            this.columnSizes = this.columnSizes.concat(newColumns);
+            this.columnSizes.push(...newColumns);
         }
 
         for(let i=0; i < items.length; i++)

@@ -10,6 +10,7 @@ export class BotError extends Error{
 export enum ErrorCode{
     UNKNOWN,
     COMMAND_ARGUMENT_COUNT,
+    COMMAND_QUOTE_NOT_MATCHED,
     USER_NOT_FOUND,
     CHANNEL_NOT_FOUND,
     CHANNEL_IS_NOT_VOICE,

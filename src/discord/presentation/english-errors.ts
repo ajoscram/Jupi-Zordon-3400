@@ -12,8 +12,9 @@ export const errors: { [property: string]: string, UNKNOWN: string } = {
     UNSUCCESSFUL_REQUEST: "Oops! Something went wrong while requesting data and the command failed.",
     MISSING_MATCH_DATA: "The match data was received incomplete. Please try again or report this issue.",
     UNKNOWN_CHAMPION_ID: "The operation failed because an unknown champion ID was received.",
-    COMMAND_ARGUMENT_COUNT: "Incorrect command argument count! Type !help or !h for help.",
+    COMMAND_ARGUMENT_COUNT: "Incorrect command argument count. Type !help or !h for help.",
     ACCOUNT_USER_ID_IN_DB: "Failed to create the account because the Discord user is already linked to another LoL account.",
     ACCOUNT_SUMMONER_ID_IN_DB: "Failed to create the account because the summoner name is already linked to another Discord account.",
     SUMMONER_STATS_NOT_FOUND: "The summoner specified has no recorded stats.",
+    COMMAND_QUOTE_NOT_MATCHED: "You've left a quotation mark (\" or ') without it's closing pair. Make sure to add quotation marks **in pairs** enclosing the text you want.",
 }

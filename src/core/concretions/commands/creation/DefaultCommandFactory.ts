@@ -13,7 +13,7 @@ export class DefaultCommandFactory implements CommandFactory{
     }
 
     public tryCreateCommand(message: Message): Command | null{
-        const metadata: CommandMetadata = this.extractor.extract(message);
+        const metadata: CommandMetadata = this.extractor.extract(message.getContent());
         switch(metadata.alias){
             case "link":
             case "l":
