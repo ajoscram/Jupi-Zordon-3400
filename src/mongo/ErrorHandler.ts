@@ -1,5 +1,6 @@
-import { BulkWriteResult, MongoServerError } from "mongodb";
+import { BulkWriteResult, MongoError, MongoServerError } from "mongodb";
 import { BotError, ErrorCode } from "../../src/core/concretions";
+import { MongoDao } from "./dao";
 import { IndexKey } from "./enums";
 
 export class ErrorHandler{
@@ -8,7 +9,23 @@ export class ErrorHandler{
 
     public createError(innerErrorMessage: string, code: ErrorCode = ErrorCode.DB_ERROR): BotError{
         const innerError: Error = new Error(innerErrorMessage);
-        return this.handleGenericError(innerError, code);
+        return new BotError(code, innerError);
+    }
+
+    public handleUpsertAccountError(error: any): any{
+        if(this.isErrorDuplicateKey(error, IndexKey.USER_ID))
+            return new BotError(ErrorCode.ACCOUNT_USER_ID_IN_DB);    
+        else if(this.isErrorDuplicateKey(error, IndexKey.SUMMONER_ID))
+            return new BotError(ErrorCode.ACCOUNT_SUMMONER_ID_IN_DB);
+        else
+            return error;
+    }
+
+    public handleGetAccountsError(error: any): any{
+        if(error instanceof MongoError && error.message === MongoDao.CURSOR_COUNT_MISMATCH_ERROR_MESSAGE)
+            return new BotError(ErrorCode.ACCOUNTS_NOT_FOUND);
+        else
+            return error;
     }
 
     public throwIfFalsy(object: any, code: ErrorCode = ErrorCode.DB_ERROR): void{
@@ -16,30 +33,13 @@ export class ErrorHandler{
             throw new BotError(code);
     }
 
-    public handleUpsertAccountError(error: any): BotError{
-        if(this.isErrorDuplicateKey(error, IndexKey.USER_ID))
-            return new BotError(ErrorCode.ACCOUNT_USER_ID_IN_DB);    
-        else if(this.isErrorDuplicateKey(error, IndexKey.SUMMONER_ID))
-            return new BotError(ErrorCode.ACCOUNT_SUMMONER_ID_IN_DB);
-        else
-            return this.handleGenericError(error);
-    }
-
     public throwIfCompletedMatchStatsInsertionErrors(insertionResults: PromiseSettledResult<BulkWriteResult>[]): void{
         console.log(insertionResults);
     }
 
-    private isErrorDuplicateKey(error: any, key: string): boolean{
+    private isErrorDuplicateKey(error: any, key: IndexKey): boolean{
         return error instanceof MongoServerError &&
             error.code == ErrorHandler.DUPLICATE_KEY_ERROR_CODE &&
             error.errmsg.includes(key);
-    }
-
-    private handleGenericError(error: any, code: ErrorCode = ErrorCode.DB_ERROR): BotError{
-        if(error instanceof BotError)
-            return error;
-        if(!(error instanceof Error))
-            error = new Error(error);
-        return new BotError(code, error);
     }
 }

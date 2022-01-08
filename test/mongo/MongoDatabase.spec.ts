@@ -1,7 +1,7 @@
 import "jasmine";
 import { Dao, MongoDao } from "../../src/mongo/dao";
 import { MongoDatabase } from "../../src/mongo/MongoDatabase";
-import { Account } from "../../src/core/model";
+import { Account, User } from "../../src/core/model";
 import { DummyModelFactory } from "../utils";
 
 import { config as loadEnvironmentVariables } from "dotenv";
@@ -25,8 +25,40 @@ describe('MongoDatabase', () => {
         await database.upsertAccount(account);
     });
 
-    xit('upsertAccount(): should fail if an error occurs', async () => {
+    xit('upsertAccount(): should fail if an error occurs (SPLIT BY ERROR)', async () => {
         const account: Account = modelFactory.createAccount();
         await database.upsertAccount(account);
+    });
+
+    xit('getAccount(): should return the account if the user for it exists', async () => {
+        const user: User = modelFactory.createUser();
+        const account: Account = await database.getAccount(user);
+        expect(account.user).toBe(user);
+    });
+
+    xit('getAccount(): should fail if the account for the user doesnt exist', async () => {
+        const user: User = modelFactory.createUser();
+        const account: Account = await database.getAccount(user);
+        expect(account.user).toBe(user);
+    });
+
+    xit('getAccounts(): should return accounts for every user queried', async () => {
+        const users: User[] = [
+            modelFactory.createUser(),
+            modelFactory.createUser(),
+            modelFactory.createUser()
+        ];
+        const accounts: Account[] = await database.getAccounts(users);
+        console.log(accounts);
+    });
+
+    xit('getAccounts(): should fail if any of the users queried is not found', async () => {
+        const users: User[] = [
+            modelFactory.createUser(),
+            modelFactory.createUser(),
+            modelFactory.createUser()
+        ];
+        const accounts: Account[] = await database.getAccounts(users);
+        console.log(accounts);
     });
 });

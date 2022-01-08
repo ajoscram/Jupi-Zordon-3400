@@ -32,7 +32,13 @@ export class MongoDatabase implements Database {
     }
 
     async getAccounts(users: User[]): Promise<Account[]> {
-        throw new Error("Method not implemented.");
+        try{
+            const filter: Filter<Document> = this.getIndexKeyOrFilter(users, IndexKey.USER_ID, user => user.id);
+            const documents: Document[] = await this.dao.findMany(Collection.ACCOUNTS, filter, users.length);
+            return documents.map(document => document as Account);
+        } catch(error){
+            throw this.errorHandler.handleGetAccountsError(error);
+        }
     }
 
     async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
@@ -47,7 +53,9 @@ export class MongoDatabase implements Database {
     }
 
     public async getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]> {
-        throw new Error("Method not implemented.");
+        const filter: Filter<Document> = { [IndexKey.SERVER_ID]: serverIdentity.id };
+        const documents: Document[] = await this.dao.findMany(Collection.ONGOING_MATCHES, filter);
+        return documents.map(document => document as OngoingMatch);
     }
 
     public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
@@ -62,8 +70,8 @@ export class MongoDatabase implements Database {
             };
             const update: Document = {
                 $set: {
-                    summoner: account.summoner,
-                    user: account.user
+                    user: account.user,
+                    summoner: account.summoner
                 }
             };
             await this.dao.upsert(Collection.ACCOUNTS, filter, update);
@@ -117,5 +125,12 @@ export class MongoDatabase implements Database {
                 .addInsertChampionStatsOperations(match.red, match.minutesPlayed);
         }
         return builder.build();  
+    }
+
+    private getIndexKeyOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<Document>{
+        const innerFilters: Filter<Document>[] = array.map(x => {
+            return { [key]: valueFunction(x) };
+        });
+        return { $or:  innerFilters };
     }
 }

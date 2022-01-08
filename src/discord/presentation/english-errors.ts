@@ -7,6 +7,7 @@ export const errors: { [property: string]: string, UNKNOWN: string } = {
     USER_NOT_IN_A_VOICE_CHANNEL: "The Discord user is not currently in a voice channel.",
     NOT_IN_A_SERVER: "The command given is only available on Discord server text channels.",
     ACCOUNT_NOT_FOUND: "That user has no registered accounts.",
+    ACCOUNTS_NOT_FOUND: "Some Discord users could not be matched with their respective summoner names. Make sure everyone has linked their accounts and try again.",
     DB_ERROR: "Internal database error.",
     ONGOING_MATCH_IS_NOT_CUSTOM: "Only ongoing custom matches may be recorded.",
     UNSUCCESSFUL_REQUEST: "Oops! Something went wrong while requesting data and the command failed.",

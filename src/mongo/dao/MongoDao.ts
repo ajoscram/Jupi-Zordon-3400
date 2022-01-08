@@ -1,9 +1,11 @@
-import { AnyBulkWriteOperation, Document, BulkWriteResult, MongoClient, Db, Filter } from "mongodb";
+import { AnyBulkWriteOperation, Document, BulkWriteResult, MongoClient, Db, Filter, FindCursor, MongoError } from "mongodb";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
 import { Dao } from ".";
 import { Collection } from "../enums";
 
 export class MongoDao implements Dao{
+
+    public static readonly CURSOR_COUNT_MISMATCH_ERROR_MESSAGE: string = "FIND_CURSOR_COUNT_MISMATCH_ERROR_MESSAGE";
 
     private databaseName: string;
     private client: MongoClient;
@@ -39,12 +41,22 @@ export class MongoDao implements Dao{
         return await this.database.collection(collection).findOne(filter);
     }
 
-    public async findMany(collection: Collection, filter: Filter<Document>): Promise<Document[]> {
-        //return await this.database.collection(collection).find(filter);
-        throw new Error("Method not implemented.");
+    public async findMany(collection: Collection, filter: Filter<Document>, expectedCount?: number): Promise<Document[]> {
+        const cursor: FindCursor = await this.database.collection(collection).find(filter);
+        await this.validateCursorCount(cursor, expectedCount);
+        const documents: Document[] = await cursor.toArray();
+        cursor.close();
+        return documents;
     }
 
     public async bulk(collection: Collection, operations: AnyBulkWriteOperation[]): Promise<BulkWriteResult> {
         return await this.database.collection(collection).bulkWrite(operations);
+    }
+
+    private async validateCursorCount(cursor: FindCursor, expectedCount?: number): Promise<void>{
+        if(expectedCount && expectedCount !== await cursor.count()){
+            cursor.close();
+            throw new MongoError(MongoDao.CURSOR_COUNT_MISMATCH_ERROR_MESSAGE);
+        }
     }
 }

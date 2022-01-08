@@ -7,6 +7,6 @@ export interface Dao{
     insertMany(collection: Collection, documents: Document[]): Promise<void>;
     upsert(collection: Collection, filter: Filter<Document>, update: Document): Promise<void>;
     find(collection: Collection, filter: Filter<Document>): Promise<Document | null>;
-    findMany(collection: Collection, filter: Filter<Document>): Promise<Document[]>;
+    findMany(collection: Collection, filter: Filter<Document>, count?: number): Promise<Document[]>;
     bulk(collection: Collection, operations: AnyBulkWriteOperation[]): Promise<BulkWriteResult>;
 }
