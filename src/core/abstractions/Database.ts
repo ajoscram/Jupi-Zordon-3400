@@ -10,6 +10,6 @@ export interface Database{
     getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch>;
     upsertAccount(account: Account): Promise<void>;
     insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void>;
-    insertCompletedMatch(completedMatch: CompletedMatch): Promise<void>;
-    deleteOngoingMatch(matches: OngoingMatch): Promise<void>;
+    insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>;
+    deleteOngoingMatches(matches: OngoingMatch[]): Promise<void>;
 }

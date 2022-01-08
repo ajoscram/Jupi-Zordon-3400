@@ -29,22 +29,21 @@ describe('DiscardMatchesCommand', () => {
         const command: DiscardMatchesCommand = new DiscardMatchesCommand([]);
         await command.execute(contextMock.object);
 
-        for(const match of matches)
-            contextMock.databaseMock.verify(x => x.deleteOngoingMatch(match), Times.once());
+        contextMock.databaseMock.verify(x => x.deleteOngoingMatches(matches), Times.once());
         contextMock.messageMock.verify(x => x.replyWithDiscardedMatches(matches), Times.once());
     });
 
     it('execute(): replies to the message appropriately when given a matchIndex', async () => {
-        const match: OngoingMatch = dummyFactory.createOngoingMatch();
+        const matches: OngoingMatch[] = [ dummyFactory.createOngoingMatch() ];
         const index: number = 1;
         contextMock.databaseMock
             .setup(x => x.getOngoingMatch(serverIdentity, index))
-            .returns(async () => match);
+            .returns(async () => matches[0]);
         
         const command: DiscardMatchesCommand = new DiscardMatchesCommand([ index + "" ]);
         await command.execute(contextMock.object);
 
-        contextMock.databaseMock.verify(x => x.deleteOngoingMatch(match), Times.once());
-        contextMock.messageMock.verify(x => x.replyWithDiscardedMatches([ match ]), Times.once());
+        contextMock.databaseMock.verify(x => x.deleteOngoingMatches(matches), Times.once());
+        contextMock.messageMock.verify(x => x.replyWithDiscardedMatches(matches), Times.once());
     });
 });

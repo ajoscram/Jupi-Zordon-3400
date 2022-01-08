@@ -16,8 +16,7 @@ export class DiscardMatchesCommand implements Command{
 
     public async execute(context: Context): Promise<void> {
         const matches: OngoingMatch[] = await this.utils.getOngoingMatches(context, this.matchIndex);
-        for(const match of matches)
-            await context.database.deleteOngoingMatch(match);
+        await context.database.deleteOngoingMatches(matches);
         await context.message.replyWithDiscardedMatches(matches);
     }
 }

@@ -1,4 +1,4 @@
-import { MongoServerError } from "mongodb";
+import { BulkWriteResult, MongoServerError } from "mongodb";
 import { BotError, ErrorCode } from "../../src/core/concretions";
 import { IndexKey } from "./enums";
 
@@ -23,6 +23,10 @@ export class ErrorHandler{
             return new BotError(ErrorCode.ACCOUNT_SUMMONER_ID_IN_DB);
         else
             return this.handleGenericError(error);
+    }
+
+    public throwIfCompletedMatchStatsInsertionErrors(insertionResults: PromiseSettledResult<BulkWriteResult>[]): void{
+        console.log(insertionResults);
     }
 
     private isErrorDuplicateKey(error: any, key: string): boolean{

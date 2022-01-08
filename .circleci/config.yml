@@ -7,5 +7,5 @@ workflows:
   test:
     jobs:
       - node/test:
-          version: '14.15'
+          version: '16.13'
           run-command: jasmine

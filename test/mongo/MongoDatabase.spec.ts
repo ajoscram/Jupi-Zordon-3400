@@ -6,7 +6,7 @@ import { DummyModelFactory } from "../utils";
 
 import { config as loadEnvironmentVariables } from "dotenv";
 
-xdescribe('MongoDatabase', () => {
+describe('MongoDatabase', () => {
 
     let modelFactory: DummyModelFactory = new DummyModelFactory();
     let database: MongoDatabase;
@@ -20,12 +20,12 @@ xdescribe('MongoDatabase', () => {
         await database.initialize();
     });
 
-    it('upsertAccount(): should add a new account if no errors occur', async () => {
+    xit('upsertAccount(): should add a new account if no errors occur', async () => {
         const account: Account = modelFactory.createAccount();
         await database.upsertAccount(account);
     });
 
-    it('upsertAccount(): should fail if an error occurs', async () => {
+    xit('upsertAccount(): should fail if an error occurs', async () => {
         const account: Account = modelFactory.createAccount();
         await database.upsertAccount(account);
     });

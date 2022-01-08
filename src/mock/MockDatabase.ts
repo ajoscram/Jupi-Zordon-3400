@@ -103,11 +103,15 @@ export class MockDatabase implements Database {
         this.ongoingMatches.push(ongoingMatch);
     }
 
-    public async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
-        this.completedMatches.push(completedMatch);
+    public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
+        this.completedMatches.push(...completedMatches);
     }
 
-    public async deleteOngoingMatch(match: OngoingMatch): Promise<void> {
+    public  async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
+        matches.forEach(x => this.deleteOngoingMatch(x));
+    }
+
+    private async deleteOngoingMatch(match: OngoingMatch): Promise<void> {
         const index: number = this.ongoingMatches.indexOf(match);
         if(index != -1)
             this.ongoingMatches.splice(index, 1);

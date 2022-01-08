@@ -4,14 +4,11 @@ import { BotError, ErrorCode } from '../BotError';
 
 export class CommandUtils{
     public async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
-        if(summonerName){
+        if(summonerName)
             return await context.summonerFetcher.getSummoner(summonerName);
-        }
-        else{
-            const user: User = context.message.getAuthor();
-            const account: Account = await context.database.getAccount(user);
-            return account.summoner;
-        }
+        const user: User = context.message.getAuthor();
+        const account: Account = await context.database.getAccount(user);
+        return account.summoner;
     }
 
     public async getOngoingMatches(context: Context, matchIndex?: number): Promise<OngoingMatch[]>{

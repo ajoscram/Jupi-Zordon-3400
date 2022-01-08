@@ -27,6 +27,10 @@ export class MongoDao implements Dao{
         await this.database.collection(collection).insertOne(document);
     }
 
+    public async insertMany(collection: Collection, documents: Document[]): Promise<void> {
+        await this.database.collection(collection).insertMany(documents);
+    }
+
     public async upsert(collection: Collection, filter: Filter<Document>, update: Document): Promise<void> {
         await this.database.collection(collection).updateOne(filter, update, { upsert: true });
     }

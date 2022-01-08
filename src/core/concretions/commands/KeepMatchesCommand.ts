@@ -16,12 +16,19 @@ export class KeepMatchesCommand implements Command{
 
     public async execute(context: Context): Promise<void> {
         const ongoingMatches: OngoingMatch[] = await this.utils.getOngoingMatches(context, this.matchIndex);
+        const completedMatches: CompletedMatch[] = await this.fetchCompletedMatches(context, ongoingMatches);
+
+        await context.database.insertCompletedMatches(completedMatches);
+        await context.database.deleteOngoingMatches(ongoingMatches);
+        await context.message.replyWithKeptMatches(completedMatches);
+    }
+
+    private async fetchCompletedMatches(context: Context, ongoingMatches: OngoingMatch[]): Promise<CompletedMatch[]>{
         const completedMatches: CompletedMatch[] = [];
         for(const ongoingMatch of ongoingMatches){
             const completedMatch: CompletedMatch = await context.matchFetcher.getCompletedMatch(ongoingMatch);
-            await context.database.insertCompletedMatch(completedMatch);
             completedMatches.push(completedMatch);
         }
-        await context.message.replyWithKeptMatches(completedMatches);
+        return completedMatches;
     }
 }

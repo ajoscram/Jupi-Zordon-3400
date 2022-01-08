@@ -17,7 +17,6 @@ export class RecordMatchCommand implements Command{
     public async execute(context: Context): Promise<void> {
         const summoner: Summoner = await this.utils.getSummoner(context, this.summonerName);
         const serverIdentity: ServerIdentity = context.server.getIdentity();
-
         const match: OngoingMatch = await context.matchFetcher.getOngoingMatch(summoner, serverIdentity);
         const prediction: Prediction = await context.predictor.predict(match);
         

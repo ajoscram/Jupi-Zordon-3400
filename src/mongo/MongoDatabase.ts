@@ -76,33 +76,46 @@ export class MongoDatabase implements Database {
         await this.dao.insert(Collection.ONGOING_MATCHES, ongoingMatch);
     }
 
-    public async insertCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
-        await this.dao.insert(Collection.COMPLETED_MATCHES, completedMatch);
-        await this.insertStatsForCompletedMatch(completedMatch); 
+    public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
+        await this.dao.insertMany(Collection.COMPLETED_MATCHES, completedMatches);
+        await this.insertStatsForCompletedMatches(completedMatches);
     }
 
-    public async deleteOngoingMatch(match: OngoingMatch): Promise<void> {
+    public async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
-    public async insertStatsForCompletedMatch(completedMatch: CompletedMatch): Promise<void> {
-        const summonerOperations: AnyBulkWriteOperation[] = new BulkOperationBuilder()
-            .addInsertSummonerStatsOperations(completedMatch.blue, completedMatch.minutesPlayed)
-            .addInsertSummonerStatsOperations(completedMatch.red, completedMatch.minutesPlayed)
-            .build();
-
-        const championOperations: AnyBulkWriteOperation[] = new BulkOperationBuilder()
-            .addInsertBanOperations(completedMatch.blue.bans)
-            .addInsertBanOperations(completedMatch.red.bans)
-            .addInsertChampionStatsOperations(completedMatch.blue, completedMatch.minutesPlayed)
-            .addInsertChampionStatsOperations(completedMatch.red, completedMatch.minutesPlayed)
-            .build();
+    private async insertStatsForCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>{
+        const summonerOperations: AnyBulkWriteOperation[] = this.getSummonerStatsOperations(completedMatches);
+        const championOperations: AnyBulkWriteOperation[] = this.getChampionStatsOperations(completedMatches);
 
         const results: PromiseSettledResult<BulkWriteResult>[] = await Promise.allSettled([
             this.dao.bulk(Collection.SUMMONER_STATS, summonerOperations),
             this.dao.bulk(Collection.CHAMPION_STATS, championOperations)
         ]);
 
-        console.log(results); //this would be where we check the errors 
+        this.errorHandler.throwIfCompletedMatchStatsInsertionErrors(results);
+    }
+
+    private getSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+        const builder: BulkOperationBuilder = new BulkOperationBuilder();
+        for(const match of completedMatches){
+            builder
+                .addInsertSummonerStatsOperations(match.blue, match.minutesPlayed)
+                .addInsertSummonerStatsOperations(match.red, match.minutesPlayed);
+        }
+        return builder.build();
+    }
+
+    private getChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+        const builder: BulkOperationBuilder = new BulkOperationBuilder();
+        for(const match of completedMatches){
+            builder
+                .addInsertBanOperations(match.blue.bans)
+                .addInsertBanOperations(match.red.bans)
+                .addInsertChampionStatsOperations(match.blue, match.minutesPlayed)
+                .addInsertChampionStatsOperations(match.red, match.minutesPlayed);
+        }
+        return builder.build();  
     }
 }
