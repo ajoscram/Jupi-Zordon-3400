@@ -8,7 +8,6 @@ import { StringPresenter } from "./presentation";
 
 export class DiscordBot extends Bot{
 
-    private static self: DiscordBot;
     private readonly client: Client;
 
     public constructor(
@@ -20,7 +19,6 @@ export class DiscordBot extends Bot{
     ){
         super(commandFactory);
         this.client = new Client();
-        DiscordBot.self = this;
     }
 
     public async initialize(): Promise<void> {
@@ -28,8 +26,14 @@ export class DiscordBot extends Bot{
         const aiModel: AIModel = await this.database.getAIModel();
         await this.predictor.initialize(aiModel);
         
-        this.client.on('ready', this.onReady);
-        this.client.on('message', this.onMessage);
+        const self: DiscordBot = this; //forced to assign this 'self' var because of JS binding BS
+        this.client.on('ready', () => Logger.logInformation('Jupi-Zordon 3400 is up and running!'));
+        this.client.on('message', (message: DiscordAPIMessage) => {
+            if(!message.author.bot){
+                const wrappedMessage: Message = new DiscordMessage(message, new StringPresenter());
+                self.process(wrappedMessage);
+            }
+        });
     }
 
     public async run(): Promise<void> {
@@ -45,16 +49,5 @@ export class DiscordBot extends Bot{
             message,
             server: message.getServer()
         };
-    }
-
-    private onReady(): void{
-        Logger.logInformation('Jupi-Zordon 3400 is up and running!');
-    }
-
-    private onMessage(message: DiscordAPIMessage): void {
-        if(!message.author.bot){
-            const wrappedMessage: Message = new DiscordMessage(message, new StringPresenter());
-            DiscordBot.self.process(wrappedMessage);
-        }
     }
 }

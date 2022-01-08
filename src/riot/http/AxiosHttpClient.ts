@@ -1,27 +1,31 @@
-import axios, { AxiosResponse } from "axios";
+import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
 import { BotError, ErrorCode } from "../../core/concretions";
 import { Header, HttpClient } from ".";
 
 export class AxiosHttpClient implements HttpClient {
 
-    private static readonly SUCCESSFUL_RESPONSE_STATUS: number = 200;
-
     public async get(url:string, headers: Header[]): Promise<object> {
-        const headersObject: object = this.createHeadersObject(headers);
-        const response: AxiosResponse = await axios.get(url, headersObject);
-        
-        if(response.status === AxiosHttpClient.SUCCESSFUL_RESPONSE_STATUS)
+        try{
+            const config: AxiosRequestConfig = this.createConfig(headers);
+            const response: AxiosResponse = await axios.get(url, config);
             return response.data;
-        else {
-            const innerError: Error = new Error(`GET failed with code ${response.status} on: ${url}`);
-            throw new BotError(ErrorCode.UNSUCCESSFUL_REQUEST, innerError);
+        } catch(error) {
+            throw this.createBotError(error, url, "GET");
         }
     }
     
-    private createHeadersObject(headers: Header[]): object {
+    private createConfig(headers: Header[]): AxiosRequestConfig {
         const headersObject: { [parameter: string]: string } = {};
         for(const header of headers)
             headersObject[header.name] = header.value;
-        return headersObject;
+        return { headers: headersObject };
+    }
+
+    private createBotError(error: any, url: string, method: string): BotError{
+        const errorMessage: string = axios.isAxiosError(error) ? 
+            `${method} failed with code ${error.response?.status} on ${url}` :
+            `${method} failed on ${url} with error: ${error} `;
+        const innerError: Error = new Error(errorMessage);
+        return new BotError(ErrorCode.UNSUCCESSFUL_REQUEST, innerError);
     }
 }
