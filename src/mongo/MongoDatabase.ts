@@ -99,13 +99,14 @@ export class MongoDatabase implements Database {
     }
 
     private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<Document>{
-        if(array.length == 1)
-            return { [key]: valueFunction(array[0]) };
-
         const innerFilters: Filter<Document>[] = array.map(x => {
             return { [key]: valueFunction(x) };
         });
-        return { $or:  innerFilters };
+
+        if(innerFilters.length == 1)
+            return innerFilters;
+        else
+            return { $or:  innerFilters };
     }
 
     private async getOngoingMatchCount(serverIdentity: ServerIdentity): Promise<number>{
