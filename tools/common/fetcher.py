@@ -13,7 +13,12 @@ current_summoner_names = {
     "arcadianforce": "Leo UWU",
     "Greety": "VØ Blueberry",
     "Manuxx11": "NovałManux",
-    "EI Pescador": "El Pescatore"
+    "EI Pescador": "El Pescatore",
+    "Don Melcôchón": "Furciø",
+    "Barrita Numar": "El Nieto",
+    "NovalManux": "NovałManux",
+    "Nï¿½xian": "Nøxian",
+    "Don Melcï¿½chï¿½n": "Furciø"
 }
 
 def create_champion_dictionary():
