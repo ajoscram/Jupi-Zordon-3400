@@ -15,12 +15,19 @@ def initialize_database():
         [
             ("serverIdentity.id", pymongo.DESCENDING),
             ("date", pymongo.DESCENDING)
-        ], unique=True, name ="serverIdentity.id, date")
+        ], name ="serverIdentity.id, date")
+    database["completed_matches"].create_index(
+        [ ("id", pymongo.DESCENDING) ],
+        unique=True, name ="id")
     database["ongoing_matches"].create_index(
         [
             ("serverIdentity.id", pymongo.DESCENDING),
-            ("date", pymongo.DESCENDING)
-        ], unique=True, name ="serverIdentity.id, date")
+            ("date", pymongo.DESCENDING),
+
+        ], name ="serverIdentity.id, date")
+    database["ongoing_matches"].create_index(
+        [ ("id", pymongo.DESCENDING) ],
+        unique=True, name ="id")
     database["summoner_stats"].create_index(
         [
             ("summoner.id", pymongo.DESCENDING),

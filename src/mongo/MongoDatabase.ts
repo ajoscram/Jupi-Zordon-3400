@@ -3,13 +3,15 @@ import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, C
 import { ErrorCode } from '../core/concretions';
 import { Dao } from "./dao";
 import { BulkOperationBuilder } from "./BulkOperationBuilder";
-import { AnyBulkWriteOperation, BulkWriteResult, Document, Filter } from "mongodb";
-import { ErrorHandler } from "./ErrorHandler";
-import { Collection, IndexKey } from "./enums";
+import { AnyBulkWriteOperation, BulkWriteResult, Document, Filter, Sort } from "mongodb";
+import { ErrorResolver } from "./ErrorResolver";
+import { Collection, IndexKey, SortOrder } from "./enums";
+import { Thrower } from "./Thrower";
 
 export class MongoDatabase implements Database {
 
-    private errorHandler: ErrorHandler = new ErrorHandler();
+    private errorResolver: ErrorResolver = new ErrorResolver();
+    private thrower: Thrower = new Thrower();
 
     constructor(
         private dao: Dao
@@ -17,9 +19,9 @@ export class MongoDatabase implements Database {
 
     async initialize(): Promise<void> {
         if(!process.env.DATABASE_NAME)
-            throw this.errorHandler.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
+            throw this.errorResolver.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
         if(!process.env.MONGO_URL)
-            throw this.errorHandler.createError("Unable to connect to the database because process.env.MONGO_URL was not set.");
+            throw this.errorResolver.createError("Unable to connect to the database because process.env.MONGO_URL was not set.");
         else
             await this.dao.initialize(process.env.MONGO_URL, process.env.DATABASE_NAME);
     }
@@ -27,24 +29,21 @@ export class MongoDatabase implements Database {
     async getAccount(user: User): Promise<Account> {
         const filter: Filter<Document> = { [IndexKey.USER_ID]: user.id };
         const document: Document | null = await this.dao.find(Collection.ACCOUNTS, filter);
-        this.errorHandler.throwIfFalsy(document, ErrorCode.ACCOUNT_NOT_FOUND);
+        this.thrower.throwIfFalsy(document, ErrorCode.ACCOUNT_NOT_FOUND);
         return document as Account;
     }
 
     async getAccounts(users: User[]): Promise<Account[]> {
-        try{
-            const filter: Filter<Document> = this.getIndexKeyOrFilter(users, IndexKey.USER_ID, user => user.id);
-            const documents: Document[] = await this.dao.findMany(Collection.ACCOUNTS, filter, users.length);
-            return documents.map(document => document as Account);
-        } catch(error){
-            throw this.errorHandler.handleGetAccountsError(error);
-        }
+        const filter: Filter<Document> = this.getOrFilter(users, IndexKey.USER_ID, user => user.id);
+        await this.validateAccountCount(filter, users.length);
+        const documents: Document[] = await this.dao.findMany(Collection.ACCOUNTS, filter);
+        return documents.map(document => document as Account);
     }
 
     async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
         const filter: Filter<Document> = { [IndexKey.SUMMONER_ID]: summoner.id };
         const document: Document | null = await this.dao.find(Collection.SUMMONER_STATS, filter);
-        this.errorHandler.throwIfFalsy(document, ErrorCode.SUMMONER_STATS_NOT_FOUND);
+        this.thrower.throwIfFalsy(document, ErrorCode.SUMMONER_STATS_NOT_FOUND);
         return document as SummonerOverallStats;
     }
 
@@ -53,13 +52,17 @@ export class MongoDatabase implements Database {
     }
 
     public async getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]> {
-        const filter: Filter<Document> = { [IndexKey.SERVER_ID]: serverIdentity.id };
-        const documents: Document[] = await this.dao.findMany(Collection.ONGOING_MATCHES, filter);
+        const filter: Filter<Document> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
+        const sort: Sort = { [IndexKey.DATE]: SortOrder.DESCENDING };
+        const documents: Document[] = await this.dao.findMany(Collection.ONGOING_MATCHES, filter, sort);
         return documents.map(document => document as OngoingMatch);
     }
 
     public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
-        throw new Error("Method not implemented.");
+        const count: number = await this.getOngoingMatchCount(serverIdentity);
+        this.thrower.throwIfOngoingMatchIndexIsOutOfRange(index, count);
+        const matches: OngoingMatch[] = await this.getOngoingMatches(serverIdentity);
+        return matches[index];
     }
 
     public async upsertAccount(account: Account): Promise<void> {
@@ -68,20 +71,21 @@ export class MongoDatabase implements Database {
                 [IndexKey.USER_ID]: account.user.id,
                 [IndexKey.SUMMONER_ID]: account.summoner.id
             };
-            const update: Document = {
-                $set: {
-                    user: account.user,
-                    summoner: account.summoner
-                }
-            };
+            const update: Document = { $set: account };
             await this.dao.upsert(Collection.ACCOUNTS, filter, update);
         } catch(error) {
-            throw this.errorHandler.handleUpsertAccountError(error);
+            throw this.errorResolver.handleUpsertAccountError(error);
         }
     }
 
     public async insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void> {
-        await this.dao.insert(Collection.ONGOING_MATCHES, ongoingMatch);
+        try{
+            const count: number = await this.getOngoingMatchCount(ongoingMatch.serverIdentity);
+            this.thrower.throwIfMaxMatchesReached(count);
+            await this.dao.insert(Collection.ONGOING_MATCHES, ongoingMatch);
+        } catch(error) {
+            throw this.errorResolver.handleInsertOngoingMatchError(error);
+        }
     }
 
     public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
@@ -90,22 +94,45 @@ export class MongoDatabase implements Database {
     }
 
     public async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
-        throw new Error("Method not implemented.");
+        const filter: Filter<Document> = this.getOrFilter(matches, IndexKey.ID, match => match.id);
+        await this.dao.deleteMany(Collection.ONGOING_MATCHES, filter);
+    }
+
+    private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<Document>{
+        if(array.length == 1)
+            return { [key]: valueFunction(array[0]) };
+
+        const innerFilters: Filter<Document>[] = array.map(x => {
+            return { [key]: valueFunction(x) };
+        });
+        return { $or:  innerFilters };
+    }
+
+    private async getOngoingMatchCount(serverIdentity: ServerIdentity): Promise<number>{
+        return await this.dao.count(
+            Collection.ONGOING_MATCHES,
+            { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id }
+        );
+    }
+
+    private async validateAccountCount(filter: Filter<Document>, expectedCount: number): Promise<void>{
+        const actualCount: number = await this.dao.count(Collection.ACCOUNTS, filter);
+        this.thrower.throwIfAccountCountIsNotExpected(actualCount, expectedCount);
     }
 
     private async insertStatsForCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>{
-        const summonerOperations: AnyBulkWriteOperation[] = this.getSummonerStatsOperations(completedMatches);
-        const championOperations: AnyBulkWriteOperation[] = this.getChampionStatsOperations(completedMatches);
+        const summonerOperations: AnyBulkWriteOperation[] = this.createSummonerStatsOperations(completedMatches);
+        const championOperations: AnyBulkWriteOperation[] = this.createChampionStatsOperations(completedMatches);
 
         const results: PromiseSettledResult<BulkWriteResult>[] = await Promise.allSettled([
             this.dao.bulk(Collection.SUMMONER_STATS, summonerOperations),
             this.dao.bulk(Collection.CHAMPION_STATS, championOperations)
         ]);
 
-        this.errorHandler.throwIfCompletedMatchStatsInsertionErrors(results);
+        this.thrower.throwIfCompletedMatchStatsInsertionErrors(results);
     }
 
-    private getSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+    private createSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
         const builder: BulkOperationBuilder = new BulkOperationBuilder();
         for(const match of completedMatches){
             builder
@@ -115,7 +142,7 @@ export class MongoDatabase implements Database {
         return builder.build();
     }
 
-    private getChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+    private createChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
         const builder: BulkOperationBuilder = new BulkOperationBuilder();
         for(const match of completedMatches){
             builder
@@ -125,12 +152,5 @@ export class MongoDatabase implements Database {
                 .addInsertChampionStatsOperations(match.red, match.minutesPlayed);
         }
         return builder.build();  
-    }
-
-    private getIndexKeyOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<Document>{
-        const innerFilters: Filter<Document>[] = array.map(x => {
-            return { [key]: valueFunction(x) };
-        });
-        return { $or:  innerFilters };
     }
 }

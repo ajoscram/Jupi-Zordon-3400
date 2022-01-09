@@ -3,5 +3,7 @@ export enum IndexKey{
     SUMMONER_ID = "summoner.id",
     CHAMPION_ID = "champion.id",
     PICKS_CHAMPION_ID = "picks.champion.id",
-    SERVER_ID = "serverIdentity.id",
+    SERVERIDENTITY_ID = "serverIdentity.id",
+    DATE = "date",
+    ID = "id",
 }

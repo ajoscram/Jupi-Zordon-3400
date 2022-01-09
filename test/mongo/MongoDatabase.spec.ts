@@ -1,7 +1,7 @@
 import "jasmine";
 import { Dao, MongoDao } from "../../src/mongo/dao";
 import { MongoDatabase } from "../../src/mongo/MongoDatabase";
-import { Account, User } from "../../src/core/model";
+import { Account, Summoner, SummonerOverallStats, User } from "../../src/core/model";
 import { DummyModelFactory } from "../utils";
 
 import { config as loadEnvironmentVariables } from "dotenv";
@@ -18,16 +18,6 @@ describe('MongoDatabase', () => {
         dao = new MongoDao();
         database = new MongoDatabase(dao);
         await database.initialize();
-    });
-
-    xit('upsertAccount(): should add a new account if no errors occur', async () => {
-        const account: Account = modelFactory.createAccount();
-        await database.upsertAccount(account);
-    });
-
-    xit('upsertAccount(): should fail if an error occurs (SPLIT BY ERROR)', async () => {
-        const account: Account = modelFactory.createAccount();
-        await database.upsertAccount(account);
     });
 
     xit('getAccount(): should return the account if the user for it exists', async () => {
@@ -60,5 +50,27 @@ describe('MongoDatabase', () => {
         ];
         const accounts: Account[] = await database.getAccounts(users);
         console.log(accounts);
+    });
+
+    xit('getSummonerOverallStats(): should return the stats for a summoner if they have stats recorded', async () => {
+        const summoner: Summoner = modelFactory.createSummoner();
+        const stats: SummonerOverallStats = await database.getSummonerOverallStats(summoner);
+        console.log(stats);
+    });
+
+    xit('getSummonerOverallStats(): should fail if the summoner has no recorded stats', async () => {
+        const summoner: Summoner = modelFactory.createSummoner();
+        const stats: SummonerOverallStats = await database.getSummonerOverallStats(summoner);
+        console.log(stats);
+    });
+
+    xit('upsertAccount(): should add a new account if no errors occur', async () => {
+        const account: Account = modelFactory.createAccount();
+        await database.upsertAccount(account);
+    });
+
+    xit('upsertAccount(): should fail if an error occurs (SPLIT BY ERROR)', async () => {
+        const account: Account = modelFactory.createAccount();
+        await database.upsertAccount(account);
     });
 });
