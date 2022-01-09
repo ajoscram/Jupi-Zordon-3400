@@ -126,7 +126,7 @@ export class BulkOperationBuilder{
         }
     }
 
-    public build(): AnyBulkWriteOperation[]{
-        return this.operations;
+    public build<T>(): AnyBulkWriteOperation<T>[]{
+        return this.operations as AnyBulkWriteOperation<T>[];
     }
 }

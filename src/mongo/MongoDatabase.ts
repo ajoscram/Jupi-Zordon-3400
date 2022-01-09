@@ -1,23 +1,23 @@
+import { AnyBulkWriteOperation, BulkWriteResult, Filter, Sort, UpdateFilter } from "mongodb";
+import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, ServerIdentity, ChampionOverallStats } from "src/core/model";
 import { Database } from "../core/abstractions";
-import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, ServerIdentity } from "src/core/model";
-import { ErrorCode } from '../core/concretions';
+import { BotError, ErrorCode } from '../core/concretions';
 import { Dao } from "./dao";
 import { BulkOperationBuilder } from "./BulkOperationBuilder";
-import { AnyBulkWriteOperation, BulkWriteResult, Document, Filter, Sort } from "mongodb";
 import { ErrorResolver } from "./ErrorResolver";
 import { Collection, IndexKey, SortOrder } from "./enums";
-import { Thrower } from "./Thrower";
 
 export class MongoDatabase implements Database {
 
+    private static readonly MAX_ONGOING_MATCHES_ALLOWED: number = 4;
+
     private errorResolver: ErrorResolver = new ErrorResolver();
-    private thrower: Thrower = new Thrower();
 
     constructor(
         private dao: Dao
     ){}
 
-    async initialize(): Promise<void> {
+    public async initialize(): Promise<void> {
         if(!process.env.DATABASE_NAME)
             throw this.errorResolver.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
         if(!process.env.MONGO_URL)
@@ -26,52 +26,55 @@ export class MongoDatabase implements Database {
             await this.dao.initialize(process.env.MONGO_URL, process.env.DATABASE_NAME);
     }
 
-    async getAccount(user: User): Promise<Account> {
-        const filter: Filter<Document> = { [IndexKey.USER_ID]: user.id };
-        const document: Document | null = await this.dao.find(Collection.ACCOUNTS, filter);
-        this.thrower.throwIfFalsy(document, ErrorCode.ACCOUNT_NOT_FOUND);
-        return document as Account;
+    public async getAccount(user: User): Promise<Account> {
+        const filter: Filter<Account> = { [IndexKey.USER_ID]: user.id };
+        const account: Account | null = await this.dao.find(Collection.ACCOUNTS, filter);
+        if(!account)
+            throw new BotError(ErrorCode.ACCOUNT_NOT_FOUND);
+        else
+            return account;
     }
 
-    async getAccounts(users: User[]): Promise<Account[]> {
-        const filter: Filter<Document> = this.getOrFilter(users, IndexKey.USER_ID, user => user.id);
+    public async getAccounts(users: User[]): Promise<Account[]> {
+        const filter: Filter<Account> = this.getOrFilter(users, IndexKey.USER_ID, user => user.id) as Filter<Account>;
         await this.validateAccountCount(filter, users.length);
-        const documents: Document[] = await this.dao.findMany(Collection.ACCOUNTS, filter);
-        return documents.map(document => document as Account);
+        return await this.dao.findMany(Collection.ACCOUNTS, filter);
     }
 
-    async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
-        const filter: Filter<Document> = { [IndexKey.SUMMONER_ID]: summoner.id };
-        const document: Document | null = await this.dao.find(Collection.SUMMONER_STATS, filter);
-        this.thrower.throwIfFalsy(document, ErrorCode.SUMMONER_STATS_NOT_FOUND);
-        return document as SummonerOverallStats;
+    public async getSummonerOverallStats(summoner: Summoner): Promise<SummonerOverallStats> {
+        const filter: Filter<SummonerOverallStats> = { [IndexKey.SUMMONER_ID]: summoner.id };
+        const stats: SummonerOverallStats | null = await this.dao.find(Collection.SUMMONER_STATS, filter);
+        if(!stats)
+            throw new BotError(ErrorCode.SUMMONER_STATS_NOT_FOUND);
+        else
+            return stats;
     }
 
-    async getAIModel(): Promise<AIModel> {
+    public async getAIModel(): Promise<AIModel> {
         return {};
     }
 
     public async getOngoingMatches(serverIdentity: ServerIdentity): Promise<OngoingMatch[]> {
-        const filter: Filter<Document> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
+        const filter: Filter<OngoingMatch> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
         const sort: Sort = { [IndexKey.DATE]: SortOrder.DESCENDING };
-        const documents: Document[] = await this.dao.findMany(Collection.ONGOING_MATCHES, filter, sort);
-        return documents.map(document => document as OngoingMatch);
+        return await this.dao.findMany(Collection.ONGOING_MATCHES, filter, sort);
     }
 
     public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
         const count: number = await this.getOngoingMatchCount(serverIdentity);
-        this.thrower.throwIfOngoingMatchIndexIsOutOfRange(index, count);
+        if(index < 0 || index >= count)
+            throw new BotError(ErrorCode.ONGOING_MATCH_INDEX_OUT_OF_RANGE);
         const matches: OngoingMatch[] = await this.getOngoingMatches(serverIdentity);
         return matches[index];
     }
 
     public async upsertAccount(account: Account): Promise<void> {
         try{
-            const filter: Filter<Document> = {
+            const filter: Filter<Account> = {
                 [IndexKey.USER_ID]: account.user.id,
                 [IndexKey.SUMMONER_ID]: account.summoner.id
             };
-            const update: Document = { $set: account };
+            const update: UpdateFilter<Account> = { $set: account };
             await this.dao.upsert(Collection.ACCOUNTS, filter, update);
         } catch(error) {
             throw this.errorResolver.handleUpsertAccountError(error);
@@ -81,7 +84,8 @@ export class MongoDatabase implements Database {
     public async insertOngoingMatch(ongoingMatch: OngoingMatch): Promise<void> {
         try{
             const count: number = await this.getOngoingMatchCount(ongoingMatch.serverIdentity);
-            this.thrower.throwIfMaxMatchesReached(count);
+            if(count >= MongoDatabase.MAX_ONGOING_MATCHES_ALLOWED)
+                throw new BotError(ErrorCode.MAX_ONGOING_MATCHES);
             await this.dao.insert(Collection.ONGOING_MATCHES, ongoingMatch);
         } catch(error) {
             throw this.errorResolver.handleInsertOngoingMatchError(error);
@@ -94,19 +98,19 @@ export class MongoDatabase implements Database {
     }
 
     public async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
-        const filter: Filter<Document> = this.getOrFilter(matches, IndexKey.ID, match => match.id);
+        const filter: Filter<OngoingMatch> = this.getOrFilter(matches, IndexKey.ID, match => match.id);
         await this.dao.deleteMany(Collection.ONGOING_MATCHES, filter);
     }
 
-    private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<Document>{
-        const innerFilters: Filter<Document>[] = array.map(x => {
+    private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<T>{
+        const innerFilters: Filter<T>[] = array.map(x => {
             return { [key]: valueFunction(x) };
-        });
+        }) as Filter<T>[];
 
         if(innerFilters.length == 1)
-            return innerFilters;
+            return innerFilters[0];
         else
-            return { $or:  innerFilters };
+            return { $or: innerFilters };
     }
 
     private async getOngoingMatchCount(serverIdentity: ServerIdentity): Promise<number>{
@@ -116,24 +120,25 @@ export class MongoDatabase implements Database {
         );
     }
 
-    private async validateAccountCount(filter: Filter<Document>, expectedCount: number): Promise<void>{
+    private async validateAccountCount(filter: Filter<Account>, expectedCount: number): Promise<void>{
         const actualCount: number = await this.dao.count(Collection.ACCOUNTS, filter);
-        this.thrower.throwIfAccountCountIsNotExpected(actualCount, expectedCount);
+        if(actualCount !== expectedCount)
+            throw new BotError(ErrorCode.ACCOUNTS_NOT_FOUND);
     }
 
     private async insertStatsForCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>{
-        const summonerOperations: AnyBulkWriteOperation[] = this.createSummonerStatsOperations(completedMatches);
-        const championOperations: AnyBulkWriteOperation[] = this.createChampionStatsOperations(completedMatches);
+        const summonerOperations: AnyBulkWriteOperation<SummonerOverallStats>[] = this.createSummonerStatsOperations(completedMatches);
+        const championOperations: AnyBulkWriteOperation<ChampionOverallStats>[] = this.createChampionStatsOperations(completedMatches);
 
         const results: PromiseSettledResult<BulkWriteResult>[] = await Promise.allSettled([
             this.dao.bulk(Collection.SUMMONER_STATS, summonerOperations),
             this.dao.bulk(Collection.CHAMPION_STATS, championOperations)
         ]);
 
-        this.thrower.throwIfCompletedMatchStatsInsertionErrors(results);
+        this.throwIfCompletedMatchStatsInsertionErrors(results);
     }
 
-    private createSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+    private createSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation<SummonerOverallStats>[] {
         const builder: BulkOperationBuilder = new BulkOperationBuilder();
         for(const match of completedMatches){
             builder
@@ -143,7 +148,7 @@ export class MongoDatabase implements Database {
         return builder.build();
     }
 
-    private createChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation[] {
+    private createChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation<ChampionOverallStats>[] {
         const builder: BulkOperationBuilder = new BulkOperationBuilder();
         for(const match of completedMatches){
             builder
@@ -153,5 +158,9 @@ export class MongoDatabase implements Database {
                 .addInsertChampionStatsOperations(match.red, match.minutesPlayed);
         }
         return builder.build();  
+    }
+
+    private throwIfCompletedMatchStatsInsertionErrors(insertionResults: PromiseSettledResult<BulkWriteResult>[]): void{
+        console.log(insertionResults);
     }
 }

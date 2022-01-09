@@ -1,4 +1,4 @@
-import { AnyBulkWriteOperation, Document, BulkWriteResult, MongoClient, Db, Filter, FindCursor, Sort } from "mongodb";
+import { AnyBulkWriteOperation, BulkWriteResult, MongoClient, Db, Filter, FindCursor, Sort, OptionalId, UpdateFilter } from "mongodb";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
 import { Dao } from ".";
 import { Collection } from "../enums";
@@ -23,40 +23,40 @@ export class MongoDao implements Dao{
         // this is missing mongo options to add connections to the pool
     }
 
-    public async find(collection: Collection, filter: Filter<Document>): Promise<Document | null> {
-        return await this.database.collection(collection).findOne(filter);
+    public async find<T>(collection: Collection, filter: Filter<T>): Promise<T | null> {
+        return await this.database.collection<T>(collection).findOne(filter);
     }
 
-    public async findMany(collection: Collection, filter: Filter<Document>, sort?: Sort): Promise<Document[]> {
-        const cursor: FindCursor = sort ?
-            this.database.collection(collection).find(filter).sort(sort) :    
-            this.database.collection(collection).find(filter);
-        const documents: Document[] = await cursor.toArray();
+    public async findMany<T>(collection: Collection, filter: Filter<T>, sort?: Sort): Promise<T[]> {
+        const cursor: FindCursor<T> = sort ?
+            this.database.collection<T>(collection).find(filter).sort(sort) :    
+            this.database.collection<T>(collection).find(filter);
+        const documents: T[] = await cursor.toArray();
         cursor.close();
         return documents;
     }
 
-    public async count(collection: Collection, filter: Filter<Document>): Promise<number> {
-        return await this.database.collection(collection).countDocuments(filter);
+    public async count<T>(collection: Collection, filter: Filter<T>): Promise<number> {
+        return await this.database.collection<T>(collection).countDocuments(filter);
     }
 
-    public async insert(collection: Collection, document: Document): Promise<void> {
-        await this.database.collection(collection).insertOne(document);
+    public async insert<T>(collection: Collection, document: OptionalId<T>): Promise<void> {
+        await this.database.collection<T>(collection).insertOne(document);
     }
 
-    public async insertMany(collection: Collection, documents: Document[]): Promise<void> {
-        await this.database.collection(collection).insertMany(documents);
+    public async insertMany<T>(collection: Collection, documents: OptionalId<T>[]): Promise<void> {
+        await this.database.collection<T>(collection).insertMany(documents);
     }
 
-    public async upsert(collection: Collection, filter: Filter<Document>, update: Document): Promise<void> {
-        await this.database.collection(collection).updateOne(filter, update, { upsert: true });
+    public async upsert<T>(collection: Collection, filter: Filter<T>, update: UpdateFilter<T>): Promise<void> {
+        await this.database.collection<T>(collection).updateOne(filter, update, { upsert: true });
     }
 
-    public async deleteMany(collection: Collection, filter: Filter<Document>): Promise<void> {
-        await this.database.collection(collection).deleteMany(filter);
+    public async deleteMany<T>(collection: Collection, filter: Filter<T>): Promise<void> {
+        await this.database.collection<T>(collection).deleteMany(filter);
     }
 
-    public async bulk(collection: Collection, operations: AnyBulkWriteOperation[]): Promise<BulkWriteResult> {
-        return await this.database.collection(collection).bulkWrite(operations);
+    public async bulk<T>(collection: Collection, operations: AnyBulkWriteOperation<T>[]): Promise<BulkWriteResult> {
+        return await this.database.collection<T>(collection).bulkWrite(operations);
     }
 }
