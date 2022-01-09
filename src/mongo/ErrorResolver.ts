@@ -4,7 +4,7 @@ import { IndexKey } from "./enums";
 
 export class ErrorResolver{
     
-    public static readonly DUPLICATE_KEY_ERROR_CODE: number = 11000;
+    private static readonly DUPLICATE_KEY_ERROR_CODE: number = 11000;
 
     public createError(innerErrorMessage: string, code: ErrorCode = ErrorCode.DB_ERROR): BotError{
         const innerError: Error = new Error(innerErrorMessage);

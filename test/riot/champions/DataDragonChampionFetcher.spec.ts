@@ -6,11 +6,12 @@ import { RawChampion, RawChampionContainer } from "../../../src/riot/model";
 import { DummyModelFactory } from "../../utils";
 import { Champion } from "../../../src/core/model";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
+import { Url } from "../../../src/riot/utils";
 
 describe('DataDragonChampionFetcher', () => {
 
     const versions: string[] = [ "1", "0" ];
-    const championsUrl: string = DataDragonChampionFetcher.CHAMPIONS_URL.replace(DataDragonChampionFetcher.VERSION_WILDCARD, versions[0]);
+    const championsUrl: string = Url.CHAMPIONS.replace("[VERSION]", versions[0]);
     const container: RawChampionContainer = new DummyModelFactory().createRawChampionContainer();
 
     let clientMock: IMock<HttpClient>;
@@ -21,7 +22,7 @@ describe('DataDragonChampionFetcher', () => {
         fetcher = new DataDragonChampionFetcher(clientMock.object);
 
         clientMock
-            .setup(x => x.get(DataDragonChampionFetcher.VERSION_URL, It.isAny()))
+            .setup(x => x.get(Url.VERSION, It.isAny()))
             .returns(async () => versions);
         
         clientMock

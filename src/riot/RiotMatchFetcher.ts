@@ -4,22 +4,20 @@ import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Parti
 import { ChampionFetcher } from "./champions";
 import { Header, HttpClient } from "./http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawTeam, RawTimeline, TeamId } from "./model";
-import { createRiotTokenHeader } from "./utils";
+import { createRiotTokenHeader, Url } from "./utils";
 
 export class RiotMatchFetcher implements MatchFetcher {
     
-    public static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
-    public static readonly WIN_STRING: string = "Win";
-    public static readonly ONGOING_MATCH_URL: string = "https://la1.api.riotgames.com/lol/spectator/v4/active-games/by-summoner/";
-    public static readonly COMPLETED_MATCH_URL: string = "https://la1.api.riotgames.com/lol/match/v4/matches/";
-
+    private static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
+    private static readonly WIN_STRING: string = "Win";
+    
     constructor(
         private readonly client: HttpClient,
         private readonly championFetcher: ChampionFetcher
     ){ };
     
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
-        const requestUrl: string = RiotMatchFetcher.ONGOING_MATCH_URL + encodeURIComponent(summoner.id);
+        const requestUrl: string = Url.ONGOING_MATCH + encodeURIComponent(summoner.id);
         const header: Header = createRiotTokenHeader();
         const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]) as RawOngoingMatch;
         this.validateRawOngoingMatch(match);
@@ -55,7 +53,7 @@ export class RiotMatchFetcher implements MatchFetcher {
     }
 
     public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
-        const requestUrl: string = RiotMatchFetcher.COMPLETED_MATCH_URL + encodeURIComponent(ongoingMatch.id);
+        const requestUrl: string = Url.COMPLETED_MATCH + encodeURIComponent(ongoingMatch.id);
         const header: Header = createRiotTokenHeader();
         const completedMatch: RawCompletedMatch = await this.client.get(requestUrl, [ header ]) as RawCompletedMatch;
         const minutesPlayed: number = Math.round(completedMatch.gameDuration / 60);

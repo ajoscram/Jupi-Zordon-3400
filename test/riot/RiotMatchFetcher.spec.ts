@@ -8,12 +8,13 @@ import { HttpClient } from "../../src/riot/http";
 import { RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
 import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, TeamStats } from "../../src/core/model";
 import { BotError, ErrorCode } from "../../src/core/concretions";
+import { Url } from "../../src/riot/utils";
 
 describe('RiotMatchFetcher', () => {
     const modelFactory: DummyModelFactory = new DummyModelFactory();
     const serverIdentity: ServerIdentity = modelFactory.createServerIndentity();
     const summoner: Summoner = modelFactory.createSummoner();
-    const ongoingMatchUrl: string = RiotMatchFetcher.ONGOING_MATCH_URL + encodeURIComponent(summoner.id);
+    const ongoingMatchUrl: string = Url.ONGOING_MATCH + encodeURIComponent(summoner.id);
 
     let clientMock: IMock<HttpClient>;
     let championFetcherMock: IMock<ChampionFetcher>;
@@ -30,7 +31,7 @@ describe('RiotMatchFetcher', () => {
     });
 
     it('getOngoingMatch(): should return correctly if a custom match is queried', async () => {
-        const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch(RiotMatchFetcher.CUSTOM_GAME_TYPE);
+        const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch("CUSTOM_GAME");
         clientMock
             .setup(x => x.get(ongoingMatchUrl, It.isAny()))
             .returns(async () => rawMatch);
@@ -56,7 +57,7 @@ describe('RiotMatchFetcher', () => {
 
     it('getCompletedMatch(): should return correctly when given a custom match with all the expected data in it', async () => {
         const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
-        const completedMatchUrl: string = RiotMatchFetcher.COMPLETED_MATCH_URL + encodeURIComponent(ongoingMatch.id);
+        const completedMatchUrl: string = Url.COMPLETED_MATCH + encodeURIComponent(ongoingMatch.id);
         const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch);
         clientMock
             .setup(x => x.get(completedMatchUrl, It.isAny()))
@@ -113,7 +114,7 @@ describe('RiotMatchFetcher', () => {
         const rawTeam: RawTeam | undefined = rawCompletedMatch.teams.find(x => x.teamId == teamId);
         const rawTeamParticipants: RawCompletedMatchParticipant[] = rawCompletedMatch.participants.filter(x => x.teamId == teamId);
         if(rawTeam){
-            expect(teamStats.won).toBe(rawTeam.win == RiotMatchFetcher.WIN_STRING);
+            expect(teamStats.won).toBe(rawTeam.win == "Win");
             expect(teamStats.dragons).toBe(rawTeam.dragonKills);
             expect(teamStats.heralds).toBe(rawTeam.riftHeraldKills);
             expect(teamStats.barons).toBe(rawTeam.baronKills);

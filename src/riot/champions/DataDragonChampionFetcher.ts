@@ -2,14 +2,12 @@ import { Champion } from "../../core/model";
 import { ChampionFetcher } from ".";
 import { Header, HttpClient } from "../http";
 import { BotError, ErrorCode } from "../../core/concretions";
-import { createRiotTokenHeader } from "../utils";
 import { RawChampion, RawChampionContainer } from "../model";
+import { Url, createRiotTokenHeader } from "../utils";
 
 export class DataDragonChampionFetcher implements ChampionFetcher{
     
-    public static readonly VERSION_WILDCARD = "[VERSION]";
-    public static readonly VERSION_URL: string = "https://ddragon.leagueoflegends.com/api/versions.json";
-    public static readonly CHAMPIONS_URL: string = `https://ddragon.leagueoflegends.com/cdn/${DataDragonChampionFetcher.VERSION_WILDCARD}/data/en_US/champion.json`;
+    private static readonly VERSION_WILDCARD = "[VERSION]";
 
     private idToChampionsMap: Map<number, Champion>;
 
@@ -31,15 +29,14 @@ export class DataDragonChampionFetcher implements ChampionFetcher{
     private async fetchChampionMapIfNeeded(): Promise<void> {
         if(!this.idToChampionsMap){
             const url: string = await this.getChampionsUrl();
-            const header: Header = createRiotTokenHeader();
-            const container: RawChampionContainer = await this.client.get(url, [ header ]) as RawChampionContainer;
+            const container: RawChampionContainer = await this.client.get(url, []) as RawChampionContainer;
             this.idToChampionsMap = this.getIdToChampionsMap(container.data);
         }
     }
 
     private async getChampionsUrl(): Promise<string> {
         const version: string = await this.getLatestVersion();
-        return DataDragonChampionFetcher.CHAMPIONS_URL.replace(
+        return Url.CHAMPIONS.replace(
             DataDragonChampionFetcher.VERSION_WILDCARD,
             version
         );
@@ -47,7 +44,7 @@ export class DataDragonChampionFetcher implements ChampionFetcher{
 
     private async getLatestVersion(): Promise<string> {
         const header: Header = createRiotTokenHeader();
-        const versions: string[] = await this.client.get(DataDragonChampionFetcher.VERSION_URL, [ header ]) as string[];
+        const versions: string[] = await this.client.get(Url.VERSION, [ header ]) as string[];
         return versions[0];
     }
 

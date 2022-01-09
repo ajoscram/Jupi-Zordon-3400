@@ -1,6 +1,5 @@
 import { RawBan, RawChampion, RawChampionContainer, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawStats, RawSummoner, RawTeam, RawTimeline, TeamId } from "../../src/riot/model";
 import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role } from "../../src/core/model";
-import { RiotMatchFetcher } from "../../src/riot";
 
 export class DummyModelFactory{
     private counter: number = 0;
@@ -173,7 +172,7 @@ export class DummyModelFactory{
     private createRawTeam(teamId: TeamId): RawTeam{
         return {
             teamId,
-            win: teamId == TeamId.BLUE ? RiotMatchFetcher.WIN_STRING : "Loss",
+            win: teamId == TeamId.BLUE ? "Win" : "Loss",
             towerKills: this.createNumber(),
             baronKills: this.createNumber(),
             dragonKills: this.createNumber(),

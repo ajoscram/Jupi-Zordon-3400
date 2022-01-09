@@ -3,7 +3,7 @@ import { BotError, ErrorCode } from "../core/concretions";
 
 export class Thrower{
 
-    public static readonly MAX_ONGOING_MATCHES_ALLOWED: number = 4;
+    private static readonly MAX_ONGOING_MATCHES_ALLOWED: number = 4;
 
     public throwIfFalsy(object: any, codeToThrow: ErrorCode = ErrorCode.DB_ERROR): void{
         if(!object)

@@ -5,7 +5,7 @@ import { MockServer } from ".";
 
 export class MockMessage implements Message{
 
-    public static readonly HELP_ITEM: string = "help_item";
+    private static readonly HELP_ITEM: string = "help_item";
     public readonly sentItems: any[] = [];
 
     constructor(
