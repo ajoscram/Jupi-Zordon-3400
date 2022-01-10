@@ -1,4 +1,4 @@
-import { AnyBulkWriteOperation, BulkWriteResult, MongoClient, Db, Filter, FindCursor, Sort, OptionalId, UpdateFilter } from "mongodb";
+import { AnyBulkWriteOperation, BulkWriteResult, MongoClient, Db, Filter, FindCursor, Sort, OptionalId, UpdateFilter, MongoClientOptions } from "mongodb";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
 import { Dao } from ".";
 import { Collection } from "../enums";
@@ -19,8 +19,13 @@ export class MongoDao implements Dao{
 
     public async initialize(url: string, database: string): Promise<void> {
         this.databaseName = database;
-        this.client = await MongoClient.connect(url, { retryWrites: true });
-        // this is missing mongo options to add connections to the pool
+        const options: MongoClientOptions = {
+            retryWrites: true,
+            maxPoolSize: 100,
+            minPoolSize: 10,
+            maxIdleTimeMS: 1800000, //30 minutes
+        };
+        this.client = await MongoClient.connect(url, options);
     }
 
     public async find<T>(collection: Collection, filter: Filter<T>): Promise<T | null> {

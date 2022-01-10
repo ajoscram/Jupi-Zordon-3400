@@ -51,10 +51,8 @@ export class BulkOperationBuilder{
             updateOne: {
                 filter: { [IndexKey.SUMMONER_ID]: performance.summoner.id },
                 update: {
-                    $setOnInsert: {
-                        summoner: performance.summoner,
-                        picks: []
-                    },
+                    $set: { summoner: performance.summoner },
+                    $setOnInsert: { picks: [] },
                     $inc: this.createOverallStatsIncrement(performance, won, minutesPlayed)
                 },
                 upsert: true

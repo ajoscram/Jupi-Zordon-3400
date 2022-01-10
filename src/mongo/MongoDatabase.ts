@@ -20,8 +20,10 @@ export class MongoDatabase implements Database {
     public async initialize(): Promise<void> {
         if(!process.env.DATABASE_NAME)
             throw this.errorResolver.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
-        if(!process.env.MONGO_URL)
+        else if(!process.env.MONGO_URL)
             throw this.errorResolver.createError("Unable to connect to the database because process.env.MONGO_URL was not set.");
+        else if(!process.env.APP_NAME)
+            throw this.errorResolver.createError("Unable to start due to the app name not being specified.");
         else
             await this.dao.initialize(process.env.MONGO_URL, process.env.DATABASE_NAME);
     }
