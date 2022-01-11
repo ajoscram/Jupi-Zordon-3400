@@ -88,7 +88,7 @@ export interface RawTimeline {
 }
 
 export interface RawSummoner {
-    readonly accountId: string, 
+    readonly id: string, 
     readonly name: string
 }
 

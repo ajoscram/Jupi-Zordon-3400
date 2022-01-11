@@ -123,7 +123,7 @@ export class DummyModelFactory{
 
     public createRawSummoner(): RawSummoner {
         return {
-            accountId: this.createString("raw summoner accountId"),
+            id: this.createString("raw summoner id"),
             name: this.createString("raw summoner id")
         };
     }

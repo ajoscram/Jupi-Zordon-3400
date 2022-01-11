@@ -4,7 +4,7 @@ import { MockPredictor } from "./mock";
 import { config as loadEnvironmentVariables } from "dotenv";
 import { ConsoleWriter, Logger } from "./core/concretions/logging";
 import { DefaultCommandFactory } from "./core/concretions/commands/creation";
-import { MongoDatabase } from "./mongo/MongoDatabase";
+import { MongoDatabase } from "./mongo";
 import { MongoDao } from "./mongo/dao";
 import { RiotMatchFetcher, RiotSummonerFetcher } from "./riot";
 import { AxiosHttpClient } from "./riot/http";

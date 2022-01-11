@@ -34,7 +34,7 @@ export class CommandMetadataExtractor{
     }
 
     private validateQuotationMarks(text: string): void{
-        const appearances: number = text.match(CommandMetadataExtractor.QUOTES_REGEX)?.length || 0;
+        const appearances: number = text.match(CommandMetadataExtractor.QUOTES_REGEX)?.length ?? 0;
         if(appearances % 2 != 0)
             throw new BotError(ErrorCode.COMMAND_QUOTE_NOT_MATCHED);
     }

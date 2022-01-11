@@ -6,7 +6,7 @@ import { RawChampion, RawChampionContainer } from "../../../src/riot/model";
 import { DummyModelFactory } from "../../utils";
 import { Champion } from "../../../src/core/model";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
-import { Url } from "../../../src/riot/utils";
+import { Url } from "../../../src/riot/Url";
 
 describe('DataDragonChampionFetcher', () => {
 

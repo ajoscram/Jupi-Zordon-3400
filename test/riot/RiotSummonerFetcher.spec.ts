@@ -6,7 +6,7 @@ import { RawSummoner } from "../../src/riot/model";
 import { DummyModelFactory } from "../utils";
 import { SummonerFetcher } from "../../src/core/abstractions";
 import { RiotSummonerFetcher } from "../../src/riot";
-import { Url } from "../../src/riot/utils";
+import { Url } from "../../src/riot/Url";
 
 describe('RiotSummonerFetcher', () => {
     let clientMock: IMock<HttpClient>;
@@ -27,6 +27,6 @@ describe('RiotSummonerFetcher', () => {
         const summoner: Summoner = await fetcher.getSummoner(rawSummoner.name);
 
         expect(summoner.name).toBe(rawSummoner.name);
-        expect(summoner.id).toBe(rawSummoner.accountId);
+        expect(summoner.id).toBe(rawSummoner.id);
     });
 });

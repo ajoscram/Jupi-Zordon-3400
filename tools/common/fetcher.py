@@ -18,7 +18,12 @@ current_summoner_names = {
     "Barrita Numar": "El Nieto",
     "NovalManux": "NovałManux",
     "Nï¿½xian": "Nøxian",
-    "Don Melcï¿½chï¿½n": "Furciø"
+    "FurciÃ¸": "Furciø",
+    "NÃ¸xian": "Nøxian",
+    "Don Melcï¿½chï¿½n": "Furciø",
+    "VÃ˜ Blueberry": "VØ Blueberry",
+    "NovaÅ‚Manux": "NovałManux",
+    "El Bombardero CR": "TheSmurfKiller"
 }
 
 def create_champion_dictionary():
@@ -49,7 +54,7 @@ def get_summoner(name):
         try:
             safe_name = requests.utils.quote(name)
             response = perform_riot_api_request(summoner_url + safe_name)
-            summoners[name] = { "id": response["accountId"], "name": name }
+            summoners[name] = { "id": response["id"], "name": name }
         except KeyError:
             raise KeyError("Summoner name not found: " + name)
     return summoners[name]

@@ -4,9 +4,10 @@ import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Parti
 import { ChampionFetcher } from "./champions";
 import { Header, HttpClient } from "./http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawTeam, RawTimeline, TeamId } from "./model";
-import { createRiotTokenHeader, Url } from "./utils";
+import { Url } from "./Url";
+import { RiotBaseFetcher } from "./RiotBaseFetcher";
 
-export class RiotMatchFetcher implements MatchFetcher {
+export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     
     private static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
     private static readonly WIN_STRING: string = "Win";
@@ -14,11 +15,11 @@ export class RiotMatchFetcher implements MatchFetcher {
     constructor(
         private readonly client: HttpClient,
         private readonly championFetcher: ChampionFetcher
-    ){ };
+    ){ super(); };
     
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
-        const requestUrl: string = Url.ONGOING_MATCH + encodeURIComponent(summoner.id);
-        const header: Header = createRiotTokenHeader();
+        const requestUrl: string = Url.ONGOING_MATCH.toString() + encodeURIComponent(summoner.id);
+        const header: Header = this.createRiotTokenHeader();
         const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]) as RawOngoingMatch;
         this.validateRawOngoingMatch(match);
         return {
@@ -54,7 +55,7 @@ export class RiotMatchFetcher implements MatchFetcher {
 
     public async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
         const requestUrl: string = Url.COMPLETED_MATCH + encodeURIComponent(ongoingMatch.id);
-        const header: Header = createRiotTokenHeader();
+        const header: Header = this.createRiotTokenHeader();
         const completedMatch: RawCompletedMatch = await this.client.get(requestUrl, [ header ]) as RawCompletedMatch;
         const minutesPlayed: number = Math.round(completedMatch.gameDuration / 60);
         return {

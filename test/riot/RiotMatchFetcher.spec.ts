@@ -8,7 +8,7 @@ import { HttpClient } from "../../src/riot/http";
 import { RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
 import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, TeamStats } from "../../src/core/model";
 import { BotError, ErrorCode } from "../../src/core/concretions";
-import { Url } from "../../src/riot/utils";
+import { Url } from "../../src/riot/Url";
 
 describe('RiotMatchFetcher', () => {
     const modelFactory: DummyModelFactory = new DummyModelFactory();

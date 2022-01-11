@@ -1,9 +1,9 @@
 import { Champion } from "../../core/model";
 import { ChampionFetcher } from ".";
-import { Header, HttpClient } from "../http";
+import { HttpClient } from "../http";
 import { BotError, ErrorCode } from "../../core/concretions";
 import { RawChampion, RawChampionContainer } from "../model";
-import { Url, createRiotTokenHeader } from "../utils";
+import { Url } from "../Url";
 
 export class DataDragonChampionFetcher implements ChampionFetcher{
     
@@ -43,8 +43,7 @@ export class DataDragonChampionFetcher implements ChampionFetcher{
     }
 
     private async getLatestVersion(): Promise<string> {
-        const header: Header = createRiotTokenHeader();
-        const versions: string[] = await this.client.get(Url.VERSION, [ header ]) as string[];
+        const versions: string[] = await this.client.get(Url.VERSION, [ ]) as string[];
         return versions[0];
     }
 
