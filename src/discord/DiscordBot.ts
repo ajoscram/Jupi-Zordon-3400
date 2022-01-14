@@ -29,7 +29,7 @@ export class DiscordBot extends Bot{
         const self: DiscordBot = this; //forced to assign this 'self' var because of JS binding BS
         this.client.on('ready', () => Logger.logInformation('Jupi-Zordon 3400 is up and running!'));
         this.client.on('message', (message: DiscordAPIMessage) => {
-            if(!message.author.bot){
+            if(!message.author.bot && message.content){
                 const wrappedMessage: Message = new DiscordMessage(message, new StringPresenter());
                 self.process(wrappedMessage);
             }

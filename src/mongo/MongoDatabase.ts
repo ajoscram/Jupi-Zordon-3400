@@ -18,10 +18,10 @@ export class MongoDatabase implements Database {
     ){}
 
     public async initialize(): Promise<void> {
-        if(!process.env.DATABASE_NAME)
-            throw this.errorResolver.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
-        else if(!process.env.MONGO_URL)
+        if(!process.env.MONGO_URL)
             throw this.errorResolver.createError("Unable to connect to the database because process.env.MONGO_URL was not set.");
+        else if(!process.env.DATABASE_NAME)
+            throw this.errorResolver.createError("Unable to find the database's name because process.env.DATABASE_NAME was not set.");
         else
             await this.dao.initialize(process.env.MONGO_URL, process.env.DATABASE_NAME);
     }
@@ -37,7 +37,9 @@ export class MongoDatabase implements Database {
 
     public async getAccounts(users: User[]): Promise<Account[]> {
         const filter: Filter<Account> = this.getOrFilter(users, IndexKey.USER_ID, user => user.id) as Filter<Account>;
-        await this.validateAccountCount(filter, users.length);
+        const accountCount: number = await this.dao.count(Collection.ACCOUNTS, filter);
+        if(accountCount !== users.length)
+            throw new BotError(ErrorCode.ACCOUNTS_NOT_FOUND);
         return await this.dao.findMany(Collection.ACCOUNTS, filter);
     }
 
@@ -92,14 +94,14 @@ export class MongoDatabase implements Database {
         }
     }
 
-    public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
-        await this.dao.insertMany(Collection.COMPLETED_MATCHES, completedMatches);
-        await this.insertStatsForCompletedMatches(completedMatches);
-    }
-
     public async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
         const filter: Filter<OngoingMatch> = this.getOrFilter(matches, IndexKey.ID, match => match.id);
         await this.dao.deleteMany(Collection.ONGOING_MATCHES, filter);
+    }
+
+    public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
+        await this.dao.insertMany(Collection.COMPLETED_MATCHES, completedMatches);
+        await this.insertStatsForCompletedMatches(completedMatches);
     }
 
     private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<T>{
@@ -114,16 +116,9 @@ export class MongoDatabase implements Database {
     }
 
     private async getOngoingMatchCount(serverIdentity: ServerIdentity): Promise<number>{
-        return await this.dao.count(
-            Collection.ONGOING_MATCHES,
+        return await this.dao.count(Collection.ONGOING_MATCHES,
             { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id }
         );
-    }
-
-    private async validateAccountCount(filter: Filter<Account>, expectedCount: number): Promise<void>{
-        const actualCount: number = await this.dao.count(Collection.ACCOUNTS, filter);
-        if(actualCount !== expectedCount)
-            throw new BotError(ErrorCode.ACCOUNTS_NOT_FOUND);
     }
 
     private async insertStatsForCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>{
