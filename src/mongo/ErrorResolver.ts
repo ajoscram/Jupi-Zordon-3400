@@ -1,4 +1,5 @@
-import { MongoServerError } from "mongodb";
+import { BulkWriteResult, MongoServerError } from "mongodb";
+import { Logger } from "../core/concretions/logging";
 import { BotError, ErrorCode } from "../core/concretions";
 import { IndexKey } from "./enums";
 
@@ -11,7 +12,7 @@ export class ErrorResolver{
         return new BotError(code, innerError);
     }
 
-    public handleUpsertAccountError(error: any): any{
+    public resolveUpsertAccountError(error: any): any{
         if(this.isErrorDuplicateKey(error, IndexKey.USER_ID))
             return new BotError(ErrorCode.ACCOUNT_USER_IN_DB);    
         else if(this.isErrorDuplicateKey(error, IndexKey.SUMMONER_ID))
@@ -20,11 +21,15 @@ export class ErrorResolver{
             return error;
     }
 
-    public handleInsertOngoingMatchError(error: any): any{
+    public resolveInsertOngoingMatchError(error: any): any{
         if(this.isErrorDuplicateKey(error, IndexKey.ID))
             return new BotError(ErrorCode.ONGOING_MATCH_IN_DB)
         else
             return error;
+    }
+
+    public resolveCompletedMatchStatsInsertionErrors(insertionResults: PromiseSettledResult<BulkWriteResult>[]): void{
+        Logger.logInformation(insertionResults.toString());
     }
 
     private isErrorDuplicateKey(error: any, key: IndexKey): boolean{

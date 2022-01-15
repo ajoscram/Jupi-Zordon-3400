@@ -1,12 +1,13 @@
 import "jasmine";
-import { Filter, UpdateFilter } from "mongodb";
+import { AnyBulkWriteOperation, Filter, Sort, UpdateFilter } from "mongodb";
 import { IMock, It, Mock, Times } from "typemoq";
 import { Dao } from "../../src/mongo/dao";
 import { MongoDatabase } from "../../src/mongo/MongoDatabase";
-import { Account, OngoingMatch, Summoner, SummonerOverallStats, User } from "../../src/core/model";
+import { Account, ChampionOverallStats, CompletedMatch, OngoingMatch, ServerIdentity, Summoner, SummonerOverallStats, User } from "../../src/core/model";
 import { DummyModelFactory } from "../utils";
-import { Collection, IndexKey } from "../../src/mongo/enums";
+import { Collection, IndexKey, SortOrder } from "../../src/mongo/enums";
 import { BotError, ErrorCode } from "../../src/core/concretions";
+import { BulkOperationCreator } from "../../src/mongo/BulkOperationCreator";
 
 describe('MongoDatabase', () => {
 
@@ -19,7 +20,7 @@ describe('MongoDatabase', () => {
         database = new MongoDatabase(daoMock.object);
     });
 
-    it('initialize(): should initialize the DAO in it when bth MONGO_URL and DATABASE_NAME are present', async () => {
+    it('initialize(): should initialize the DAO in it when both MONGO_URL and DATABASE_NAME are present', async () => {
         const mongoUrl: string = "MONGO_URL";
         const databaseName: string = "DATABASE_NAME";
 
@@ -112,8 +113,68 @@ describe('MongoDatabase', () => {
         );
     });
 
-    //getOngoingMatches is missing
-    //getOngoingMatch is missing
+    it('getOngoingMatches(): should return the list of OngoingMatches for the ServerIdentity', async () => {
+        const expectedMatches: OngoingMatch[] = [
+            modelFactory.createOngoingMatch(),
+            modelFactory.createOngoingMatch(),
+            modelFactory.createOngoingMatch()
+        ]
+        const serverIdentity: ServerIdentity = expectedMatches[0].serverIdentity;
+        const filter: Filter<OngoingMatch> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
+        const sort: Sort = { [IndexKey.DATE]: SortOrder.DESCENDING };
+        daoMock
+            .setup(x => x.findMany(Collection.ONGOING_MATCHES, filter, sort))
+            .returns(async () => expectedMatches);
+
+        const actualMatches: OngoingMatch[] = await database.getOngoingMatches(serverIdentity);
+
+        expect(actualMatches).toBe(expectedMatches);
+    });
+
+    it('getOngoingMatch(): returns the match if the index passed in is in range', async () => {
+        const matches: OngoingMatch[] = [
+            modelFactory.createOngoingMatch(),
+            modelFactory.createOngoingMatch(),
+            modelFactory.createOngoingMatch()
+        ]
+        const index: number = 0;
+        const serverIdentity: ServerIdentity = matches[index].serverIdentity;
+        const filter: Filter<OngoingMatch> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
+        const sort: Sort = { [IndexKey.DATE]: SortOrder.DESCENDING };
+        daoMock
+            .setup(x => x.count(Collection.ONGOING_MATCHES, filter))
+            .returns(async () => matches.length);
+        daoMock
+            .setup(x => x.findMany(Collection.ONGOING_MATCHES, filter, sort))
+            .returns(async () => matches);
+
+        const match: OngoingMatch = await database.getOngoingMatch(serverIdentity, index);
+
+        expect(match).toBe(matches[index]);
+    });
+
+    it('getOngoingMatch(): fails if the index passed in is less than 0', async () => {
+        const index: number = -1;
+        const serverIdentity: ServerIdentity = modelFactory.createServerIndentity();
+
+        await expectAsync(database.getOngoingMatch(serverIdentity, index)).toBeRejectedWith(
+            new BotError(ErrorCode.ONGOING_MATCH_INDEX_OUT_OF_RANGE)
+        );
+    });
+
+    it('getOngoingMatch(): fails if the index passed in is greater than or equal to the total amount of ongoing matches recorded', async () => {
+        const matchCount: number = 3;
+        const index: number = matchCount + 1;
+        const serverIdentity: ServerIdentity = modelFactory.createServerIndentity();
+        const filter: Filter<OngoingMatch> = { [IndexKey.SERVERIDENTITY_ID]: serverIdentity.id };
+        daoMock
+            .setup(x => x.count(Collection.ONGOING_MATCHES, filter))
+            .returns(async () => matchCount);
+
+        await expectAsync(database.getOngoingMatch(serverIdentity, index)).toBeRejectedWith(
+            new BotError(ErrorCode.ONGOING_MATCH_INDEX_OUT_OF_RANGE)
+        );
+    });
 
     it('upsertAccount(): should upsert a new account if no errors occur', async () => {
         const account: Account = modelFactory.createAccount();
@@ -174,14 +235,34 @@ describe('MongoDatabase', () => {
         await expectAsync(database.insertOngoingMatch(match)).toBeRejected();
     });
 
-    it('deleteOngoingMatches(): should call delete on every OngoingMatch in the list', async () => {
-        const matches: OngoingMatch[] = [ modelFactory.createOngoingMatch(), modelFactory.createOngoingMatch() ];
+    it('deleteOngoingMatches(): should delete every OngoingMatch in the list', async () => {
+        const matches: OngoingMatch[] = [
+            modelFactory.createOngoingMatch(),
+            modelFactory.createOngoingMatch()
+        ];
         const filter: Filter<OngoingMatch> = {
             $or: matches.map(x => { return { [IndexKey.ID]: x.id }; })
         };
-        
+
         await database.deleteOngoingMatches(matches);
 
         daoMock.verify(x => x.deleteMany(Collection.ONGOING_MATCHES, filter), Times.once());
+    });
+
+    it('insertCompletedMatches(): should insert every CompletedMatch in the list and its stats', async () => {
+        const matches: CompletedMatch[] = [
+            modelFactory.createCompletedMatch(),
+            modelFactory.createCompletedMatch()
+        ];
+        const summonerStatsOperations: AnyBulkWriteOperation<SummonerOverallStats>[] = 
+            new BulkOperationCreator().createInsertSummonerStatsOperations(matches);
+        const championStatsOperations: AnyBulkWriteOperation<ChampionOverallStats>[] =
+            new BulkOperationCreator().createInsertChampionStatsOperations(matches);
+
+        await database.insertCompletedMatches(matches);
+
+        daoMock.verify(x => x.insertMany(Collection.COMPLETED_MATCHES, matches), Times.once());
+        daoMock.verify(x => x.bulk(Collection.SUMMONER_STATS, summonerStatsOperations), Times.once());
+        daoMock.verify(x => x.bulk(Collection.CHAMPION_STATS, championStatsOperations), Times.once());
     });
 });

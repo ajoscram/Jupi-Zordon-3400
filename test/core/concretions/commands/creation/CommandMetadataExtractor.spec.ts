@@ -1,4 +1,5 @@
 import "jasmine";
+import { BotError, ErrorCode } from "../../../../../src/core/concretions";
 import { CommandMetadata } from "../../../../../src/core/concretions/commands/creation/CommandMetadata";
 import { CommandMetadataExtractor } from "../../../../../src/core/concretions/commands/creation/CommandMetadataExtractor";
 
@@ -27,5 +28,13 @@ describe('CommandMetadataExtractor', () => {
 
         expect(metadata.alias).toBe("");
         expect(metadata.options.length).toBe(0);
+    });
+
+    it('extract(): should fail when quotation marks are not closed correctly', async () => {
+        const text: string = `${identifier}command 'option`;
+
+        expect(() => extractor.extract(text)).toThrow(
+            new BotError(ErrorCode.COMMAND_QUOTE_NOT_MATCHED)
+        );
     });
 });

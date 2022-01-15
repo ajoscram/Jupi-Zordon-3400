@@ -21,7 +21,7 @@ describe('ErrorResolver', () => {
     it('handleUpsertAccountError(): should return an "already registered" BotError given a duplicate key mongo error with the user id index key', async () => {
         const mongoError: MongoServerError = createDuplicateKeyError(IndexKey.USER_ID);
 
-        const botError: any = resolver.handleUpsertAccountError(mongoError);
+        const botError: any = resolver.resolveUpsertAccountError(mongoError);
 
         expect(botError).toBeInstanceOf(BotError);
         expect(botError.code).toBe(ErrorCode.ACCOUNT_USER_IN_DB);
@@ -30,7 +30,7 @@ describe('ErrorResolver', () => {
     it('handleUpsertAccountError(): should return an "already registered" BotError given a duplicate key mongo error with the summoner id index key', async () => {
         const mongoError: MongoServerError = createDuplicateKeyError(IndexKey.SUMMONER_ID);
         
-        const botError: any = resolver.handleUpsertAccountError(mongoError);
+        const botError: any = resolver.resolveUpsertAccountError(mongoError);
 
         expect(botError).toBeInstanceOf(BotError);
         expect(botError.code).toBe(ErrorCode.ACCOUNT_SUMMONER_IN_DB);
@@ -39,7 +39,7 @@ describe('ErrorResolver', () => {
     it('handleUpsertAccountError(): returns the same error if it doesnt fit any criteria', async () => {
         const expectedError: any = "not a recognized error";
 
-        const actualError: any = resolver.handleUpsertAccountError(expectedError);
+        const actualError: any = resolver.resolveUpsertAccountError(expectedError);
 
         expect(actualError).toBe(expectedError);
     });
@@ -47,7 +47,7 @@ describe('ErrorResolver', () => {
     it('handleInsertOngoingMatchError(): should return an "already registered" BotError given a duplicate key mongo error with the id index key', async () => {
         const mongoError: MongoServerError = createDuplicateKeyError(IndexKey.ID);
         
-        const botError: any = resolver.handleInsertOngoingMatchError(mongoError);
+        const botError: any = resolver.resolveInsertOngoingMatchError(mongoError);
 
         expect(botError).toBeInstanceOf(BotError);
         expect(botError.code).toBe(ErrorCode.ONGOING_MATCH_IN_DB);
@@ -56,7 +56,7 @@ describe('ErrorResolver', () => {
     it('handleInsertOngoingMatchError(): returns the same error if it doesnt fit any criteria', async () => {
         const expectedError: any = "not a recognized error";
 
-        const actualError: any = resolver.handleInsertOngoingMatchError(expectedError);
+        const actualError: any = resolver.resolveInsertOngoingMatchError(expectedError);
 
         expect(actualError).toBe(expectedError);
     });

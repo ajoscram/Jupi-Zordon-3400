@@ -3,7 +3,7 @@ import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, C
 import { Database } from "../core/abstractions";
 import { BotError, ErrorCode } from '../core/concretions';
 import { Dao } from "./dao";
-import { BulkOperationBuilder } from "./BulkOperationBuilder";
+import { BulkOperationCreator } from "./BulkOperationCreator";
 import { ErrorResolver } from "./ErrorResolver";
 import { Collection, IndexKey, SortOrder } from "./enums";
 
@@ -11,7 +11,8 @@ export class MongoDatabase implements Database {
 
     private static readonly MAX_ONGOING_MATCHES_ALLOWED: number = 4;
 
-    private errorResolver: ErrorResolver = new ErrorResolver();
+    private readonly errorResolver: ErrorResolver = new ErrorResolver();
+    private readonly bulkOperationsCreator: BulkOperationCreator = new BulkOperationCreator();
 
     constructor(
         private dao: Dao
@@ -63,8 +64,7 @@ export class MongoDatabase implements Database {
     }
 
     public async getOngoingMatch(serverIdentity: ServerIdentity, index: number): Promise<OngoingMatch> {
-        const count: number = await this.getOngoingMatchCount(serverIdentity);
-        if(index < 0 || index >= count)
+        if(index < 0 || index >= await this.getOngoingMatchCount(serverIdentity))
             throw new BotError(ErrorCode.ONGOING_MATCH_INDEX_OUT_OF_RANGE);
         const matches: OngoingMatch[] = await this.getOngoingMatches(serverIdentity);
         return matches[index];
@@ -79,7 +79,7 @@ export class MongoDatabase implements Database {
             const update: UpdateFilter<Account> = { $set: account };
             await this.dao.upsert(Collection.ACCOUNTS, filter, update);
         } catch(error) {
-            throw this.errorResolver.handleUpsertAccountError(error);
+            throw this.errorResolver.resolveUpsertAccountError(error);
         }
     }
 
@@ -90,7 +90,7 @@ export class MongoDatabase implements Database {
                 throw new BotError(ErrorCode.MAX_ONGOING_MATCHES);
             await this.dao.insert(Collection.ONGOING_MATCHES, ongoingMatch);
         } catch(error) {
-            throw this.errorResolver.handleInsertOngoingMatchError(error);
+            throw this.errorResolver.resolveInsertOngoingMatchError(error);
         }
     }
 
@@ -122,40 +122,16 @@ export class MongoDatabase implements Database {
     }
 
     private async insertStatsForCompletedMatches(completedMatches: CompletedMatch[]): Promise<void>{
-        const summonerOperations: AnyBulkWriteOperation<SummonerOverallStats>[] = this.createSummonerStatsOperations(completedMatches);
-        const championOperations: AnyBulkWriteOperation<ChampionOverallStats>[] = this.createChampionStatsOperations(completedMatches);
+        const summonerOperations: AnyBulkWriteOperation<SummonerOverallStats>[] =
+            this.bulkOperationsCreator.createInsertSummonerStatsOperations(completedMatches);
+        const championOperations: AnyBulkWriteOperation<ChampionOverallStats>[] =
+            this.bulkOperationsCreator.createInsertChampionStatsOperations(completedMatches);
 
         const results: PromiseSettledResult<BulkWriteResult>[] = await Promise.allSettled([
             this.dao.bulk(Collection.SUMMONER_STATS, summonerOperations),
             this.dao.bulk(Collection.CHAMPION_STATS, championOperations)
         ]);
 
-        this.throwIfCompletedMatchStatsInsertionErrors(results);
-    }
-
-    private createSummonerStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation<SummonerOverallStats>[] {
-        const builder: BulkOperationBuilder = new BulkOperationBuilder();
-        for(const match of completedMatches){
-            builder
-                .addInsertSummonerStatsOperations(match.blue, match.minutesPlayed)
-                .addInsertSummonerStatsOperations(match.red, match.minutesPlayed);
-        }
-        return builder.build();
-    }
-
-    private createChampionStatsOperations(completedMatches: CompletedMatch[]): AnyBulkWriteOperation<ChampionOverallStats>[] {
-        const builder: BulkOperationBuilder = new BulkOperationBuilder();
-        for(const match of completedMatches){
-            builder
-                .addInsertBanOperations(match.blue.bans)
-                .addInsertBanOperations(match.red.bans)
-                .addInsertChampionStatsOperations(match.blue, match.minutesPlayed)
-                .addInsertChampionStatsOperations(match.red, match.minutesPlayed);
-        }
-        return builder.build();  
-    }
-
-    private throwIfCompletedMatchStatsInsertionErrors(insertionResults: PromiseSettledResult<BulkWriteResult>[]): void{
-        console.log(insertionResults);
-    }
+        this.errorResolver.resolveCompletedMatchStatsInsertionErrors(results);
+    }    
 }
