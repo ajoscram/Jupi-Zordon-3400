@@ -66,5 +66,4 @@ describe('ErrorResolver', () => {
         error.code = 11000; //Duplicate key error code
         return error;
     }
-    
 });

@@ -107,7 +107,7 @@ export class BulkOperationCreator{
             updateOne:{
                 filter: { [IndexKey.CHAMPION_ID]: performance.champion.id },
                 update: {
-                    $setOnInsert: { "champion": performance.champion },
+                    $setOnInsert: { champion: performance.champion },
                     $inc: {
                         picks: 1,
                         ...this.createOverallStatsIncrement(performance, won, minutesPlayed)
