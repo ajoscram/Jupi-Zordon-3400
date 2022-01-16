@@ -9,7 +9,7 @@ export class LinkAccountCommand implements Command{
     private readonly summonerName: string;
 
     constructor(options: string[]){
-        new CommandUtils().validateOptionsLength(options, [ 1, 2 ]);
+        CommandUtils.validateOptionsLength(options, [ 1, 2 ]);
         [ this.summonerName, this.username ] = options;
     }
 

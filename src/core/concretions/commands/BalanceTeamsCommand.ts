@@ -8,7 +8,7 @@ export class BalanceTeamsCommand implements Command{
     private readonly channelName: string;
 
     constructor(options: string[]){
-        new CommandUtils().validateOptionsLength(options, [ 0, 1 ]);
+        CommandUtils.validateOptionsLength(options, [ 0, 1 ]);
         [ this.channelName ] = options;
     }
 

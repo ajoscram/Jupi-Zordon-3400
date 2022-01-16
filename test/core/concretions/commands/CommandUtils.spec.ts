@@ -7,7 +7,6 @@ import { ContextMock, DummyModelFactory } from "../../../../test/utils";
 describe('CommandUtils', () => {
     const dummyFactory: DummyModelFactory = new DummyModelFactory();
     const serverIdentity: ServerIdentity = dummyFactory.createServerIndentity();
-    const utils: CommandUtils = new CommandUtils();
     let contextMock: ContextMock = new ContextMock();
 
     beforeEach(() => {
@@ -24,7 +23,7 @@ describe('CommandUtils', () => {
             .setup(x => x.getSummoner(summonerName))
             .returns(async () => expectedSummoner);
         
-        const summoner: Summoner = await utils.getSummoner(contextMock.object, summonerName);
+        const summoner: Summoner = await CommandUtils.getSummoner(contextMock.object, summonerName);
 
         expect(summoner).toBe(expectedSummoner);
     });
@@ -38,7 +37,7 @@ describe('CommandUtils', () => {
             .setup(x => x.getAccount(account.user))
             .returns(async () => account);
         
-        const summoner: Summoner = await utils.getSummoner(contextMock.object);
+        const summoner: Summoner = await CommandUtils.getSummoner(contextMock.object);
         expect(summoner).toBe(account.summoner);
     });
 
@@ -52,7 +51,7 @@ describe('CommandUtils', () => {
             .setup(x => x.getOngoingMatches(serverIdentity))
             .returns(async () => expectedMatches);
         
-        const matches: OngoingMatch[] = await utils.getOngoingMatches(contextMock.object);
+        const matches: OngoingMatch[] = await CommandUtils.getOngoingMatches(contextMock.object);
 
         expect(matches).toBe(expectedMatches);
     });
@@ -64,7 +63,7 @@ describe('CommandUtils', () => {
             .setup(x => x.getOngoingMatch(serverIdentity, index))
             .returns(async () => expectedMatch);
         
-        const matches: OngoingMatch[] = await utils.getOngoingMatches(contextMock.object, index);
+        const matches: OngoingMatch[] = await CommandUtils.getOngoingMatches(contextMock.object, index);
 
         expect(matches.length).toBe(1);
         expect(matches[0]).toBe(expectedMatch);
@@ -74,14 +73,29 @@ describe('CommandUtils', () => {
         const options: string[] = [ "option1", "option2" ];
         const admissibleLengths: number[] = [ 2 ];
         
-        utils.validateOptionsLength(options, admissibleLengths);
+        CommandUtils.validateOptionsLength(options, admissibleLengths);
     });
 
     it('validateOptionsLength(): throws if options length is not in admissible lengths', async () => {
         const options: string[] = [ "option1", "option2" ];
         const admissibleLengths: number[] = [ 1 ];
         
-        expect(() => utils.validateOptionsLength(options, admissibleLengths))
+        expect(() => CommandUtils.validateOptionsLength(options, admissibleLengths))
             .toThrow(new BotError(ErrorCode.COMMAND_ARGUMENT_COUNT));
+    });
+
+    it('parseIndex(): returns a number if the input string is an integer', async () => {
+        const index: string = "0"; // selected on purpose because 0 is falsy in JS
+
+        const int: number = CommandUtils.parseIndex(index);
+
+        expect(int).toBe(Number.parseInt(index));
+    });
+
+    it('parseIndex(): throws if the input string is not an integer', async () => {
+        const index: string = "not an integer";
+
+        expect(() => CommandUtils.parseIndex(index))
+            .toThrow( new BotError(ErrorCode.INDEX_NOT_NUMBER));
     });
 });

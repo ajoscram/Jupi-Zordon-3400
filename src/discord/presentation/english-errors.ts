@@ -2,6 +2,7 @@ export const errors: { [property: string]: string, UNKNOWN: string } = {
     UNKNOWN: "Sorry! An unknown error has occurred while processing your command.",
     COMMAND_ARGUMENT_COUNT: "Incorrect command argument count. Type !help or !h for help.",
     COMMAND_QUOTE_NOT_MATCHED: "You've left a quotation mark (\" or ') without it's closing pair. Make sure to add quotation marks **in pairs** enclosing the text you want.",
+    INDEX_NOT_NUMBER: "The command expected a numeric index parameter and was not given one. Make sure you only type valid numbers for it.",
     USER_NOT_FOUND: "The Discord user was not found.",
     CHANNEL_NOT_FOUND: "The Discord channel was not found.",
     CHANNEL_IS_NOT_VOICE: "The Discord channel must be a voice channel only.",

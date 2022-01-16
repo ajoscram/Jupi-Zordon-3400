@@ -2,8 +2,8 @@ import { Context } from '../../concretions';
 import { User, Account, Summoner, OngoingMatch, ServerIdentity } from '../../model';
 import { BotError, ErrorCode } from '../BotError';
 
-export class CommandUtils{
-    public async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
+export abstract class CommandUtils{
+    public static async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
         if(summonerName)
             return await context.summonerFetcher.getSummoner(summonerName);
         const user: User = context.message.getAuthor();
@@ -11,7 +11,7 @@ export class CommandUtils{
         return account.summoner;
     }
 
-    public async getOngoingMatches(context: Context, matchIndex?: number): Promise<OngoingMatch[]>{
+    public static async getOngoingMatches(context: Context, matchIndex?: number): Promise<OngoingMatch[]>{
         const serverIdentity: ServerIdentity = context.server.getIdentity();
         if(matchIndex)
             return [ await context.database.getOngoingMatch(serverIdentity, matchIndex) ];
@@ -19,8 +19,16 @@ export class CommandUtils{
             return await context.database.getOngoingMatches(serverIdentity);
     }
 
-    public validateOptionsLength(options: string[], admissibleLengths: number[]): void {
+    public static validateOptionsLength(options: string[], admissibleLengths: number[]): void {
         if(!admissibleLengths.includes(options.length))
             throw new BotError(ErrorCode.COMMAND_ARGUMENT_COUNT);
+    }
+
+    public static parseIndex(index: string): number{
+        const result: number = Number.parseInt(index);
+        if(!result && result != 0)
+            throw new BotError(ErrorCode.INDEX_NOT_NUMBER);
+        else
+            return result;
     }
 }

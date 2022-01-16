@@ -5,17 +5,16 @@ import { OngoingMatch } from "../../../core/model";
 
 export class DiscardMatchesCommand implements Command{
 
-    private readonly utils: CommandUtils;
-    private readonly matchIndex: number;
+    private readonly matchIndex?: number;
 
     constructor(options: string[]){
-        this.utils = new CommandUtils();
-        this.utils.validateOptionsLength(options, [ 0, 1 ]);
-        this.matchIndex = Number.parseInt(options[0]);
+        CommandUtils.validateOptionsLength(options, [ 0, 1 ]);
+        if(options[0])
+            this.matchIndex = CommandUtils.parseIndex(options[0]);
     }
 
     public async execute(context: Context): Promise<void> {
-        const matches: OngoingMatch[] = await this.utils.getOngoingMatches(context, this.matchIndex);
+        const matches: OngoingMatch[] = await CommandUtils.getOngoingMatches(context, this.matchIndex);
         await context.database.deleteOngoingMatches(matches);
         await context.message.replyWithDiscardedMatches(matches);
     }
