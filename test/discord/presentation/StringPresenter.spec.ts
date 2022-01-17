@@ -6,6 +6,7 @@ import { Account, CompletedMatch, OngoingMatch, Prediction, SummonerOverallStats
 
 describe('StringPresenter', () => {
 
+    const tableRegex: RegExp = /[║═╣╠╦╩╬]/;
     const presenter: StringPresenter = new StringPresenter();
     let factory: DummyModelFactory;
 
@@ -34,6 +35,7 @@ describe('StringPresenter', () => {
         expect(reply).toContain(expectedSummonerStatsString);
     });
 
+    
     it('createReplyFromRecordedMatch(): should return a table with the recorded match and its prediction', async () => {
         const match: OngoingMatch = factory.createOngoingMatch();
         const prediction: Prediction = factory.createPrediction();
@@ -41,6 +43,11 @@ describe('StringPresenter', () => {
         expect(reply).toContain(expectedRecordedMatchString);
     });
 
+    it('createReplyFromRecordedMatches(): should not return a table when no matches are given', async () => {
+        const reply: string = presenter.createReplyFromRecordedMatches([]);
+        expect(reply.match(tableRegex)).toBeNull();
+    });
+    
     it('createReplyFromRecordedMatches(): should return a list of recorded ongoing matches', async () => {
         const matches: OngoingMatch[] = [
             factory.createOngoingMatch(),
@@ -50,6 +57,11 @@ describe('StringPresenter', () => {
         ];
         const reply: string = presenter.createReplyFromRecordedMatches(matches);
         expect(reply).toContain(expectedRecordedMatchesString);
+    });
+
+    it('createReplyFromKeptMatches(): should not return a table when no matches are given', async () => {
+        const reply: string = presenter.createReplyFromKeptMatches([]);
+        expect(reply.match(tableRegex)).toBeNull();
     });
 
     it('createReplyFromKeptMatches(): should return a table with the completed match if only one match is passed in', async () => {
@@ -67,6 +79,11 @@ describe('StringPresenter', () => {
         ];
         const reply: string = presenter.createReplyFromKeptMatches(matches);
         expect(reply).toContain(expectedKeptMatchesString);
+    });
+
+    it('createReplyFromDiscardedMatches(): should not return a table when no matches are given', async () => {
+        const reply: string = presenter.createReplyFromDiscardedMatches([]);
+        expect(reply.match(tableRegex)).toBeNull();
     });
 
     it('createReplyFromDiscardedMatches(): should return a table with the deleted ongoing match if only one match is passed in', async () => {

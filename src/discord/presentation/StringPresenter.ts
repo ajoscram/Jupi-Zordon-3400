@@ -109,47 +109,54 @@ export class StringPresenter implements Presenter {
     }
 
     public createReplyFromRecordedMatches(matches: OngoingMatch[]): StringResolvable | APIMessage {
+        if(matches.length == 0)
+            return "No recorded matches to display.";
+        
         const builder: TableBuilder = new TableBuilder()
             .addSeparator(Padding.LINE)
-            .addHeader("Recorded Matches", Padding.EMPTY)
-            .addData(["#", "Teams", "Picks"], Padding.LINE);
-        for(let i = 0; i < matches.length; i++){
-            builder
-                .addData([
-                    i.toString(),
-                    "Blue",
-                    matches[i].blue.map(x => x.champion.name).join(", ")
-                ])
-                .addData([
-                    "",
-                    "Red",
-                    matches[i].red.map(x => x.champion.name).join(", ")
-                ])
-                .addSeparator();
-        }
+            .addHeader("Recorded Matches", Padding.EMPTY);
+        this.addSummarizedOngoingMatchesToBuilder(builder, matches, true);
         return builder.build();
     }
 
     public createReplyFromKeptMatches(matches: CompletedMatch[]): StringResolvable | APIMessage {
-        const builder: TableBuilder = new TableBuilder().addSeparator(Padding.LINE);
-        if(matches.length == 1){
-            builder.addHeader("New Match Kept", Padding.EMPTY);
-            this.addCompletedMatchToBuilder(builder, matches[0]);
-        } else {
-            builder.addHeader("New Matches Kept", Padding.EMPTY);
-            this.addSummarizedCompletedMatchesToBuilder(builder, matches);
+        let builder: TableBuilder;
+        switch(matches.length){
+            case 0:
+                return "There were no recorded matches to keep.";
+            case 1:
+                builder = new TableBuilder()
+                    .addSeparator(Padding.LINE)
+                    .addHeader("New Match Kept", Padding.EMPTY);
+                this.addCompletedMatchToBuilder(builder, matches[0]);
+                break;
+            default:
+                builder = new TableBuilder()
+                    .addSeparator(Padding.LINE)
+                    .addHeader("New Matches Kept", Padding.EMPTY);
+                this.addSummarizedCompletedMatchesToBuilder(builder, matches);
+                break;
         }
         return builder.build();
     }
 
     public createReplyFromDiscardedMatches(matches: OngoingMatch[]): StringResolvable | APIMessage {
-        const builder: TableBuilder = new TableBuilder().addSeparator(Padding.LINE);
-        if(matches.length == 1){
-            builder.addHeader("New Match Discarded", Padding.EMPTY);
-            this.addOngoingMatchToBuilder(builder, matches[0]);
-        } else {
-            builder.addHeader("New Matches Discarded", Padding.EMPTY);
-            this.addSummarizedOngoingMatchesToBuilder(builder, matches);
+        let builder: TableBuilder;
+        switch(matches.length){
+            case 0:
+                return "There were no recorded matches to discard.";
+            case 1:
+                builder = new TableBuilder()
+                    .addSeparator(Padding.LINE)
+                    .addHeader("New Match Discarded", Padding.EMPTY);
+                this.addOngoingMatchToBuilder(builder, matches[0]);
+                break;
+            default:
+                builder = new TableBuilder()
+                    .addSeparator(Padding.LINE)
+                    .addHeader("New Matches Discarded", Padding.EMPTY);
+                this.addSummarizedOngoingMatchesToBuilder(builder, matches, false);
+                break;
         }
         return builder.build();
     }
@@ -260,19 +267,24 @@ export class StringPresenter implements Presenter {
         builder.addSeparator();
     }
 
-    private addSummarizedOngoingMatchesToBuilder(builder: TableBuilder, matches: OngoingMatch[]): void {
-        builder.addData(["Teams", "Picks"], Padding.LINE);
-        for(const match of matches){
-            builder
-                .addData([
-                    "Blue",
-                    match.blue.map(x => x.champion.name).join(", ")
-                ])
-                .addData([
-                    "Red",
-                    match.red.map(x => x.champion.name).join(", ")
-                ])
-                .addSeparator();
+    private addSummarizedOngoingMatchesToBuilder(builder: TableBuilder, matches: OngoingMatch[], includeIndex: boolean): void {
+        
+        const firstRow: string[] = includeIndex ? ["#", "Teams", "Picks"] : ["Teams", "Picks"];
+        builder.addData(firstRow, Padding.LINE);
+        
+        for(let i = 0; i < matches.length; i++){
+            
+            const bluePicks: string = matches[i].blue.map(x => x.champion.name).join(", ");
+            const blueRow: string[] = includeIndex ? 
+                [ i.toString(), "Blue", bluePicks ] : 
+                [ "Blue", bluePicks ];
+            
+            const redPicks: string = matches[i].red.map(x => x.champion.name).join(", ");
+            const redRow: string[] = includeIndex ? 
+                [ "", "Red", redPicks ] : 
+                [ "Red", redPicks ];
+
+            builder.addData(blueRow).addData(redRow).addSeparator();
         }
     }
 }
