@@ -77,8 +77,6 @@ export interface RawStats {
     readonly goldEarned: number,
     readonly totalMinionsKilled: number,
     readonly neutralMinionsKilled: number,
-    readonly firstBloodKill: boolean,
-    readonly firstTowerKill: boolean,
     readonly timeline: RawTimeline
 }
 

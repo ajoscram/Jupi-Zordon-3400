@@ -214,8 +214,6 @@ export class DummyModelFactory{
             goldEarned: this.createNumber(),
             totalMinionsKilled: this.createNumber(),
             neutralMinionsKilled: this.createNumber(),
-            firstBloodKill: false,
-            firstTowerKill: false,
             timeline: this.createRawTimeline()
         };
     }
@@ -276,8 +274,6 @@ export class DummyModelFactory{
             champion: this.createChampion(),
             largestMultikill: this.createNumber(),
             largestKillingSpree: this.createNumber(),
-            firstBlood: false,
-            firstTower: false,
             role: Role.UNKNOWN,
             assists: this.createNumber(),
             deaths: this.createNumber(),

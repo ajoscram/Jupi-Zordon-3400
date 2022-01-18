@@ -43,30 +43,24 @@ export class MockMatchFetcher implements MatchFetcher {
     private getPerformanceStatsArray(participants: Participant[], wonTeam: boolean ): PerformanceStats[] {
         const performanceStatsArray: PerformanceStats[] = [];
         const roles: Role[] = [ Role.TOP, Role.MIDDLE, Role.JUNGLE, Role.CARRY, Role.SUPPORT ];
-        let first: boolean = true;
         for (let participant of participants){
             performanceStatsArray.push(
                 this.getPerformanceStats(
                     participant.summoner, 
                     participant.champion,
-                    first && wonTeam,
-                    first && wonTeam,
                     roles.pop() ?? Role.UNKNOWN
                 )
             );
-            first = false;
         }
         return performanceStatsArray;
     }
 
-    private getPerformanceStats(summoner: Summoner, champion: Champion, firstBlood: boolean, firstTower: boolean, role: Role): PerformanceStats {
+    private getPerformanceStats(summoner: Summoner, champion: Champion, role: Role): PerformanceStats {
         return {
             summoner,
             champion,
             largestMultikill: 5,
             largestKillingSpree: 6,
-            firstBlood,
-            firstTower,
             role,
             assists: 2,
             deaths: 20,

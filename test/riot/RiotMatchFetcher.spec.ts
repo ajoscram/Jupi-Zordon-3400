@@ -137,8 +137,6 @@ describe('RiotMatchFetcher', () => {
             if(performance){
                 expect(performance.largestMultikill).toBe(rawParticipant.stats.largestMultiKill);
                 expect(performance.largestKillingSpree).toBe(rawParticipant.stats.largestKillingSpree);
-                expect(performance.firstBlood).toBe(rawParticipant.stats.firstBloodKill);
-                expect(performance.firstTower).toBe(rawParticipant.stats.firstTowerKill);
                 expect(performance.assists).toBe(rawParticipant.stats.assists);
                 expect(performance.deaths).toBe(rawParticipant.stats.deaths);
                 expect(performance.damageDealtToChampions).toBe(rawParticipant.stats.totalDamageDealtToChampions);

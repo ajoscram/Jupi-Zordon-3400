@@ -111,8 +111,6 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
                 champion: participant.champion,
                 largestMultikill: rawParticipant.stats.largestMultiKill,
                 largestKillingSpree: rawParticipant.stats.largestKillingSpree,
-                firstBlood: rawParticipant.stats.firstBloodKill,
-                firstTower: rawParticipant.stats.firstTowerKill,
                 role: this.getRole(rawParticipant.stats.timeline),
                 assists: rawParticipant.stats.assists,
                 deaths: rawParticipant.stats.deaths,
