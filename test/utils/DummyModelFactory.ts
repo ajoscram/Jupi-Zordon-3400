@@ -1,5 +1,5 @@
 import { RawBan, RawChampion, RawChampionContainer, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawStats, RawSummoner, RawTeam, RawTimeline, TeamId } from "../../src/riot/model";
-import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role } from "../../src/core/model";
+import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role, Team } from "../../src/core/model";
 
 export class DummyModelFactory{
     private counter: number = 0;
@@ -72,18 +72,23 @@ export class DummyModelFactory{
     }
 
     public createOngoingMatch(): OngoingMatch{
-        return{
+        return {
             id: this.createString("ongoing match id"),
             date: this.createDate(),
             serverIdentity: this.createServerIndentity(),
-            blue: [
-                this.createParticipant(),
-                this.createParticipant(),
-                this.createParticipant(),
-                this.createParticipant(),
-                this.createParticipant(),
+            blue: this.createTeam(),
+            red: this.createTeam()
+        };
+    }
+
+    public createTeam(): Team{
+        return {
+            bans: [
+                this.createChampion(),
+                this.createChampion(),
+                this.createChampion(),
             ],
-            red: [
+            participants: [
                 this.createParticipant(),
                 this.createParticipant(),
                 this.createParticipant(),
@@ -131,6 +136,7 @@ export class DummyModelFactory{
     public createRawOngoingMatch(gameType: string): RawOngoingMatch {
         return {
             gameId: this.createNumber(),
+            platformId: "LA1",
             gameStartTime: this.createNumber(),
             gameType,
             participants: [
@@ -144,23 +150,32 @@ export class DummyModelFactory{
                 this.createRawOngoingMatchParticipant(TeamId.RED),
                 this.createRawOngoingMatchParticipant(TeamId.RED),
                 this.createRawOngoingMatchParticipant(TeamId.RED)
+            ],
+            bannedChampions:[
+                this.createRawBan(TeamId.BLUE),
+                this.createRawBan(TeamId.BLUE),
+                this.createRawBan(TeamId.BLUE),
+                this.createRawBan(TeamId.RED),
+                this.createRawBan(TeamId.RED),
+                this.createRawBan(TeamId.RED),
             ]
         };
     }
 
     public createRawCompletedMatch(ongoingMatch: OngoingMatch, includeRedTeam: boolean = true, includeCorrectChampionIds: boolean = true): RawCompletedMatch {
         const teams: RawTeam[] = [ this.createRawTeam(TeamId.BLUE) ];
-        const participants: RawCompletedMatchParticipant[] = ongoingMatch.blue.map(x => 
+        const participants: RawCompletedMatchParticipant[] = ongoingMatch.blue.participants.map(x => 
             this.createRawCompletedMatchParticipant(TeamId.BLUE, x, includeCorrectChampionIds));
         
         if(includeRedTeam){
             teams.push(this.createRawTeam(TeamId.RED));
-            for(const participant of ongoingMatch.red)
+            for(const participant of ongoingMatch.red.participants)
                 participants.push(this.createRawCompletedMatchParticipant(TeamId.RED, participant, includeCorrectChampionIds));
         }
 
         return {
             gameId: this.createNumber(),
+            platformId: "LA1",
             gameType: this.createString("raw completed match gameType"),
             gameCreation: this.createNumber(),
             gameDuration: this.createNumber(),
@@ -177,16 +192,14 @@ export class DummyModelFactory{
             baronKills: this.createNumber(),
             dragonKills: this.createNumber(),
             riftHeraldKills: this.createNumber(),
-            bans: [
-                this.createRawBan(),
-                this.createRawBan(),
-                this.createRawBan(),
-            ]
         };
     }
 
-    private createRawBan(): RawBan{
-        return { championId: this.createNumber() };
+    private createRawBan(teamId: TeamId): RawBan{
+        return {
+            championId: this.createNumber(),
+            teamId,
+        };
     }
 
     private createRawCompletedMatchParticipant(teamId: TeamId, participant: Participant, includeCorrectChampionIds: boolean): RawCompletedMatchParticipant{
@@ -227,7 +240,7 @@ export class DummyModelFactory{
 
     private createRawOngoingMatchParticipant(teamId: TeamId): RawOngoingMatchParticipant{
         return {
-            teamId: teamId,
+            teamId,
             championId: this.createNumber(),
             summonerId: this.createString("raw ongoing match participant id"),
             summonerName: this.createString("raw ongoing match participant name")

@@ -1,12 +1,12 @@
 import "jasmine";
-import { IMock, It, Mock } from "typemoq";
+import { IMock, It, Mock, Times } from "typemoq";
 import { MatchFetcher } from "../../src/core/abstractions";
 import { RiotMatchFetcher } from "../../src/riot";
 import { ChampionFetcher } from "../../src/riot/champions";
 import { DummyModelFactory } from "../utils";
 import { HttpClient } from "../../src/riot/http";
-import { RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
-import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, TeamStats } from "../../src/core/model";
+import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
+import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, Team, TeamStats } from "../../src/core/model";
 import { BotError, ErrorCode } from "../../src/core/concretions";
 import { Url } from "../../src/riot/Url";
 
@@ -41,8 +41,8 @@ describe('RiotMatchFetcher', () => {
         expect(match.id).toBe(rawMatch.gameId.toString());
         expect(match.serverIdentity).toBe(serverIdentity);
         expect(match.date).toEqual(new Date(rawMatch.gameStartTime));
-        validateParticipants(match.blue, rawMatch.participants, TeamId.BLUE);
-        validateParticipants(match.red, rawMatch.participants, TeamId.RED);
+        validateTeam(match.blue, rawMatch, TeamId.BLUE);
+        validateTeam(match.red, rawMatch, TeamId.RED);
     });
 
     it('getOngoingMatch(): should throw if a non-custom match is queried', async () => {
@@ -90,14 +90,29 @@ describe('RiotMatchFetcher', () => {
         await expectAsync(fetcher.getCompletedMatch(ongoingMatch)).toBeRejectedWith(error);
     });
 
-    function validateParticipants(participants: Participant[], rawParticipants: RawOngoingMatchParticipant[], teamId: TeamId): void {
+    function validateTeam(team: Team, match: RawOngoingMatch, teamId: TeamId): void {
+        const rawTeamParticipants: RawOngoingMatchParticipant[] = match.participants.filter(x => x.teamId == teamId);
+        const rawTeamBans: RawBan[] = match.bannedChampions.filter(x => x.teamId == teamId);
+        validateParticipants(team.participants, rawTeamParticipants);
+        validateBans(rawTeamBans);
+    }
+
+    function validateParticipants(participants: Participant[], rawParticipants: RawOngoingMatchParticipant[]): void {
         for(const participant of participants){
             const rawParticipant: RawOngoingMatchParticipant | undefined = rawParticipants.find(raw =>
-                    raw.teamId == teamId &&
-                    raw.summonerName == participant.summoner.name &&
-                    raw.summonerId == participant.summoner.id
+                raw.summonerName == participant.summoner.name &&
+                raw.summonerId == participant.summoner.id
             );
             expect(rawParticipant).toBeDefined();
+        }
+    }
+
+    function validateBans(rawBans: RawBan[]): void{
+        for(const ban of rawBans){
+            championFetcherMock.verify(
+                x => x.getChampion(ban.championId),
+                Times.once()
+            );
         }
     }
 
@@ -110,7 +125,7 @@ describe('RiotMatchFetcher', () => {
         validateTeamStats(TeamId.RED, completedMatch.red, rawCompletedMatch, ongoingMatch.red);
     }
 
-    function validateTeamStats(teamId: TeamId, teamStats: TeamStats, rawCompletedMatch: RawCompletedMatch, ongoingMatchParticipants: Participant[]): void{
+    function validateTeamStats(teamId: TeamId, teamStats: TeamStats, rawCompletedMatch: RawCompletedMatch, team: Team): void{
         const rawTeam: RawTeam | undefined = rawCompletedMatch.teams.find(x => x.teamId == teamId);
         const rawTeamParticipants: RawCompletedMatchParticipant[] = rawCompletedMatch.participants.filter(x => x.teamId == teamId);
         if(rawTeam){
@@ -119,7 +134,7 @@ describe('RiotMatchFetcher', () => {
             expect(teamStats.heralds).toBe(rawTeam.riftHeraldKills);
             expect(teamStats.barons).toBe(rawTeam.baronKills);
             expect(teamStats.towers).toBe(rawTeam.towerKills);
-            validatePerformanceStats(teamStats.performanceStats, rawTeamParticipants, ongoingMatchParticipants);
+            validatePerformanceStats(teamStats.performanceStats, rawTeamParticipants, team.participants);
         }
         else
             fail("failed to find the " + TeamId[teamId] + " team");

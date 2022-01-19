@@ -161,41 +161,41 @@ const expectedRecordedMatchString: string = `
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 29  ║  champion name 31  ║
-║  summoner name 34  ║  champion name 36  ║
-║  summoner name 39  ║  champion name 41  ║
-║  summoner name 44  ║  champion name 46  ║
-║  summoner name 49  ║  champion name 51  ║
+║  summoner name 47  ║  champion name 49  ║
+║  summoner name 52  ║  champion name 54  ║
+║  summoner name 57  ║  champion name 59  ║
+║  summoner name 62  ║  champion name 64  ║
+║  summoner name 67  ║  champion name 69  ║
 ╠════════════════════╩════════════════════╣
-║            54% chance to win            ║
+║            72% chance to win            ║
 ╠═════════════════════════════════════════╣
 ║                                         ║
 ║                  Blue                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 4   ║  champion name 6   ║
-║  summoner name 9   ║  champion name 11  ║
-║  summoner name 14  ║  champion name 16  ║
-║  summoner name 19  ║  champion name 21  ║
-║  summoner name 24  ║  champion name 26  ║
+║  summoner name 13  ║  champion name 15  ║
+║  summoner name 18  ║  champion name 20  ║
+║  summoner name 23  ║  champion name 25  ║
+║  summoner name 28  ║  champion name 30  ║
+║  summoner name 33  ║  champion name 35  ║
 ╠════════════════════╩════════════════════╣
-║            54% chance to win            ║
+║            72% chance to win            ║
 ╚═════════════════════════════════════════╝`;
 
 const expectedRecordedMatchesString: string = `
 ╔═════════════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                                Recorded Matches                                                 ║
 ╠═ # ═╦═ Teams ═╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  0  ║  Blue   ║     champion name 6, champion name 11, champion name 16, champion name 21, champion name 26     ║
-║     ║   Red   ║    champion name 31, champion name 36, champion name 41, champion name 46, champion name 51     ║
+║  0  ║  Blue   ║    champion name 15, champion name 20, champion name 25, champion name 30, champion name 35     ║
+║     ║   Red   ║    champion name 49, champion name 54, champion name 59, champion name 64, champion name 69     ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  1  ║  Blue   ║    champion name 59, champion name 64, champion name 69, champion name 74, champion name 79     ║
-║     ║   Red   ║    champion name 84, champion name 89, champion name 94, champion name 99, champion name 104    ║
+║  1  ║  Blue   ║   champion name 86, champion name 91, champion name 96, champion name 101, champion name 106    ║
+║     ║   Red   ║  champion name 120, champion name 125, champion name 130, champion name 135, champion name 140  ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  2  ║  Blue   ║  champion name 112, champion name 117, champion name 122, champion name 127, champion name 132  ║
-║     ║   Red   ║  champion name 137, champion name 142, champion name 147, champion name 152, champion name 157  ║
+║  2  ║  Blue   ║  champion name 157, champion name 162, champion name 167, champion name 172, champion name 177  ║
+║     ║   Red   ║  champion name 191, champion name 196, champion name 201, champion name 206, champion name 211  ║
 ╠═════╬═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  3  ║  Blue   ║  champion name 165, champion name 170, champion name 175, champion name 180, champion name 185  ║
-║     ║   Red   ║  champion name 190, champion name 195, champion name 200, champion name 205, champion name 210  ║
+║  3  ║  Blue   ║  champion name 228, champion name 233, champion name 238, champion name 243, champion name 248  ║
+║     ║   Red   ║  champion name 262, champion name 267, champion name 272, champion name 277, champion name 282  ║
 ╚═════╩═════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedKeptMatchString: string = `
@@ -249,37 +249,37 @@ const expectedDiscardedMatchString: string = `
 ║                                         ║
 ║                   Red                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 29  ║  champion name 31  ║
-║  summoner name 34  ║  champion name 36  ║
-║  summoner name 39  ║  champion name 41  ║
-║  summoner name 44  ║  champion name 46  ║
-║  summoner name 49  ║  champion name 51  ║
+║  summoner name 47  ║  champion name 49  ║
+║  summoner name 52  ║  champion name 54  ║
+║  summoner name 57  ║  champion name 59  ║
+║  summoner name 62  ║  champion name 64  ║
+║  summoner name 67  ║  champion name 69  ║
 ╠════════════════════╩════════════════════╣
 ║                                         ║
 ║                  Blue                   ║
 ╠═════ Summoner ═════╦═════ Champion ═════╣
-║  summoner name 4   ║  champion name 6   ║
-║  summoner name 9   ║  champion name 11  ║
-║  summoner name 14  ║  champion name 16  ║
-║  summoner name 19  ║  champion name 21  ║
-║  summoner name 24  ║  champion name 26  ║
+║  summoner name 13  ║  champion name 15  ║
+║  summoner name 18  ║  champion name 20  ║
+║  summoner name 23  ║  champion name 25  ║
+║  summoner name 28  ║  champion name 30  ║
+║  summoner name 33  ║  champion name 35  ║
 ╚════════════════════╩════════════════════╝`;
 
 const expectedDiscardedMatchesString: string = `
 ╔═══════════════════════════════════════════════════════════════════════════════════════════════════════════╗
 ║                                           New Matches Discarded                                           ║
 ╠═ Teams ═╦═════════════════════════════════════════════ Picks ═════════════════════════════════════════════╣
-║  Blue   ║     champion name 6, champion name 11, champion name 16, champion name 21, champion name 26     ║
-║   Red   ║    champion name 31, champion name 36, champion name 41, champion name 46, champion name 51     ║
+║  Blue   ║    champion name 15, champion name 20, champion name 25, champion name 30, champion name 35     ║
+║   Red   ║    champion name 49, champion name 54, champion name 59, champion name 64, champion name 69     ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║    champion name 59, champion name 64, champion name 69, champion name 74, champion name 79     ║
-║   Red   ║    champion name 84, champion name 89, champion name 94, champion name 99, champion name 104    ║
+║  Blue   ║   champion name 86, champion name 91, champion name 96, champion name 101, champion name 106    ║
+║   Red   ║  champion name 120, champion name 125, champion name 130, champion name 135, champion name 140  ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║  champion name 112, champion name 117, champion name 122, champion name 127, champion name 132  ║
-║   Red   ║  champion name 137, champion name 142, champion name 147, champion name 152, champion name 157  ║
+║  Blue   ║  champion name 157, champion name 162, champion name 167, champion name 172, champion name 177  ║
+║   Red   ║  champion name 191, champion name 196, champion name 201, champion name 206, champion name 211  ║
 ╠═════════╬═════════════════════════════════════════════════════════════════════════════════════════════════╣
-║  Blue   ║  champion name 165, champion name 170, champion name 175, champion name 180, champion name 185  ║
-║   Red   ║  champion name 190, champion name 195, champion name 200, champion name 205, champion name 210  ║
+║  Blue   ║  champion name 228, champion name 233, champion name 238, champion name 243, champion name 248  ║
+║   Red   ║  champion name 262, champion name 267, champion name 272, champion name 277, champion name 282  ║
 ╚═════════╩═════════════════════════════════════════════════════════════════════════════════════════════════╝`;
 
 const expectedAccountString: string = "Linked Discord account **user name 1** with LoL account **summoner name 3**.";

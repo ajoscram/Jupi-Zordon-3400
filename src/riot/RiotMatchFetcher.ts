@@ -1,6 +1,6 @@
 import { BotError, ErrorCode } from "../core/concretions";
 import { MatchFetcher } from "../core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Participant, TeamStats, PerformanceStats, Role } from "../core/model";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Participant, TeamStats, PerformanceStats, Role, Team } from "../core/model";
 import { ChampionFetcher } from "./champions";
 import { Header, HttpClient } from "./http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawTeam, RawTimeline, TeamId } from "./model";
@@ -26,14 +26,22 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
             id: match.gameId.toString(),
             date: new Date(match.gameStartTime),
             serverIdentity,
-            blue: await this.getTeamParticipants(match.participants, TeamId.BLUE),
-            red: await this.getTeamParticipants(match.participants, TeamId.RED)
+            blue: await this.getTeam(match, TeamId.BLUE),
+            red: await this.getTeam(match, TeamId.RED)
         };
     }
 
     private validateRawOngoingMatch(rawOngoingMatch: RawOngoingMatch): void {
         if(rawOngoingMatch.gameType != RiotMatchFetcher.CUSTOM_GAME_TYPE)
             throw new BotError(ErrorCode.ONGOING_MATCH_IS_NOT_CUSTOM);
+    }
+
+    private async getTeam(ongoingMatch: RawOngoingMatch, teamId: TeamId): Promise<Team>{
+        const teamBans: RawBan[] = ongoingMatch.bannedChampions.filter(x => x.teamId == teamId);
+        return {
+            bans: await this.getBans(teamBans),
+            participants: await this.getTeamParticipants(ongoingMatch.participants, teamId),
+        };
     }
 
     private async getTeamParticipants(rawParticipants: RawOngoingMatchParticipant[], teamId: TeamId): Promise<Participant[]> {
@@ -63,24 +71,27 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
             serverIdentity: ongoingMatch.serverIdentity,
             date: new Date(completedMatch.gameCreation),
             minutesPlayed,
-            blue: await this.getTeamStats(TeamId.BLUE, completedMatch, ongoingMatch, minutesPlayed),
-            red: await this.getTeamStats(TeamId.RED, completedMatch, ongoingMatch, minutesPlayed),
+            blue: await this.getTeamStats(TeamId.BLUE, completedMatch, ongoingMatch),
+            red: await this.getTeamStats(TeamId.RED, completedMatch, ongoingMatch),
         };
     }
 
-    private async getTeamStats(teamId: TeamId, completedMatch: RawCompletedMatch, ongoingMatch: OngoingMatch, minutesPlayed: number): Promise<TeamStats> {
+    private async getTeamStats(teamId: TeamId, completedMatch: RawCompletedMatch, ongoingMatch: OngoingMatch): Promise<TeamStats> {
         const rawTeam: RawTeam = this.getRawTeam(teamId, completedMatch.teams);
         const rawCompletedMatchParticipants: RawCompletedMatchParticipant[] = completedMatch.participants.filter(x => x.teamId == teamId);
-        const participants: Participant[] = teamId == TeamId.BLUE ? ongoingMatch.blue : ongoingMatch.red;
+        const bans: Champion[] = TeamId.BLUE ? ongoingMatch.blue.bans : ongoingMatch.red.bans;
+        const participants: Participant[] = teamId == TeamId.BLUE ?
+            ongoingMatch.blue.participants :
+            ongoingMatch.red.participants;
         return {
             won: rawTeam.win == RiotMatchFetcher.WIN_STRING,
             dragons: rawTeam.dragonKills,
             heralds: rawTeam.riftHeraldKills,
             barons: rawTeam.baronKills,
             towers: rawTeam.towerKills,
-            bans: await this.getBans(rawTeam.bans),
+            bans,
             performanceStats: this.getPerformanceStats(rawCompletedMatchParticipants, participants)
-        }
+        };
     }
 
     private getRawTeam(teamId: TeamId, teams: RawTeam[]): RawTeam {

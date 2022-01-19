@@ -18,17 +18,19 @@ export enum RawLane {
 
 interface RawMatch {
     readonly gameId: number,
-    readonly gameType: string
+    readonly gameType: string,
+    readonly platformId: string
 }
 
 interface RawParticipant {
     readonly teamId: TeamId,
-    readonly championId: number,
+    readonly championId: number
 }
 
 export interface RawOngoingMatch extends RawMatch {
     readonly gameStartTime: number,
-    readonly participants: RawOngoingMatchParticipant[]
+    readonly participants: RawOngoingMatchParticipant[],
+    readonly bannedChampions: RawBan[]
 }
 
 export interface RawOngoingMatchParticipant extends RawParticipant {
@@ -49,12 +51,12 @@ export interface RawTeam {
     readonly towerKills: number,
     readonly baronKills: number,
     readonly dragonKills: number,
-    readonly riftHeraldKills: number,
-    readonly bans: RawBan[]
+    readonly riftHeraldKills: number
 }
 
 export interface RawBan {
-    readonly championId: number
+    readonly championId: number,
+    readonly teamId: TeamId
 }
 
 export interface RawCompletedMatchParticipant extends RawParticipant {

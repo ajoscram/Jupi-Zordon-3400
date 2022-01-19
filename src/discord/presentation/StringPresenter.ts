@@ -1,6 +1,6 @@
 import { StringResolvable, APIMessage } from "discord.js";
 import { CalculatedOverallStats, ErrorCode } from "../../core/concretions";
-import { Account, SummonerOverallStats, Prediction, CompletedMatch, TeamStats, PerformanceStats, Pick, Participant, OngoingMatch } from "../../core/model";
+import { Account, SummonerOverallStats, Prediction, CompletedMatch, TeamStats, PerformanceStats, Pick, Participant, OngoingMatch, Team } from "../../core/model";
 import { Presenter } from ".";
 import { errors } from "./english-errors";
 import { TableBuilder, Padding } from "./TableBuilder";
@@ -247,11 +247,11 @@ export class StringPresenter implements Presenter {
         this.addOngoingMatchTeamToBuilder(builder, "Blue", match.blue, prediction?.probabilityRedWins);
     }
 
-    private addOngoingMatchTeamToBuilder(builder: TableBuilder, teamName: string, participants: Participant[], probabilityToWin?: number){
+    private addOngoingMatchTeamToBuilder(builder: TableBuilder, teamName: string, team: Team, probabilityToWin?: number){
         builder
             .addSeparator(Padding.EMPTY)
             .addHeader(teamName, Padding.EMPTY);
-        this.addParticipantsToBuilder(builder, participants);
+        this.addParticipantsToBuilder(builder, team.participants);
         
         if(probabilityToWin !== undefined){
             builder
@@ -274,12 +274,12 @@ export class StringPresenter implements Presenter {
         
         for(let i = 0; i < matches.length; i++){
             
-            const bluePicks: string = matches[i].blue.map(x => x.champion.name).join(", ");
+            const bluePicks: string = matches[i].blue.participants.map(x => x.champion.name).join(", ");
             const blueRow: string[] = includeIndex ? 
                 [ i.toString(), "Blue", bluePicks ] : 
                 [ "Blue", bluePicks ];
             
-            const redPicks: string = matches[i].red.map(x => x.champion.name).join(", ");
+            const redPicks: string = matches[i].red.participants.map(x => x.champion.name).join(", ");
             const redRow: string[] = includeIndex ? 
                 [ "", "Red", redPicks ] : 
                 [ "Red", redPicks ];

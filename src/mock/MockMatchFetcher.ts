@@ -1,16 +1,14 @@
 import { MatchFetcher } from "../core/abstractions";
-import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role, Participant } from "../core/model";
+import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role, Participant, Team } from "../core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
 
     private num: number = 0;
     
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
-        const blue: Participant[] = this.getParticipants(summoner);
-        const red:  Participant[] = this.getParticipants();
         return {
-            blue,        
-            red,        
+            blue: this.getTeam(summoner),
+            red: this.getTeam(),
             serverIdentity,
             id: "" + this.num++,
             date: new Date()
@@ -28,15 +26,28 @@ export class MockMatchFetcher implements MatchFetcher {
         };
     }
 
-    private getTeamStats(participants: Participant[], wonTeam: boolean): TeamStats{ 
+    private getTeam(summoner?: Summoner): Team{
         return {
-            bans: [],
+            bans: [
+                this.createChampion(this.num++),
+                this.createChampion(this.num++),
+                this.createChampion(this.num++),
+                this.createChampion(this.num++),
+                this.createChampion(this.num++),
+            ],
+            participants: this.getParticipants(summoner)
+        }
+    }
+
+    private getTeamStats(team: Team, wonTeam: boolean): TeamStats{ 
+        return {
+            bans: team.bans,
             won: wonTeam,
             dragons: 3,
             heralds: 1,
             barons: 1,
             towers: 9,
-            performanceStats: this.getPerformanceStatsArray(participants, wonTeam)
+            performanceStats: this.getPerformanceStatsArray(team.participants, wonTeam)
         };
     }
 
@@ -83,7 +94,6 @@ export class MockMatchFetcher implements MatchFetcher {
             name: "Champion " + id
         };
     }
-
         
     private getParticipants(summoner?: Summoner): Participant[] {
 
@@ -109,5 +119,5 @@ export class MockMatchFetcher implements MatchFetcher {
             participants.push({summoner,champion});
         }
         return participants;
-    }   
+    }
 }
