@@ -35,15 +35,15 @@ describe('KeepMatchesCommand', () => {
     });
 
     it('execute(): replies to the message appropriately when given a matchIndex', async () => {
-        const ongoingMatch: OngoingMatch = dummyFactory.createOngoingMatch();
+        const ongoingMatches: OngoingMatch[] = [ dummyFactory.createOngoingMatch() ];
         const completedMatches: CompletedMatch[] = [ dummyFactory.createCompletedMatch() ];
         const index: number = 1;
         contextMock.databaseMock
             .setup(x => x.getOngoingMatch(serverIdentity, index))
-            .returns(async () => ongoingMatch);
+            .returns(async () => ongoingMatches[0]);
         contextMock.matchFetcherMock
-            .setup(x => x.getCompletedMatch(ongoingMatch))
-            .returns(async () => completedMatches[0]);
+            .setup(x => x.getCompletedMatches(ongoingMatches))
+            .returns(async () => completedMatches);
         
         const command: KeepMatchesCommand = new KeepMatchesCommand([ index + "" ]);
         await command.execute(contextMock.object);
@@ -53,14 +53,10 @@ describe('KeepMatchesCommand', () => {
     });
 
     function setupOngoingMatchesToCompletedAndGetList(ongoingMatches: OngoingMatch[]): CompletedMatch[]{
-        const completedMatches: CompletedMatch[] = [];
-        for(const ongoingMatch of ongoingMatches){
-            const completedMatch: CompletedMatch = dummyFactory.createCompletedMatch();
-            contextMock.matchFetcherMock
-                .setup(x => x.getCompletedMatch(ongoingMatch))
-                .returns(async () => completedMatch);
-            completedMatches.push(completedMatch);
-        }
+        const completedMatches: CompletedMatch[] = ongoingMatches.map(_ => dummyFactory.createCompletedMatch());
+        contextMock.matchFetcherMock
+            .setup(x => x.getCompletedMatches(ongoingMatches))
+            .returns(async () => completedMatches);
         return completedMatches;
     }
 });

@@ -63,9 +63,9 @@ describe('RiotMatchFetcher', () => {
             .setup(x => x.get(completedMatchUrl, It.isAny()))
             .returns(async () => rawCompletedMatch);
         
-        const completedMatch: CompletedMatch = await fetcher.getCompletedMatch(ongoingMatch);
+        const completedMatches: CompletedMatch[] = await fetcher.getCompletedMatches([ ongoingMatch ]);
 
-        validateCompletedMatch(completedMatch, rawCompletedMatch, ongoingMatch);
+        validateCompletedMatch(completedMatches[0], rawCompletedMatch, ongoingMatch);
     });
 
     it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when missing information for a team', async () => {
@@ -76,7 +76,7 @@ describe('RiotMatchFetcher', () => {
             .setup(x => x.get(It.isAny(), It.isAny()))
             .returns(async () => rawCompletedMatch);
         
-        await expectAsync(fetcher.getCompletedMatch(ongoingMatch)).toBeRejectedWith(error);
+        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(error);
     });
 
     it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when paricipant identities fail to be linked', async () => {
@@ -87,7 +87,7 @@ describe('RiotMatchFetcher', () => {
             .setup(x => x.get(It.isAny(), It.isAny()))
             .returns(async () => rawCompletedMatch);
         
-        await expectAsync(fetcher.getCompletedMatch(ongoingMatch)).toBeRejectedWith(error);
+        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(error);
     });
 
     function validateTeam(team: Team, match: RawOngoingMatch, teamId: TeamId): void {
