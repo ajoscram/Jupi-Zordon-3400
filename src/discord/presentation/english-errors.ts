@@ -11,6 +11,7 @@ export const errors: { [property: string]: string, UNKNOWN: string } = {
     NOT_IN_A_SERVER: "The command given is only available on Discord server text channels.",
     ONGOING_MATCH_IS_NOT_CUSTOM: "Only ongoing custom matches may be recorded.",
     UNSUCCESSFUL_REQUEST: "Oops! Something went wrong while requesting data and the command failed.",
+    TYPE_ASSERTION_FAILED: "Oops! It seems some data requested during your command did not arrive as expected and the command failed.",
     MISSING_MATCH_DATA: "The match data was received incomplete. Please try again or report this issue.",
     UNKNOWN_CHAMPION_ID: "The operation failed because an unknown champion ID was received.",
     DB_ERROR: "Internal database error.",

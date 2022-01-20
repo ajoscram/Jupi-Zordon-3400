@@ -11,7 +11,7 @@ export class AxiosHttpClient implements HttpClient {
             if(!validator || validator(response.data))
                 return response.data;
             else
-                throw new BotError(ErrorCode.RESPONSE_TYPE_ASSERTION_FAILED);
+                throw this.createValidationError(response.data);
         } catch(error) {
             if(error instanceof BotError)
                 throw error;
@@ -33,5 +33,11 @@ export class AxiosHttpClient implements HttpClient {
             `${method} failed on ${url} with error: ${error}`;
         const innerError: Error = new Error(errorMessage);
         return new BotError(ErrorCode.UNSUCCESSFUL_REQUEST, innerError);
+    }
+
+    private createValidationError(data: any): BotError{
+        const errorMessage: string = `This data failed a validation check when requested: ${data}`;
+        const innerError: Error = new Error(errorMessage);
+        return new BotError(ErrorCode.TYPE_ASSERTION_FAILED, innerError);
     }
 }
