@@ -1,7 +1,6 @@
 import { Message } from ".";
-import { CompletedMatch, OngoingMatch, ServerIdentity, Summoner } from "../model";
+import { CompletedMatch, OngoingMatch } from "../model";
 
-export interface MatchFetcher{
-    getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch>;
+export interface CompletedMatchFetcher{
     getCompletedMatches(ongoingMatches: OngoingMatch[], message?: Message): Promise<CompletedMatch[]>;
 }

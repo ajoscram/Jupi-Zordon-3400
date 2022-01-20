@@ -1,5 +1,5 @@
 import { BotError, ErrorCode } from "../core/concretions";
-import { MatchFetcher } from "../core/abstractions";
+import { CompletedMatchFetcher, OngoingMatchFetcher } from "../core/abstractions";
 import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Participant, TeamStats, PerformanceStats, Role, Team } from "../core/model";
 import { ChampionFetcher } from "./champions";
 import { Header, HttpClient } from "../http";
@@ -7,7 +7,7 @@ import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOn
 import { Url } from "./Url";
 import { RiotBaseFetcher } from "./RiotBaseFetcher";
 
-export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
+export class RiotMatchFetcher extends RiotBaseFetcher implements OngoingMatchFetcher, CompletedMatchFetcher {
     
     private static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
     private static readonly WIN_STRING: string = "Win";

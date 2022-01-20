@@ -4,7 +4,7 @@ import { Header, HttpClient } from ".";
 
 export class AxiosHttpClient implements HttpClient {
 
-    public async get<T>(url:string, headers: Header[], validator?: (x: any) => asserts x is T): Promise<T> {
+    public async get<T>(url:string, headers: Header[], validator?: (x: any) => x is T): Promise<T> {
         try{
             const config: AxiosRequestConfig = this.createConfig(headers);
             const response: AxiosResponse = await axios.get(url, config);

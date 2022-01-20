@@ -1,6 +1,6 @@
 import { config as loadEnvironmentVariables } from "dotenv";
 import { Bot } from "./core/abstractions";
-import { DiscordBot } from "./discord";
+import { DiscordBot, DiscordMatchFetcher } from "./discord";
 import { MockPredictor } from "./mock";
 import { ConsoleWriter, Logger } from "./core/concretions/logging";
 import { DefaultCommandFactory } from "./core/concretions/commands/creation";
@@ -20,6 +20,7 @@ async function main(): Promise<void>{
             new AxiosHttpClient(),
             new DataDragonChampionFetcher(new AxiosHttpClient())
         ),
+        new DiscordMatchFetcher(),
         new RiotSummonerFetcher(new AxiosHttpClient()),
         new MockPredictor()
     );

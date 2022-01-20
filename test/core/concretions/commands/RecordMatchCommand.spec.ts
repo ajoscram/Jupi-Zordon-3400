@@ -20,7 +20,7 @@ describe('RecordMatchCommand', () => {
         contextMock.serverMock
             .setup(x => x.getIdentity())
             .returns(() => serverIdentity);
-        contextMock.matchFetcherMock
+        contextMock.ongoingMatchFetcherMock
             .setup(x => x.getOngoingMatch(summoner, serverIdentity))
             .returns(async () => ongoingMatch);
         contextMock.predictorMock

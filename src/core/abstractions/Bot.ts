@@ -13,8 +13,7 @@ export abstract class Bot{
     protected async process(message: Message): Promise<void>{
         try{
             const command: Command | null = this.commandFactory.tryCreateCommand(message);
-            const context: Context = this.getContext(message);
-            await command?.execute(context);
+            await command?.execute(this.getContext(message));
         }
         catch(error){
             this.handleError(error, message);

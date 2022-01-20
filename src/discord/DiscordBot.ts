@@ -1,6 +1,6 @@
 import { Client,Message as DiscordAPIMessage } from "discord.js";
 import { Logger } from "../core/concretions/logging";
-import { Bot, CommandFactory, Database, MatchFetcher, Message, Predictor, SummonerFetcher } from "../core/abstractions";
+import { Bot, CommandFactory, Database, OngoingMatchFetcher, CompletedMatchFetcher, Message, Predictor, SummonerFetcher } from "../core/abstractions";
 import { Context } from "../core/concretions";
 import { AIModel } from "../core/model";
 import { DiscordMessage } from ".";
@@ -13,7 +13,8 @@ export class DiscordBot extends Bot{
     public constructor(
         commandFactory: CommandFactory,
         private readonly database: Database,    
-        private readonly matchFetcher: MatchFetcher,
+        private readonly ongoingMatchFetcher: OngoingMatchFetcher,
+        private readonly completedMatchFetcher: CompletedMatchFetcher,
         private readonly summonerFetcher: SummonerFetcher,
         private readonly predictor: Predictor
     ){
@@ -42,7 +43,8 @@ export class DiscordBot extends Bot{
         return {
             database: this.database,
             predictor: this.predictor,
-            matchFetcher: this.matchFetcher,
+            ongoingMatchFetcher: this.ongoingMatchFetcher,
+            completedMatchFetcher: this.completedMatchFetcher,
             summonerFetcher: this.summonerFetcher,
             message,
             server: message.getServer()

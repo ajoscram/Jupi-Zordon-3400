@@ -15,7 +15,8 @@ export class KeepMatchesCommand implements Command{
 
     public async execute(context: Context): Promise<void> {
         const ongoingMatches: OngoingMatch[] = await CommandUtils.getOngoingMatches(context, this.matchIndex);
-        const completedMatches: CompletedMatch[] = await context.matchFetcher.getCompletedMatches(ongoingMatches);
+        const completedMatches: CompletedMatch[] =
+            await context.completedMatchFetcher.getCompletedMatches(ongoingMatches);
 
         await context.database.insertCompletedMatches(completedMatches);
         await context.database.deleteOngoingMatches(ongoingMatches);

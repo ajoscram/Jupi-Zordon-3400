@@ -1,6 +1,5 @@
 import "jasmine";
 import { IMock, It, Mock, Times } from "typemoq";
-import { MatchFetcher } from "../../src/core/abstractions";
 import { RiotMatchFetcher } from "../../src/riot";
 import { ChampionFetcher } from "../../src/riot/champions";
 import { DummyModelFactory } from "../utils";
@@ -18,7 +17,7 @@ describe('RiotMatchFetcher', () => {
 
     let clientMock: IMock<HttpClient>;
     let championFetcherMock: IMock<ChampionFetcher>;
-    let fetcher: MatchFetcher;
+    let fetcher: RiotMatchFetcher;
 
     beforeEach(async () => {
         clientMock = Mock.ofType<HttpClient>();

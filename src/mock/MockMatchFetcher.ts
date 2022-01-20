@@ -1,7 +1,7 @@
-import { MatchFetcher } from "../core/abstractions";
+import { CompletedMatchFetcher, OngoingMatchFetcher } from "../core/abstractions";
 import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role, Participant, Team } from "../core/model";
 
-export class MockMatchFetcher implements MatchFetcher {
+export class MockMatchFetcher implements OngoingMatchFetcher, CompletedMatchFetcher {
 
     private num: number = 0;
     
