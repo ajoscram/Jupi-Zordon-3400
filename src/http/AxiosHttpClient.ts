@@ -1,16 +1,22 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { BotError, ErrorCode } from "../../core/concretions";
+import { BotError, ErrorCode } from "../core/concretions";
 import { Header, HttpClient } from ".";
 
 export class AxiosHttpClient implements HttpClient {
 
-    public async get(url:string, headers: Header[]): Promise<object> {
+    public async get<T>(url:string, headers: Header[], validator?: (x: any) => asserts x is T): Promise<T> {
         try{
             const config: AxiosRequestConfig = this.createConfig(headers);
             const response: AxiosResponse = await axios.get(url, config);
-            return response.data;
+            if(!validator || validator(response.data))
+                return response.data;
+            else
+                throw new BotError(ErrorCode.RESPONSE_TYPE_ASSERTION_FAILED);
         } catch(error) {
-            throw this.createBotError(error, url, "GET");
+            if(error instanceof BotError)
+                throw error;
+            else
+                throw this.createRequestError(error, url, "GET");
         }
     }
     
@@ -21,7 +27,7 @@ export class AxiosHttpClient implements HttpClient {
         return { headers: headersObject };
     }
 
-    private createBotError(error: any, url: string, method: string): BotError{
+    private createRequestError(error: any, url: string, method: string): BotError{
         const errorMessage: string = axios.isAxiosError(error) ? 
             `${method} failed with code ${error.response?.status} on ${url} with error: ${error}` :
             `${method} failed on ${url} with error: ${error}`;

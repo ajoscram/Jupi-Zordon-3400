@@ -1,6 +1,6 @@
 import "jasmine";
 import { IMock, It, Mock } from "typemoq";
-import { HttpClient } from "../../src/riot/http";
+import { HttpClient } from "../../src/http";
 import { Summoner } from "../../src/core/model";
 import { RawSummoner } from "../../src/riot/model";
 import { DummyModelFactory } from "../utils";

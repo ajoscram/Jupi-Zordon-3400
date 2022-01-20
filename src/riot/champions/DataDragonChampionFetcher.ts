@@ -1,6 +1,6 @@
 import { Champion } from "../../core/model";
 import { ChampionFetcher } from ".";
-import { HttpClient } from "../http";
+import { HttpClient } from "../../http";
 import { BotError, ErrorCode } from "../../core/concretions";
 import { RawChampion, RawChampionContainer } from "../model";
 import { Url } from "../Url";
@@ -29,7 +29,7 @@ export class DataDragonChampionFetcher implements ChampionFetcher{
     private async fetchChampionMapIfNeeded(): Promise<void> {
         if(!this.idToChampionsMap){
             const url: string = await this.getChampionsUrl();
-            const container: RawChampionContainer = await this.client.get(url, []) as RawChampionContainer;
+            const container: RawChampionContainer = await this.client.get(url, []);
             this.idToChampionsMap = this.getIdToChampionsMap(container.data);
         }
     }
@@ -43,7 +43,7 @@ export class DataDragonChampionFetcher implements ChampionFetcher{
     }
 
     private async getLatestVersion(): Promise<string> {
-        const versions: string[] = await this.client.get(Url.VERSION, [ ]) as string[];
+        const versions: string[] = await this.client.get(Url.VERSION, []);
         return versions[0];
     }
 

@@ -7,7 +7,6 @@ export abstract class Bot{
         private readonly commandFactory: CommandFactory
     ){}
 
-    public abstract initialize(): Promise<void>;
     public abstract run(): Promise<void>;
     protected abstract getContext(message: Message): Context;
 

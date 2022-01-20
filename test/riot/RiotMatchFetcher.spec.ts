@@ -4,7 +4,7 @@ import { MatchFetcher } from "../../src/core/abstractions";
 import { RiotMatchFetcher } from "../../src/riot";
 import { ChampionFetcher } from "../../src/riot/champions";
 import { DummyModelFactory } from "../utils";
-import { HttpClient } from "../../src/riot/http";
+import { HttpClient } from "../../src/http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatch, RawOngoingMatchParticipant, RawTeam, TeamId } from "../../src/riot/model";
 import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, Team, TeamStats } from "../../src/core/model";
 import { BotError, ErrorCode } from "../../src/core/concretions";

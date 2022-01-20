@@ -21,7 +21,7 @@ export class DiscordBot extends Bot{
         this.client = new Client();
     }
 
-    public async initialize(): Promise<void> {
+    public async run(): Promise<void> {
         await this.database.initialize();
         const aiModel: AIModel = await this.database.getAIModel();
         await this.predictor.initialize(aiModel);
@@ -34,9 +34,7 @@ export class DiscordBot extends Bot{
                 self.process(wrappedMessage);
             }
         });
-    }
 
-    public async run(): Promise<void> {
         await this.client.login(process.env.DISCORD_TOKEN);
     }
 

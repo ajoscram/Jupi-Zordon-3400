@@ -1,7 +1,7 @@
 import "jasmine";
 import { IMock, It, Mock } from "typemoq";
 import { ChampionFetcher, DataDragonChampionFetcher } from "../../../src/riot/champions";
-import { HttpClient } from "../../../src/riot/http";
+import { HttpClient } from "../../../src/http";
 import { RawChampion, RawChampionContainer } from "../../../src/riot/model";
 import { DummyModelFactory } from "../../utils";
 import { Champion } from "../../../src/core/model";

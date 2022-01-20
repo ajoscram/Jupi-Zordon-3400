@@ -1,4 +1,4 @@
-import { Header } from "./http";
+import { Header } from "../http";
 
 export abstract class RiotBaseFetcher{
     protected createRiotTokenHeader(): Header {

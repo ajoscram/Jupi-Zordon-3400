@@ -83,6 +83,6 @@ export class DiscordMessage implements Message{
         else if(!this.message.channel.isText())
             throw new BotError(ErrorCode.CHANNEL_IS_NOT_TEXT);
         else
-            return this.message.channel as GuildChannel;
+            return this.message.channel;
     }
 }

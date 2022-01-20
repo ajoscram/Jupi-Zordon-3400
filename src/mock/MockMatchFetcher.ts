@@ -1,4 +1,4 @@
-import { MatchFetcher, Message } from "../core/abstractions";
+import { MatchFetcher } from "../core/abstractions";
 import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, TeamStats, PerformanceStats, Role, Participant, Team } from "../core/model";
 
 export class MockMatchFetcher implements MatchFetcher {
@@ -15,7 +15,7 @@ export class MockMatchFetcher implements MatchFetcher {
         };
     }
 
-    public async getCompletedMatches(ongoingMatches: OngoingMatch[], message?: Message): Promise<CompletedMatch[]> {
+    public async getCompletedMatches(ongoingMatches: OngoingMatch[]): Promise<CompletedMatch[]> {
         const completedMatches: CompletedMatch[] = [];
         for(const match of ongoingMatches)
             completedMatches.push(await this.getCompletedMatch(match));

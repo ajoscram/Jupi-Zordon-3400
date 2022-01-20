@@ -2,7 +2,7 @@ import { BotError, ErrorCode } from "../core/concretions";
 import { MatchFetcher } from "../core/abstractions";
 import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Participant, TeamStats, PerformanceStats, Role, Team } from "../core/model";
 import { ChampionFetcher } from "./champions";
-import { Header, HttpClient } from "./http";
+import { Header, HttpClient } from "../http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawTeam, RawTimeline, TeamId } from "./model";
 import { Url } from "./Url";
 import { RiotBaseFetcher } from "./RiotBaseFetcher";
@@ -20,7 +20,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
         const requestUrl: string = Url.ONGOING_MATCH.toString() + encodeURIComponent(summoner.id);
         const header: Header = this.createRiotTokenHeader();
-        const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]) as RawOngoingMatch;
+        const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ]);
         this.validateRawOngoingMatch(match);
         return {
             id: match.gameId.toString(),
@@ -34,7 +34,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     public async getCompletedMatches(ongoingMatches: OngoingMatch[]): Promise<CompletedMatch[]>{
         const completedMatchPromises: Promise<CompletedMatch>[] =
             ongoingMatches.map(x => this.getCompletedMatch(x));
-        return await Promise.all(completedMatchPromises);
+        return Promise.all(completedMatchPromises);
     }
 
     private validateRawOngoingMatch(rawOngoingMatch: RawOngoingMatch): void {
@@ -53,7 +53,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     private async getTeamParticipants(rawParticipants: RawOngoingMatchParticipant[], teamId: TeamId): Promise<Participant[]> {
         const teamRawParticipants: RawOngoingMatchParticipant[] = rawParticipants.filter(x => x.teamId == teamId);
         const participantPromises: Promise<Participant>[] = teamRawParticipants.map(x => this.getParticipant(x));
-        return await Promise.all(participantPromises);
+        return Promise.all(participantPromises);
     }
 
     private async getParticipant(rawParticipant: RawOngoingMatchParticipant): Promise<Participant>{
@@ -65,7 +65,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     private async getCompletedMatch(ongoingMatch: OngoingMatch): Promise<CompletedMatch> {
         const requestUrl: string = Url.COMPLETED_MATCH + encodeURIComponent(ongoingMatch.id);
         const header: Header = this.createRiotTokenHeader();
-        const completedMatch: RawCompletedMatch = await this.client.get(requestUrl, [ header ]) as RawCompletedMatch;
+        const completedMatch: RawCompletedMatch = await this.client.get(requestUrl, [ header ]);
         const minutesPlayed: number = Math.round(completedMatch.gameDuration / 60);
         return {
             id: completedMatch.gameId.toString(),
@@ -108,7 +108,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     private async getBans(rawBans: RawBan[]): Promise<Champion[]> {
         const banPromises: Promise<Champion>[] =
             rawBans.map(x => this.championFetcher.getChampion(x.championId));
-        return await Promise.all(banPromises);
+        return Promise.all(banPromises);
     }
 
     private getPerformanceStats(rawParticipants: RawCompletedMatchParticipant[], participants: Participant[]): PerformanceStats[] {
