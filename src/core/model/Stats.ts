@@ -19,6 +19,8 @@ export interface PerformanceStats extends Stats{
     readonly champion: Champion,
     readonly largestMultikill: number,
     readonly largestKillingSpree: number,
+    readonly firstBlood: boolean,
+    readonly firstTower: boolean,
     readonly role: Role
 }
 

@@ -1,7 +1,7 @@
 import { config as loadEnvironmentVariables } from "dotenv";
 import { Bot } from "./core/interfaces";
 import { DiscordBot } from "./discord";
-import { MockPredictor } from "./mock";
+import { TensorPredictor } from "./tensorflow";
 import { ConsoleWriter, Logger } from "./core/concretions/logging";
 import { DefaultCommandFactory } from "./core/concretions/commands/creation";
 import { MongoDatabase } from "./mongo";
@@ -21,7 +21,7 @@ async function main(): Promise<void>{
             new DataDragonChampionFetcher(new AxiosHttpClient())
         ),
         new RiotSummonerFetcher(new AxiosHttpClient()),
-        new MockPredictor()
+        new TensorPredictor()
     );
     await bot.run();
 }

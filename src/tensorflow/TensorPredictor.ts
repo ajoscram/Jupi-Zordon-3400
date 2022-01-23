@@ -1,7 +1,7 @@
 import { Predictor } from "src/core/interfaces";
 import { AIModel, Account, OngoingMatch, Prediction } from "src/core/model";
 
-export class MockPredictor implements Predictor {
+export class TensorPredictor implements Predictor {
     public async initialize(model: AIModel): Promise<void> { }
 
     public async balance(players: Account[]): Promise<[Account[], Account[]]> { 

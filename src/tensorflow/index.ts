@@ -1,0 +1,1 @@
+export { TensorPredictor } from './TensorPredictor';

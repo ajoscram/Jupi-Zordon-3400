@@ -1,8 +1,8 @@
 import "jasmine";
+import { IMock, Mock } from "typemoq";
 import { Command, Message } from "../../../../../src/core/interfaces";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "../../../../../src/core/concretions/commands";
 import { DefaultCommandFactory } from "../../../../../src/core/concretions/commands/creation";
-import { MockMessage } from "../../../../../src/mock";
 
 describe('DefaultCommandFactory', () => {
 
@@ -14,17 +14,27 @@ describe('DefaultCommandFactory', () => {
         return aliases.map( alias => identifier + alias + parameterList);
     }
 
+    function getMockedMessage(content: string): Message{
+        const messageMock: IMock<Message> = Mock.ofType<Message>();
+        messageMock
+            .setup(x => x.getContent())
+            .returns(() => content);
+        return messageMock.object;
+    }
+
     function getCommandVariations(aliases: string[], parameters: string[] = []): Command[]{
         const variationStrings: string[] = createCommandVariationStrings(aliases, parameters);
         const variations: Command[] = [];
         for(let variation of variationStrings){
-            const message: Message = new MockMessage(variation);
+            const message: Message = getMockedMessage(variation);
             const command: Command | null = factory.tryCreateCommand(message);
             if(command)
                 variations.push(command);
         }
         return variations;
     }
+
+    
 
     it('tryCreateCommand(): returns a LinkAccountCommand if given its alias', () => {
         getCommandVariations(["link", "l"], ["user", "summoner"])
