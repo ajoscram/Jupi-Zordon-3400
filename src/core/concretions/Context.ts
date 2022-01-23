@@ -1,4 +1,4 @@
-import { Predictor, Database, Message, Server, CompletedMatchFetcher, SummonerFetcher, OngoingMatchFetcher } from '../abstractions';
+import { Predictor, Database, Message, Server, SummonerFetcher, MatchFetcher, } from '../interfaces';
 
 export interface Context{
     readonly predictor: Predictor,
@@ -6,6 +6,5 @@ export interface Context{
     readonly server: Server,
     readonly message: Message,
     readonly summonerFetcher: SummonerFetcher,
-    readonly ongoingMatchFetcher: OngoingMatchFetcher,
-    readonly completedMatchFetcher: CompletedMatchFetcher,
+    readonly matchFetcher: MatchFetcher,
 }

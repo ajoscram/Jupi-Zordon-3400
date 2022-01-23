@@ -1,4 +1,4 @@
-import { SummonerFetcher } from "src/core/abstractions";
+import { SummonerFetcher } from "src/core/interfaces";
 import { Summoner } from "src/core/model";
 
 export class MockSummonerFetcher implements SummonerFetcher {

@@ -1,7 +1,7 @@
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 import { Context } from "..";
 import { CommandUtils } from "./CommandUtils";
-import { OngoingMatch } from "../../../core/model";
+import { OngoingMatch } from "../../model";
 
 export class DiscardMatchesCommand implements Command{
 

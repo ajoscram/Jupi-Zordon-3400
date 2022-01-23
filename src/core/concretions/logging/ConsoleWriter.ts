@@ -1,4 +1,4 @@
-import { Writer } from "../../abstractions";
+import { Writer } from "../../interfaces";
 
 export class ConsoleWriter implements Writer{
     

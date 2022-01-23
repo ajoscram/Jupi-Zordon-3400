@@ -1,4 +1,4 @@
-import { Database } from "../core/abstractions";
+import { Database } from "../core/interfaces";
 import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, Pick, ServerIdentity } from "../core/model";
 
 export class MockDatabase implements Database {

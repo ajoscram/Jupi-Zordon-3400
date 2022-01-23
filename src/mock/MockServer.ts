@@ -1,4 +1,4 @@
-import { Server } from "src/core/abstractions";
+import { Server } from "src/core/interfaces";
 import { Channel, User, ServerIdentity } from "src/core/model";
 
 export class MockServer implements Server{

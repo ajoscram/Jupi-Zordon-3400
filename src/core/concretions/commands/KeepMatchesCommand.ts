@@ -1,7 +1,7 @@
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 import { Context } from "..";
 import { CommandUtils } from "./CommandUtils";
-import { CompletedMatch, OngoingMatch } from "../../../core/model";
+import { CompletedMatch, OngoingMatch } from "../../model";
 
 export class KeepMatchesCommand implements Command{
 
@@ -15,8 +15,7 @@ export class KeepMatchesCommand implements Command{
 
     public async execute(context: Context): Promise<void> {
         const ongoingMatches: OngoingMatch[] = await CommandUtils.getOngoingMatches(context, this.matchIndex);
-        const completedMatches: CompletedMatch[] =
-            await context.completedMatchFetcher.getCompletedMatches(ongoingMatches);
+        const completedMatches: CompletedMatch[] = await context.matchFetcher.getCompletedMatches(ongoingMatches);
 
         await context.database.insertCompletedMatches(completedMatches);
         await context.database.deleteOngoingMatches(ongoingMatches);

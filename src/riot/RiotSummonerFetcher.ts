@@ -1,7 +1,7 @@
 import { Summoner } from "../core/model";
-import { SummonerFetcher } from "../core/abstractions";
+import { SummonerFetcher } from "../core/interfaces";
 import { RawSummoner } from "./model";
-import { Header, HttpClient } from "../http";
+import { Header, HttpClient } from "./http";
 import { Url } from "./Url";
 import { RiotBaseFetcher } from "./RiotBaseFetcher";
 

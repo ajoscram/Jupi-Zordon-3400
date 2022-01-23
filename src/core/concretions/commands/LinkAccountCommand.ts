@@ -1,4 +1,4 @@
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 import { Context } from "..";
 import { User, Account, Summoner } from "../../model";
 import { CommandUtils } from "./CommandUtils";

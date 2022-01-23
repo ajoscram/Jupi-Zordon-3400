@@ -1,6 +1,6 @@
 import { Champion } from "../../core/model";
 import { ChampionFetcher } from ".";
-import { HttpClient } from "../../http";
+import { HttpClient } from "../http";
 import { BotError, ErrorCode } from "../../core/concretions";
 import { RawChampion, RawChampionContainer } from "../model";
 import { Url } from "../Url";

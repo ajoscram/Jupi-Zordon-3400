@@ -1,13 +1,13 @@
 import { config as loadEnvironmentVariables } from "dotenv";
-import { Bot } from "./core/abstractions";
-import { DiscordBot, DiscordMatchFetcher } from "./discord";
+import { Bot } from "./core/interfaces";
+import { DiscordBot } from "./discord";
 import { MockPredictor } from "./mock";
 import { ConsoleWriter, Logger } from "./core/concretions/logging";
 import { DefaultCommandFactory } from "./core/concretions/commands/creation";
 import { MongoDatabase } from "./mongo";
 import { MongoDao } from "./mongo/dao";
 import { RiotMatchFetcher, RiotSummonerFetcher } from "./riot";
-import { AxiosHttpClient } from "./http";
+import { AxiosHttpClient } from "./riot/http";
 import { DataDragonChampionFetcher } from "./riot/champions";
 
 async function main(): Promise<void>{
@@ -20,7 +20,6 @@ async function main(): Promise<void>{
             new AxiosHttpClient(),
             new DataDragonChampionFetcher(new AxiosHttpClient())
         ),
-        new DiscordMatchFetcher(),
         new RiotSummonerFetcher(new AxiosHttpClient()),
         new MockPredictor()
     );

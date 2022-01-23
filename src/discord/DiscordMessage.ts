@@ -1,6 +1,6 @@
 import { Message, Server } from "../core/abstractions";
 import { BotError, ErrorCode } from "../core/concretions";
-import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch, OngoingMatch } from "../core/model";
+import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch, OngoingMatch, Attachment } from "../core/model";
 import { Presenter } from "./presentation";
 import { DiscordServer } from ".";
 import { Message as DiscordAPIMessage, GuildChannel, StringResolvable, APIMessage } from "discord.js";
@@ -30,6 +30,18 @@ export class DiscordMessage implements Message{
 
     public getContent(): string {
         return this.message.content;
+    }
+
+    public getAttachments(): Attachment[]{
+        const attachments: Attachment[] = [];
+        for(const attachment of this.message.attachments.values()){
+            attachments.push({
+                url: attachment.url,
+                name: attachment.name ?? "",
+                bytes: attachment.size
+            });
+        }
+        return attachments;
     }
 
     public async replyWithError(error: ErrorCode): Promise<void> {

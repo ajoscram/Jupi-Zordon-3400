@@ -9,3 +9,4 @@ export { Pick } from './Pick';
 export { Participant } from './Participant';
 export { TeamStats } from './TeamStats';
 export { Team } from './Team';
+export { Attachment } from './Attachment';

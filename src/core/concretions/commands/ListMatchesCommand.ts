@@ -1,6 +1,6 @@
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 import { Context } from "..";
-import { OngoingMatch, ServerIdentity } from "../../../core/model";
+import { OngoingMatch, ServerIdentity } from "../../model";
 
 export class ListMatchesCommand implements Command{
     public async execute(context: Context): Promise<void> {

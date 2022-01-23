@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from "axios";
-import { BotError, ErrorCode } from "../core/concretions";
+import { BotError, ErrorCode } from "../../core/concretions";
 import { Header, HttpClient } from ".";
 
 export class AxiosHttpClient implements HttpClient {

@@ -41,7 +41,7 @@ describe('KeepMatchesCommand', () => {
         contextMock.databaseMock
             .setup(x => x.getOngoingMatch(serverIdentity, index))
             .returns(async () => ongoingMatches[0]);
-        contextMock.completedMatchFetcherMock
+        contextMock.matchFetcherMock
             .setup(x => x.getCompletedMatches(ongoingMatches))
             .returns(async () => completedMatches);
         
@@ -54,7 +54,7 @@ describe('KeepMatchesCommand', () => {
 
     function setupOngoingMatchesToCompletedAndGetList(ongoingMatches: OngoingMatch[]): CompletedMatch[]{
         const completedMatches: CompletedMatch[] = ongoingMatches.map(_ => dummyFactory.createCompletedMatch());
-        contextMock.completedMatchFetcherMock
+        contextMock.matchFetcherMock
             .setup(x => x.getCompletedMatches(ongoingMatches))
             .returns(async () => completedMatches);
         return completedMatches;

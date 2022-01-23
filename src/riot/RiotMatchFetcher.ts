@@ -1,13 +1,13 @@
 import { BotError, ErrorCode } from "../core/concretions";
-import { CompletedMatchFetcher, OngoingMatchFetcher } from "../core/abstractions";
+import { MatchFetcher } from "../core/interfaces";
 import { Summoner, ServerIdentity, OngoingMatch, CompletedMatch, Champion, Participant, TeamStats, PerformanceStats, Role, Team } from "../core/model";
 import { ChampionFetcher } from "./champions";
-import { Header, HttpClient } from "../http";
+import { Header, HttpClient } from "./http";
 import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawTeam, RawTimeline, TeamId } from "./model";
 import { Url } from "./Url";
 import { RiotBaseFetcher } from "./RiotBaseFetcher";
 
-export class RiotMatchFetcher extends RiotBaseFetcher implements OngoingMatchFetcher, CompletedMatchFetcher {
+export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     
     private static readonly CUSTOM_GAME_TYPE: string = "CUSTOM_GAME";
     private static readonly WIN_STRING: string = "Win";

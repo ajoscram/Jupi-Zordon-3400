@@ -1,8 +1,8 @@
-import { Command, Message, CommandFactory } from ".";
+import { Command, Message, CommandFactory, Bot } from "../interfaces";
 import { Context, BotError, ErrorCode } from "../concretions";
 import { Logger } from "../concretions/logging";
 
-export abstract class Bot{
+export abstract class BaseBot implements Bot{
     constructor(
         private readonly commandFactory: CommandFactory
     ){}

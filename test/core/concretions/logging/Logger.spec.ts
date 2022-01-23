@@ -1,6 +1,6 @@
 import "jasmine";
 import { IMock, Mock, Times } from "typemoq";
-import { Writer } from "../../../../src/core/abstractions";
+import { Writer } from "../../../../src/core/interfaces";
 import { Logger } from "../../../../src/core/concretions/logging";
 
 describe('Logger', () => {

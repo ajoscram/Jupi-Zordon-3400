@@ -1,6 +1,6 @@
 import { AnyBulkWriteOperation, BulkWriteResult, Filter, Sort, UpdateFilter } from "mongodb";
 import { User, Account, Summoner, SummonerOverallStats, AIModel, OngoingMatch, CompletedMatch, ServerIdentity, ChampionOverallStats } from "src/core/model";
-import { Database } from "../core/abstractions";
+import { Database } from "../core/interfaces";
 import { BotError, ErrorCode } from '../core/concretions';
 import { Dao } from "./dao";
 import { BulkOperationCreator } from "./BulkOperationCreator";

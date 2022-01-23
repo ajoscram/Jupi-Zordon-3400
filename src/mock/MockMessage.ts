@@ -1,6 +1,6 @@
-import { Message, Server } from "src/core/abstractions";
+import { Message, Server } from "src/core/interfaces";
 import { ErrorCode } from "src/core/concretions";
-import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction, OngoingMatch } from "src/core/model";
+import { User, Channel, Account, SummonerOverallStats, CompletedMatch, Prediction, OngoingMatch, Attachment } from "src/core/model";
 import { MockServer } from ".";
 
 export class MockMessage implements Message{
@@ -26,6 +26,10 @@ export class MockMessage implements Message{
 
     public getContent(): string {
         return this.content;
+    }
+
+    public getAttachments(): Attachment[] {
+        return [];
     }
 
     public async replyWithError(error: ErrorCode): Promise<void> {

@@ -1,5 +1,5 @@
 import "jasmine";
-import { Command, Message } from "../../../../../src/core/abstractions";
+import { Command, Message } from "../../../../../src/core/interfaces";
 import { BalanceTeamsCommand, GetPlayerStatsCommand, HelpCommand, LinkAccountCommand, RecordMatchCommand } from "../../../../../src/core/concretions/commands";
 import { DefaultCommandFactory } from "../../../../../src/core/concretions/commands/creation";
 import { MockMessage } from "../../../../../src/mock";

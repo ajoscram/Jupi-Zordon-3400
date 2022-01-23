@@ -1,0 +1,20 @@
+// Get started with the LCU
+// https://hextechdocs.dev/getting-started-with-the-lcu-api/
+
+// LCU Schema
+// https://www.mingweisamuel.com/lcu-schema/tool/#/
+
+// the app-port where the local server is running
+@port=a_port
+// this password is calculated via BASE64("riot:" + remoting-auth-token)
+@password=some_password
+//a random match id
+@matchId=some_match_id
+
+### Getting match history
+GET https://127.0.0.1:{{port}}/lol-match-history/v1/products/lol/current-summoner/matches
+Authorization: Basic {{password}}
+
+### Getting a match's data
+GET https://127.0.0.1:{{port}}/lol-match-history/v1/games/{{matchId}}
+Authorization: Basic {{password}}

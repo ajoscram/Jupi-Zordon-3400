@@ -1,4 +1,4 @@
-import { Writer } from "../../abstractions";
+import { Writer } from "../../interfaces";
 
 export abstract class Logger{
     private static writers: Writer[] = [];

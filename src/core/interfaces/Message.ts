@@ -1,5 +1,5 @@
 import { ErrorCode } from '../concretions';
-import { Channel, CompletedMatch, User, Account, SummonerOverallStats, Prediction, OngoingMatch } from '../model'
+import { Channel, CompletedMatch, User, Account, SummonerOverallStats, Prediction, OngoingMatch, Attachment } from '../model'
 import { Server } from '.';
 
 export interface Message{
@@ -7,6 +7,7 @@ export interface Message{
     getAuthor(): User;
     getChannel(): Channel;
     getContent(): string;
+    getAttachments(): Attachment[];
     replyWithError(error: ErrorCode): Promise<void>;
     replyWithTeams(teams: [Account[], Account[]]): Promise<void>;
     replyWithSummonerStats(stats: SummonerOverallStats): Promise<void>;

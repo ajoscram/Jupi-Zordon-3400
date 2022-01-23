@@ -1,4 +1,4 @@
-import { Predictor } from "src/core/abstractions";
+import { Predictor } from "src/core/interfaces";
 import { AIModel, Account, OngoingMatch, Prediction } from "src/core/model";
 
 export class MockPredictor implements Predictor {

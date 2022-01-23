@@ -1,4 +1,4 @@
-import { Command, CommandFactory, Message } from "../../../abstractions";
+import { Command, CommandFactory, Message } from "../../../interfaces";
 import { BalanceTeamsCommand, DiscardMatchesCommand, GetPlayerStatsCommand, HelpCommand, KeepMatchesCommand, LinkAccountCommand, RecordMatchCommand } from "..";
 import { CommandMetadataExtractor } from "./CommandMetadataExtractor";
 import { CommandMetadata } from "./CommandMetadata";

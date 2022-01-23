@@ -1,7 +1,8 @@
-import { CommandFactory, Message, Bot } from "../../src/core/abstractions";
+import { CommandFactory, Message } from "../../src/core/interfaces";
+import { BaseBot } from "../../src/core/abstractions";
 import { Context } from "../../src/core/concretions";
 
-export class TestableBot extends Bot{
+export class TestableBot extends BaseBot{
     constructor(
         commandFactory: CommandFactory,
         private readonly context: Context){

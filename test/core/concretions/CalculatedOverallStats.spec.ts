@@ -1,6 +1,6 @@
 import "jasmine";
 import { IMock, Mock } from "typemoq";
-import { CalculatedOverallStatsTester } from "../../utils/CalculatedOverallStatsTester";
+import { CalculatedOverallStatsTester } from "../../utils";
 import { CalculatedOverallStats } from "../../../src/core/concretions";
 import { OverallStats } from "../../../src/core/model";
 

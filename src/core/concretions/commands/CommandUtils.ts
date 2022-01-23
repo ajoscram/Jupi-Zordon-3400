@@ -1,4 +1,4 @@
-import { Context } from '../../concretions';
+import { Context } from '..';
 import { User, Account, Summoner, OngoingMatch, ServerIdentity } from '../../model';
 import { BotError, ErrorCode } from '../BotError';
 

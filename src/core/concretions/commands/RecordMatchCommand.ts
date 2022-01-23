@@ -1,4 +1,4 @@
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 import { Context } from "..";
 import { OngoingMatch, Prediction, ServerIdentity, Summoner } from "../../model";
 import { CommandUtils } from "./CommandUtils";
@@ -15,7 +15,7 @@ export class RecordMatchCommand implements Command{
     public async execute(context: Context): Promise<void> {
         const summoner: Summoner = await CommandUtils.getSummoner(context, this.summonerName);
         const serverIdentity: ServerIdentity = context.server.getIdentity();
-        const match: OngoingMatch = await context.ongoingMatchFetcher.getOngoingMatch(summoner, serverIdentity);
+        const match: OngoingMatch = await context.matchFetcher.getOngoingMatch(summoner, serverIdentity);
         const prediction: Prediction = await context.predictor.predict(match);
         
         await context.database.insertOngoingMatch(match);

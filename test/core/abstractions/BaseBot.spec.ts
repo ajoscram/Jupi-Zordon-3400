@@ -1,14 +1,15 @@
-import { IMock, Mock, Times } from "typemoq";
 import "jasmine";
-import { Bot, Command, CommandFactory } from "../../../src/core/abstractions";
-import { ContextMock, TestableBot } from "../../utils";
+import { IMock, Mock, Times } from "typemoq";
+import { Command, CommandFactory } from "../../../src/core/interfaces";
+import { BaseBot } from "../../../src/core/abstractions";
 import { BotError, ErrorCode } from "../../../src/core/concretions";
+import { ContextMock, TestableBot } from "../../utils";
 
-describe('Bot', () => {
+describe('BaseBot', () => {
     let contextMock: ContextMock;
     let commandFactoryMock: IMock<CommandFactory>;
     let commandMock: IMock<Command>;
-    let bot: Bot;
+    let bot: BaseBot;
 
     beforeEach(async () => {
         contextMock = new ContextMock();

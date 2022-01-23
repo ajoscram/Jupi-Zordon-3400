@@ -1,5 +1,5 @@
 import { Context } from "..";
-import { Command } from "../../abstractions";
+import { Command } from "../../interfaces";
 
 export class HelpCommand implements Command {
     public async execute(context: Context): Promise<void> {
