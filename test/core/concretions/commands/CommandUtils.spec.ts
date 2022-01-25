@@ -56,17 +56,12 @@ describe('CommandUtils', () => {
         expect(matches).toBe(expectedMatches);
     });
 
-    it('getOngoingMatches(): returns a list with only one match if its index is given', async () =>{
-        const expectedMatch: OngoingMatch = dummyFactory.createOngoingMatch();
-        const index: number = 1;
-        contextMock.databaseMock
-            .setup(x => x.getOngoingMatch(serverIdentity, index))
-            .returns(async () => expectedMatch);
-        
-        const matches: OngoingMatch[] = await CommandUtils.getOngoingMatches(contextMock.object, index);
+    it('getOngoingMatches(): returns a list with only one match if a non-zero index is given', async () =>{
+        testForIndex(1);
+    });
 
-        expect(matches.length).toBe(1);
-        expect(matches[0]).toBe(expectedMatch);
+    it('getOngoingMatches(): returns a list with only one match if its index is 0', async () =>{
+        testForIndex(0);
     });
 
     it('validateOptionsLength(): doesnt throw if options length is in admissible lengths', async () => {
@@ -98,4 +93,16 @@ describe('CommandUtils', () => {
         expect(() => CommandUtils.parseIndex(index))
             .toThrow( new BotError(ErrorCode.INDEX_NOT_NUMBER));
     });
+
+    async function testForIndex(index: number): Promise<void>{
+        const expectedMatch: OngoingMatch = dummyFactory.createOngoingMatch();
+        contextMock.databaseMock
+            .setup(x => x.getOngoingMatch(serverIdentity, index))
+            .returns(async () => expectedMatch);
+        
+        const matches: OngoingMatch[] = await CommandUtils.getOngoingMatches(contextMock.object, index);
+
+        expect(matches.length).toBe(1);
+        expect(matches[0]).toBe(expectedMatch);
+    }
 });

@@ -1,4 +1,4 @@
-import { Message, Server } from "../core/abstractions";
+import { Message, Server } from "../core/interfaces";
 import { BotError, ErrorCode } from "../core/concretions";
 import { User, Channel, Account, SummonerOverallStats, Prediction, CompletedMatch, OngoingMatch, Attachment } from "../core/model";
 import { Presenter } from "./presentation";

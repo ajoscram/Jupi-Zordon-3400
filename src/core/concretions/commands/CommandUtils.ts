@@ -1,6 +1,6 @@
 import { Context } from '..';
 import { User, Account, Summoner, OngoingMatch, ServerIdentity } from '../../model';
-import { BotError, ErrorCode } from '../BotError';
+import { BotError, ErrorCode } from '..';
 
 export abstract class CommandUtils{
     public static async getSummoner(context: Context, summonerName?: string): Promise<Summoner>{
@@ -13,7 +13,7 @@ export abstract class CommandUtils{
 
     public static async getOngoingMatches(context: Context, matchIndex?: number): Promise<OngoingMatch[]>{
         const serverIdentity: ServerIdentity = context.server.getIdentity();
-        if(matchIndex)
+        if(matchIndex || matchIndex === 0)
             return [ await context.database.getOngoingMatch(serverIdentity, matchIndex) ];
         else
             return await context.database.getOngoingMatches(serverIdentity);
@@ -26,7 +26,7 @@ export abstract class CommandUtils{
 
     public static parseIndex(index: string): number{
         const result: number = Number.parseInt(index);
-        if(!result && result != 0)
+        if(!result && result !== 0)
             throw new BotError(ErrorCode.INDEX_NOT_NUMBER);
         else
             return result;

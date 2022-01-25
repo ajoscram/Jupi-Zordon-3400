@@ -8,12 +8,12 @@ import { RawBan, RawCompletedMatch, RawCompletedMatchParticipant, RawOngoingMatc
 import { CompletedMatch, OngoingMatch, Participant, PerformanceStats, ServerIdentity, Summoner, Team, TeamStats } from "../../src/core/model";
 import { BotError, ErrorCode } from "../../src/core/concretions";
 import { Url } from "../../src/riot/Url";
+import { Source } from "../../src/core/interfaces";
 
 describe('RiotMatchFetcher', () => {
     const modelFactory: DummyModelFactory = new DummyModelFactory();
     const serverIdentity: ServerIdentity = modelFactory.createServerIndentity();
     const summoner: Summoner = modelFactory.createSummoner();
-    const ongoingMatchUrl: string = Url.ONGOING_MATCH + encodeURIComponent(summoner.id);
 
     let clientMock: IMock<HttpClient>;
     let championFetcherMock: IMock<ChampionFetcher>;
@@ -26,13 +26,14 @@ describe('RiotMatchFetcher', () => {
 
         championFetcherMock
             .setup(x => x.getChampion(It.isAnyNumber()))
-            .returns(async () => modelFactory.createChampion());
+            .returns(async (id: number) => modelFactory.createChampion(id));
     });
 
     it('getOngoingMatch(): should return correctly if a custom match is queried', async () => {
         const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch("CUSTOM_GAME");
+        const ongoingMatchUrl: string = Url.ONGOING_MATCH + encodeURIComponent(summoner.id);
         clientMock
-            .setup(x => x.get(ongoingMatchUrl, It.isAny()))
+            .setup(x => x.get(ongoingMatchUrl, It.isAny(), It.isAny()))
             .returns(async () => rawMatch);
         
         const match: OngoingMatch = await fetcher.getOngoingMatch(summoner, serverIdentity);
@@ -44,22 +45,11 @@ describe('RiotMatchFetcher', () => {
         validateTeam(match.red, rawMatch, TeamId.RED);
     });
 
-    it('getOngoingMatch(): should throw if a non-custom match is queried', async () => {
-        const rawMatch: RawOngoingMatch = modelFactory.createRawOngoingMatch("not custom game type");
-        const error: BotError = new BotError(ErrorCode.ONGOING_MATCH_IS_NOT_CUSTOM);
-        clientMock
-            .setup(x => x.get(ongoingMatchUrl, It.isAny()))
-            .returns(async () => rawMatch);
-        
-        await expectAsync(fetcher.getOngoingMatch(summoner, serverIdentity)).toBeRejectedWith(error);        
-    });
-
-    it('getCompletedMatch(): should return correctly when given a custom match with all the expected data in it', async () => {
+    it('getCompletedMatches(): should return correctly when given custom matches with all the expected data in it', async () => {
         const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
-        const completedMatchUrl: string = Url.COMPLETED_MATCH + encodeURIComponent(ongoingMatch.id);
         const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch);
         clientMock
-            .setup(x => x.get(completedMatchUrl, It.isAny()))
+            .setup(x => x.get(It.isAny(), It.isAny(), It.isAny()))
             .returns(async () => rawCompletedMatch);
         
         const completedMatches: CompletedMatch[] = await fetcher.getCompletedMatches([ ongoingMatch ]);
@@ -67,26 +57,58 @@ describe('RiotMatchFetcher', () => {
         validateCompletedMatch(completedMatches[0], rawCompletedMatch, ongoingMatch);
     });
 
-    it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when missing information for a team', async () => {
-        const error: BotError = new BotError(ErrorCode.MISSING_MATCH_DATA);
+    it('getCompletedMatch(): should use the source URLs if a source is passed in', async () => {
+        const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
+        const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch);
+        const url: string = "url";
+        const sourceMock: IMock<Source> = Mock.ofType();
+        sourceMock
+            .setup(x => x.getUrls())
+            .returns(() => [ url ]);
+        clientMock
+            .setup(x => x.get(url, It.isAny(), It.isAny()))
+            .returns(async () => rawCompletedMatch);
+        
+        const completedMatches: CompletedMatch[] =
+            await fetcher.getCompletedMatches([ ongoingMatch ], sourceMock.object);
+
+        validateCompletedMatch(completedMatches[0], rawCompletedMatch, ongoingMatch);
+    });
+
+    it('getCompletedMatches(): should fail with MISSING_MATCH_DATA when missing information for a team', async () => {
         const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
         const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch, false);
         clientMock
-            .setup(x => x.get(It.isAny(), It.isAny()))
+            .setup(x => x.get(It.isAny(), It.isAny(), It.isAny()))
             .returns(async () => rawCompletedMatch);
         
-        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(error);
+        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(
+            new BotError(ErrorCode.MISSING_MATCH_DATA)
+        );
     });
 
     it('getCompletedMatch(): should fail with MISSING_MATCH_DATA when paricipant identities fail to be linked', async () => {
-        const error: BotError = new BotError(ErrorCode.MISSING_MATCH_DATA);
         const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
         const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch(ongoingMatch, true, false);
         clientMock
-            .setup(x => x.get(It.isAny(), It.isAny()))
+            .setup(x => x.get(It.isAny(), It.isAny(), It.isAny()))
             .returns(async () => rawCompletedMatch);
         
-        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(error);
+        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(
+            new BotError(ErrorCode.MISSING_MATCH_DATA)
+        );
+    });
+
+    it('getCompletedMatch(): should fail with UNABLE_TO_MATCH_ONGOING_TO_COMPLETED_MATCH if no completed match is found for a corresponding ongoing match', async () => {
+        const ongoingMatch: OngoingMatch = modelFactory.createOngoingMatch();
+        const rawCompletedMatch: RawCompletedMatch = modelFactory.createRawCompletedMatch();
+        clientMock
+            .setup(x => x.get(It.isAny(), It.isAny(), It.isAny()))
+            .returns(async () => rawCompletedMatch);
+        
+        await expectAsync(fetcher.getCompletedMatches([ ongoingMatch ])).toBeRejectedWith(
+            new BotError(ErrorCode.UNABLE_TO_MATCH_ONGOING_TO_COMPLETED_MATCH)
+        );
     });
 
     function validateTeam(team: Team, match: RawOngoingMatch, teamId: TeamId): void {

@@ -18,6 +18,7 @@ export enum RawLane {
 
 interface RawMatch {
     readonly gameId: number,
+    readonly gameMode: string,
     readonly gameType: string,
     readonly platformId: string
 }

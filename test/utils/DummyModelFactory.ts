@@ -1,5 +1,5 @@
 import { RawBan, RawChampion, RawChampionContainer, RawCompletedMatch, RawCompletedMatchParticipant, RawLane, RawOngoingMatch, RawOngoingMatchParticipant, RawRole, RawStats, RawSummoner, RawTeam, RawTimeline, TeamId } from "../../src/riot/model";
-import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role, Team } from "../../src/core/model";
+import { Account, Champion, Channel, Summoner, SummonerOverallStats, User, Pick, ServerIdentity, OngoingMatch, Participant, Prediction, CompletedMatch, TeamStats, PerformanceStats, Role, Team, Attachment } from "../../src/core/model";
 
 export class DummyModelFactory{
     private counter: number = 0;
@@ -32,9 +32,9 @@ export class DummyModelFactory{
         };
     }
 
-    public createChampion(): Champion{
+    public createChampion(id?: number): Champion{
         return {
-            id: this.createNumber().toString(),
+            id: (id ?? this.createNumber()).toString(),
             name: this.createString("champion name"),
             picture: this.createString("champion picture")
         };
@@ -73,7 +73,7 @@ export class DummyModelFactory{
 
     public createOngoingMatch(): OngoingMatch{
         return {
-            id: this.createString("ongoing match id"),
+            id: this.createNumber().toString(),
             date: this.createDate(),
             serverIdentity: this.createServerIndentity(),
             blue: this.createTeam(),
@@ -133,12 +133,13 @@ export class DummyModelFactory{
         };
     }
 
-    public createRawOngoingMatch(gameType: string): RawOngoingMatch {
+    public createRawOngoingMatch(gameType?: string, gameMode?: string): RawOngoingMatch {
         return {
             gameId: this.createNumber(),
             platformId: "LA1",
             gameStartTime: this.createNumber(),
-            gameType,
+            gameType: gameType ?? "CUSTOM_GAME",
+            gameMode: gameMode ?? "CLASSIC",
             participants: [
                 this.createRawOngoingMatchParticipant(TeamId.BLUE),
                 this.createRawOngoingMatchParticipant(TeamId.BLUE),
@@ -162,7 +163,8 @@ export class DummyModelFactory{
         };
     }
 
-    public createRawCompletedMatch(ongoingMatch: OngoingMatch, includeRedTeam: boolean = true, includeCorrectChampionIds: boolean = true): RawCompletedMatch {
+    public createRawCompletedMatch(ongoingMatch?: OngoingMatch, includeRedTeam: boolean = true, includeCorrectChampionIds: boolean = true): RawCompletedMatch {
+        ongoingMatch = ongoingMatch ?? this.createOngoingMatch();
         const teams: RawTeam[] = [ this.createRawTeam(TeamId.BLUE) ];
         const participants: RawCompletedMatchParticipant[] = ongoingMatch.blue.participants.map(x => 
             this.createRawCompletedMatchParticipant(TeamId.BLUE, x, includeCorrectChampionIds));
@@ -174,13 +176,22 @@ export class DummyModelFactory{
         }
 
         return {
-            gameId: this.createNumber(),
+            gameId: Number.parseInt(ongoingMatch.id),
             platformId: "LA1",
-            gameType: this.createString("raw completed match gameType"),
+            gameType: "CUSTOM_GAME",
+            gameMode: "CLASSIC",
             gameCreation: this.createNumber(),
             gameDuration: this.createNumber(),
             teams,
             participants: participants
+        };
+    }
+
+    public createAttachment(): Attachment{
+        return {
+            name: this.createString("attachment name"),
+            url: this.createString("attachment url"),
+            bytes: this.createNumber()
         };
     }
 
