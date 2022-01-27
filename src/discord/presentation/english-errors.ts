@@ -27,4 +27,5 @@ export const errors: { [property: string]: string, UNKNOWN: string } = {
     MAX_ONGOING_MATCHES: "The maximum amount of recorded ongoing matches has been reached. Please either keep or discard at least one of them and try again.",
     ONGOING_MATCH_INDEX_OUT_OF_RANGE: "The match index specified is out of range. Use the **!list** command to find the index for each match.",
     ONGOING_MATCH_IN_DB: "Failed to record the ongoing match because it has already been recorded.",
+    NO_ONGOING_MATCHES_LEFT: "There are no recorded matches left to keep or delete.",
 }

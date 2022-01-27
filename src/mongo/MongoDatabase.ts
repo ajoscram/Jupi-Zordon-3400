@@ -95,13 +95,17 @@ export class MongoDatabase implements Database {
     }
 
     public async deleteOngoingMatches(matches: OngoingMatch[]): Promise<void> {
+        if(matches.length == 0)
+            throw new BotError(ErrorCode.NO_ONGOING_MATCHES_LEFT);
         const filter: Filter<OngoingMatch> = this.getOrFilter(matches, IndexKey.ID, match => match.id);
         await this.dao.deleteMany(Collection.ONGOING_MATCHES, filter);
     }
 
-    public async insertCompletedMatches(completedMatches: CompletedMatch[]): Promise<void> {
-        await this.dao.insertMany(Collection.COMPLETED_MATCHES, completedMatches);
-        await this.insertStatsForCompletedMatches(completedMatches);
+    public async insertCompletedMatches(matches: CompletedMatch[]): Promise<void> {
+        if(matches.length == 0)
+            throw new BotError(ErrorCode.NO_ONGOING_MATCHES_LEFT);
+        await this.dao.insertMany(Collection.COMPLETED_MATCHES, matches);
+        await this.insertStatsForCompletedMatches(matches);
     }
 
     private getOrFilter<T>(array: T[], key: IndexKey, valueFunction: (element: T) => string): Filter<T>{

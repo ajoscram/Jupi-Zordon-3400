@@ -235,6 +235,31 @@ describe('MongoDatabase', () => {
         await expectAsync(database.insertOngoingMatch(match)).toBeRejected();
     });
 
+    it('insertCompletedMatches(): should insert every CompletedMatch in the list and its stats', async () => {
+        const matches: CompletedMatch[] = [
+            modelFactory.createCompletedMatch(),
+            modelFactory.createCompletedMatch()
+        ];
+        const summonerStatsOperations: AnyBulkWriteOperation<SummonerOverallStats>[] = 
+        new BulkOperationCreator().createInsertSummonerStatsOperations(matches);
+        const championStatsOperations: AnyBulkWriteOperation<ChampionOverallStats>[] =
+        new BulkOperationCreator().createInsertChampionStatsOperations(matches);
+        
+        await database.insertCompletedMatches(matches);
+        
+        daoMock.verify(x => x.insertMany(Collection.COMPLETED_MATCHES, matches), Times.once());
+        daoMock.verify(x => x.bulk(Collection.SUMMONER_STATS, summonerStatsOperations), Times.once());
+        daoMock.verify(x => x.bulk(Collection.CHAMPION_STATS, championStatsOperations), Times.once());
+    });
+
+    it('insertCompletedMatches(): should fail if no matches are passed in', async () => {
+        const matches: CompletedMatch[] = [];
+        
+        await expectAsync(database.insertCompletedMatches(matches)).toBeRejectedWith(
+            new BotError(ErrorCode.NO_ONGOING_MATCHES_LEFT)
+        );
+    });
+    
     it('deleteOngoingMatches(): should delete every OngoingMatch in the list', async () => {
         const matches: OngoingMatch[] = [
             modelFactory.createOngoingMatch(),
@@ -243,26 +268,17 @@ describe('MongoDatabase', () => {
         const filter: Filter<OngoingMatch> = {
             $or: matches.map(x => { return { [IndexKey.ID]: x.id }; })
         };
-
+    
         await database.deleteOngoingMatches(matches);
-
+    
         daoMock.verify(x => x.deleteMany(Collection.ONGOING_MATCHES, filter), Times.once());
     });
 
-    it('insertCompletedMatches(): should insert every CompletedMatch in the list and its stats', async () => {
-        const matches: CompletedMatch[] = [
-            modelFactory.createCompletedMatch(),
-            modelFactory.createCompletedMatch()
-        ];
-        const summonerStatsOperations: AnyBulkWriteOperation<SummonerOverallStats>[] = 
-            new BulkOperationCreator().createInsertSummonerStatsOperations(matches);
-        const championStatsOperations: AnyBulkWriteOperation<ChampionOverallStats>[] =
-            new BulkOperationCreator().createInsertChampionStatsOperations(matches);
-
-        await database.insertCompletedMatches(matches);
-
-        daoMock.verify(x => x.insertMany(Collection.COMPLETED_MATCHES, matches), Times.once());
-        daoMock.verify(x => x.bulk(Collection.SUMMONER_STATS, summonerStatsOperations), Times.once());
-        daoMock.verify(x => x.bulk(Collection.CHAMPION_STATS, championStatsOperations), Times.once());
+    it('deleteOngoingMatches(): should fail if no matches are passed in', async () => {
+        const matches: OngoingMatch[] = [];
+    
+        await expectAsync(database.deleteOngoingMatches(matches)).toBeRejectedWith(
+            new BotError(ErrorCode.NO_ONGOING_MATCHES_LEFT)
+        );
     });
 });
