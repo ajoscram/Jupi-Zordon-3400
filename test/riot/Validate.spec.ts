@@ -45,7 +45,7 @@ describe('Validator', () => {
 
     it('validateRawCompletedMatch(): should fail with TYPE_ASSERTION_FAILED if a property is missing', async () => {
         const match: any = dummyFactory.createRawCompletedMatch();
-        delete(match.participants[0].stats.timeline.role); //picked arbitrarily
+        delete(match.participants[0].timeline.role); //picked arbitrarily
         expect(() => Validate.rawCompletedMatch(match)).toThrow(
             new BotError(ErrorCode.TYPE_ASSERTION_FAILED)
         );

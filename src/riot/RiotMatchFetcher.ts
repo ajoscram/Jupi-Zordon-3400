@@ -19,9 +19,9 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
     ){ super(); }
     
     public async getOngoingMatch(summoner: Summoner, serverIdentity: ServerIdentity): Promise<OngoingMatch> {
-        const requestUrl: string = Url.ONGOING_MATCH.toString() + encodeURIComponent(summoner.id);
+        const url: string = Url.ONGOING_MATCH.toString() + encodeURIComponent(summoner.id);
         const header: Header = this.createRiotTokenHeader();
-        const match: RawOngoingMatch = await this.client.get(requestUrl, [ header ], Validate.rawOngoingMatch);
+        const match: RawOngoingMatch = await this.client.get(url, [ header ], Validate.rawOngoingMatch);
         return {
             id: match.gameId.toString(),
             date: new Date(match.gameStartTime),
@@ -135,7 +135,7 @@ export class RiotMatchFetcher extends RiotBaseFetcher implements MatchFetcher {
                 largestKillingSpree: rawParticipant.stats.largestKillingSpree,
                 firstBlood: rawParticipant.stats.firstBloodKill,
                 firstTower: rawParticipant.stats.firstTowerKill,
-                role: this.getRole(rawParticipant.stats.timeline),
+                role: this.getRole(rawParticipant.timeline),
                 assists: rawParticipant.stats.assists,
                 deaths: rawParticipant.stats.deaths,
                 damageDealtToChampions: rawParticipant.stats.totalDamageDealtToChampions,

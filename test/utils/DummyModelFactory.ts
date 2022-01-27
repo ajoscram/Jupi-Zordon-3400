@@ -218,7 +218,8 @@ export class DummyModelFactory{
             teamId,
             championId: includeCorrectChampionIds ? Number.parseInt(participant.champion.id) : -1,
             participantId: Number.parseInt(participant.summoner.id),
-            stats: this.createRawStats()
+            stats: this.createRawStats(),
+            timeline: this.createRawTimeline()
         }
     }
 
@@ -239,8 +240,7 @@ export class DummyModelFactory{
             totalMinionsKilled: this.createNumber(),
             neutralMinionsKilled: this.createNumber(),
             firstBloodKill: false,
-            firstTowerKill: false,
-            timeline: this.createRawTimeline()
+            firstTowerKill: false
         };
     }
 

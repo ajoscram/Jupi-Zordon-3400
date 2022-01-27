@@ -13,7 +13,8 @@ export enum RawRole {
 export enum RawLane {
     TOP = "TOP",
     MIDDLE = "MIDDLE",
-    BOTTOM = "BOTTOM"
+    BOTTOM = "BOTTOM",
+    NONE = "NONE"
 }
 
 interface RawMatch {
@@ -62,7 +63,8 @@ export interface RawBan {
 
 export interface RawCompletedMatchParticipant extends RawParticipant {
     readonly participantId: number,
-    readonly stats: RawStats
+    readonly stats: RawStats,
+    readonly timeline: RawTimeline
 }
 
 export interface RawStats {
@@ -81,8 +83,7 @@ export interface RawStats {
     readonly totalMinionsKilled: number,
     readonly neutralMinionsKilled: number,
     readonly firstBloodKill: boolean,
-    readonly firstTowerKill: boolean,
-    readonly timeline: RawTimeline
+    readonly firstTowerKill: boolean
 }
 
 export interface RawTimeline {

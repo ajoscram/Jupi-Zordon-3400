@@ -103,11 +103,11 @@ export abstract class Validate{
                     totalMinionsKilled: 1,
                     neutralMinionsKilled: 1,
                     firstBloodKill: true,
-                    firstTowerKill: true,
-                    timeline: {
-                        role: RawRole.SOLO,
-                        lane: RawLane.BOTTOM
-                    }
+                    firstTowerKill: true
+                },
+                timeline: {
+                    role: RawRole.SOLO,
+                    lane: RawLane.BOTTOM
                 }
             }
         ]   
